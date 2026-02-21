@@ -6,6 +6,15 @@
 
 This standard operating procedure dictates the exact sequence of operations for generating, executing, and auditing software utilizing the Coding 4.0 architecture. Do not deviate from the sequence. Bypassing the specification or auditing phases will result in context collapse, hallucinated requirements, and system graph corruption.
 
+## **Phase \-1: Legacy Onboarding (Brownfield Projects Only)**
+
+If you are implementing this framework in an existing repository, you must map the territory before starting Phase 1\.
+
+1. **Initialize the Hypergraph:** Execute /discover. The agent will scan your code and populate spec/compiled/architecture.yml.  
+2. **Review the Map:** Open the YAML file. Verify that the major modules and dependencies were captured correctly.  
+3. **Baseline the System:** Execute /baseline. The agent will generate the first SuperPRD.md.  
+4. **Verification:** Read the SuperPRD.md. If it accurately reflects what your software does today, you are ready to proceed to **Phase 1: Step 1 (/architect)** to add your first new feature.
+
 ## **Phase 0: System Initialization**
 
 ### **Greenfield Project Setup**
