@@ -1,0 +1,31 @@
+# --- Hypergraph Coding Agent Framework Standard Ignores ---
+
+# Framework: Active specifications and unverified outputs (Project-specific)
+# We preserve the directory structure via .gitkeep, but ignore the actual files.
+spec/active/*
+!spec/active/.gitkeep
+spec/archive/*
+!spec/archive/.gitkeep
+spec/compiled/*.yml
+!spec/compiled/architecture.yml
+
+# Tests: Candidate outputs should never be committed to the master template
+tests/candidate_outputs/*
+!tests/candidate_outputs/.gitkeep
+
+# Python: Standard environment and cache ignores
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Gemini CLI / Agent-specific temporary files
+.gemini/tmp/
+*.log

@@ -78,6 +78,12 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 
 ---
 
+## 🤖 Gemini CLI Integration
+
+This framework provides native support for fully automated, multi-agent workflows using [Gemini CLI](https://github.com/google/gemini-cli). Check out the **[Gemini Integration Guide (GEMINI.md)](./GEMINI.md)** to see how `gemini-cli` orchestrates the scripts and agents autonomously.
+
+---
+
 ## ❓ Troubleshooting Overview
 
 -   **Hallucinations**: Usually caused by forgotten archives. Run `archive_specs.py`.
