@@ -18,6 +18,11 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 
 ## 📁 Directory Structure
 
+-   `docs/`
+    -   [`MasterSOP.md`](docs/MasterSOP.md): Comprehensive Standard Operating Procedure.
+    -   [`Troubleshooting.md`](docs/Troubleshooting.md): Solutions to common issues.
+    -   [`Tutorial.md`](docs/Tutorial.md): Step-by-step framework guide.
+    -   [`Whitepaper.md`](docs/Whitepaper.md): Foundational theory and architecture.
 -   `.agents/`
     -   `skills/`: Custom slash commands (`/architect`, `/redteam`, etc.).
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
@@ -40,6 +45,8 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 ---
 
 ## 📖 Standard Operating Procedure (SOP)
+
+*(For full details, see the [Master SOP](docs/MasterSOP.md))*
 
 The Hypergraph workflow is strictly sequential to prevent race conditions and graph corruption.
 
@@ -85,6 +92,8 @@ This framework provides native support for fully automated, multi-agent workflow
 ---
 
 ## ❓ Troubleshooting Overview
+
+*(For an in-depth guide, see [Troubleshooting.md](docs/Troubleshooting.md))*
 
 -   **Hallucinations**: Usually caused by forgotten archives. Run `archive_specs.py`.
 -   **Desynchronization**: Builder missed `hypergraph_updater.py`. Run it manually.
