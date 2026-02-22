@@ -1,6 +1,6 @@
-# **Coding 4.0: A Practical Walkthrough**
+# **Hypergraph Coding Agent Framework: A Practical Walkthrough**
 
-This tutorial demonstrates exactly how to use the Coding 4.0 template by walking through a real-world scenario: **Adding an Email Newsletter Subscription feature** to an existing system.
+This tutorial demonstrates exactly how to use the Hypergraph Coding Agent Framework template by walking through a real-world scenario: **Adding an Email Newsletter Subscription feature** to an existing system.
 
 ## **The Scenario**
 

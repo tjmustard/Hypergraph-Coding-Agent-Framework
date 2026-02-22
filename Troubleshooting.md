@@ -1,6 +1,6 @@
 # **Troubleshooting Guide: Agent Failure States**
 
-Large Language Models are probabilistic engines. Even with rigid constraints, they will occasionally fail. This guide details how to diagnose and recover from the most common failure states in the Coding 4.0 architecture.
+Large Language Models are probabilistic engines. Even with rigid constraints, they will occasionally fail. This guide details how to diagnose and recover from the most common failure states in the Hypergraph Coding Agent Framework architecture.
 
 ## **1\. Context Bloat & Hallucination**
 

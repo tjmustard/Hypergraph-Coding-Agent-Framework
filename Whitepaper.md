@@ -1,8 +1,8 @@
-# **Coding 4.0: Orchestrating Autonomous Software Engineering via Multi-Dimensional Specification and Deterministic State Management**
+# **Hypergraph Coding Agent Framework: Orchestrating Autonomous Software Engineering via Multi-Dimensional Specification and Deterministic State Management**
 
 ## **Abstract**
 
-The transition to "Coding 4.0" shifts the developer's role from a writer of syntax to an architect of intent. However, this transition is currently bottlenecked by the **Specification Alignment Problem**: Large Language Models (LLMs) suffer from context collapse and hallucination when forced to ingest monolithic requirements or traverse complex system architectures probabilistically.
+The transition to the "Hypergraph Coding Agent Framework" shifts the developer's role from a writer of syntax to an architect of intent. However, this transition is currently bottlenecked by the **Specification Alignment Problem**: Large Language Models (LLMs) suffer from context collapse and hallucination when forced to ingest monolithic requirements or traverse complex system architectures probabilistically.
 
 This whitepaper outlines a "Spec-First" framework designed to solve these constraints. By decoupling probabilistic reasoning (LLM Agents) from deterministic state management (Python scripts), and by serializing system architecture into a Multi-Dimensional Hypergraph, we establish a mathematically sound, multi-agent pipeline capable of autonomous, reliable software engineering.
 
@@ -322,4 +322,4 @@ The workflow is strictly sequential to prevent race conditions and graph corrupt
 
 ## **Conclusion**
 
-Coding 4.0 is not defined by the intelligence of the model, but by the rigor of the system surrounding it. By wrapping LLMs in deterministic constraints, state-machine pacing, and graph-based memory, we transform probabilistic text generators into reliable software engineering engines.
+The Hypergraph Coding Agent Framework is not defined by the intelligence of the model, but by the rigor of the system surrounding it. By wrapping LLMs in deterministic constraints, state-machine pacing, and graph-based memory, we transform probabilistic text generators into reliable software engineering engines.

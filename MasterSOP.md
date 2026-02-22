@@ -1,10 +1,10 @@
-# **Master SOP: Coding 4.0 Agentic Workflow**
+# **Master SOP: Hypergraph Coding Agent Framework Workflow**
 
 **Version:** 1.0 (Strict Sequential Execution Model)
 
 **Core Paradigm:** Spec-First, Deterministic Memory, Automated Auditing
 
-This standard operating procedure dictates the exact sequence of operations for generating, executing, and auditing software utilizing the Coding 4.0 architecture. Do not deviate from the sequence. Bypassing the specification or auditing phases will result in context collapse, hallucinated requirements, and system graph corruption.
+This standard operating procedure dictates the exact sequence of operations for generating, executing, and auditing software utilizing the Hypergraph Coding Agent Framework architecture. Do not deviate from the sequence. Bypassing the specification or auditing phases will result in context collapse, hallucinated requirements, and system graph corruption.
 
 ## **Phase \-1: Legacy Onboarding (Brownfield Projects Only)**
 
