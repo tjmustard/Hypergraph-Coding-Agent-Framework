@@ -21,9 +21,13 @@ For each changed file:
 ## 3. Update Relevant Documentation
 
 - **README.md**: Ensure architectural, structural, or high-level project workflow changes are accurately reflected here.
-- **CHANGELOG.md**: Add entry under "Unreleased" section
-  - Use categories: Added, Changed, Fixed, Security, Removed
-  - Be concise, user-facing language
+- **CHANGELOG.md**: 
+  - **CRITICAL**: Before modifying the CHANGELOG, ask the user: *"Are we bumping the version? If so, what is the new semantic version and today's date?"*
+  - Wait for the user's response.
+  - **If the user provides a version and date:** Rename the `## [Unreleased]` header to `## [Version] - Date` and create a fresh `## [Unreleased]` block above it.
+  - **If the user says no/unreleased:** Add entries under the existing `## [Unreleased]` section.
+  - Use categories: Added, Changed, Fixed, Security, Removed.
+  - Be concise, user-facing language.
 
 ## 4. Documentation Style Rules
 

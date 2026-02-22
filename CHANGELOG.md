@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-02-22
+
+### Changed
+- **Workflows**: Replaced the automated git-history approach in the `/document` workflow with an explicit, interactive user prompt for semantic versioning.
+- **Workflows**: Upgraded the `/document` workflow to gracefully structure and label stamped release sections derived from the `[Unreleased]` block.
+
+## [0.2.2] - 2026-02-22
+
 ### Added
 - **Agent Resources**: Added new directories `.agents/memory/`, `.agents/rules/`, and `.agents/schemas/` housing agent rule templates and schema templates (`DESIGN_Template.md`, `PRD_Template.md`, `plan_Template.md`, `todo_Template.md`).
 - **Workflows**: Duplicated and formatted agent skills into the `.agents/workflows/` directory for Antigravity integration (e.g., `code-auditor.md`, `consult-cto.md`, `create-issue.md`, `create-plan.md`, `execute.md`, `explore.md`, `review.md`, etc.).
