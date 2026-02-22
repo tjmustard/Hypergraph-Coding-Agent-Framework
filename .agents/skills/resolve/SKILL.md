@@ -26,4 +26,6 @@ Your objective is to mediate between the Red Team's Adversarial Analysis (`spec/
 ### [PHASE 4: Compilation & Archival]
 * **Trigger:** All Red Team flags have a documented decision.
 * **Action 1:** Generate the final `SuperPRD.md` and individual `MiniPRD_[Module].md` files (using the strictly provided `.agent/schemas/MiniPRD_Template.md`). Save them to `spec/compiled/`.
-* **Action 2:** Instruct the user to execute the system script to flush the active directory: `python .agent/scripts/archive_specs.py [Feature_Name]`.
+* **Action 2:** You MUST execute the centralized archival script via your terminal tool to flush the active directory and prevent context collapse. 
+  - Run: `python .agents/scripts/archive_specs.py [Feature_Name]`
+  - Log the absolute path returned by the script.

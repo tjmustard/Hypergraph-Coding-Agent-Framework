@@ -1,6 +1,7 @@
 ---
 description: Create new slash commands on the fly.
 ---
+
 # /newcommand Workflow
 
 When the user specifies `/newcommand [command_name] [description]`:

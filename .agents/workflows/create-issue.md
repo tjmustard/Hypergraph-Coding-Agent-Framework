@@ -1,8 +1,7 @@
 ---
 description: Create a GitHub issue for a bug, feature, or improvement
 ---
-
-# Create Issue
+# /create-issue Workflow
 
 User is mid-development and thought of a bug/feature/improvement. Capture it fast so they can keep working.
 
@@ -25,12 +24,12 @@ Create a complete issue with:
 
 Keep questions brief. One message with 2-3 targeted questions beats multiple back-and-forths.
 
-**Search for context** only when helpful:
-- Web search for best practices if it's a complex feature
-- Grep codebase to find relevant files
-- Note any risks or dependencies you spot
+**Search for context** systematically:
+- ALWAYS check `spec/compiled/architecture.yml` (the hypergraph) to identify the specific `node_id`s that this issue will affect. 
+- Use `grep_search` to find the relevant implementation files linked to those nodes.
+- Note any risks, dependencies, or architectural constraints you spot.
 
-**Skip what's obvious** - If it's a straightforward bug, don't search web. If type/priority is clear from description, don't ask.
+**Do not guess** - Use First Principles. If the system architecture impact isn't obvious, state that in the issue.
 
 **Keep it fast** - Total exchange under 2min. Be conversational but brief. Get what you need, create ticket, done.
 

@@ -20,9 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation Structure**: Moved `MasterSOP.md`, `Troubleshooting.md`, `Tutorial.md`, and `Whitepaper.md` to a new `docs/` directory, updating `README.md` links accordingly.
 - **Documentation**: Enhanced `README.md` to include references to Gemini CLI's native multi-agent capabilities.
 - **Workflow**: Updated the repository's core mandates to prioritize automated state management when operated by Gemini CLI.
+- **Workflows**: Refined formatting of agent workflows in `.agents/workflows/` by adding standard titles and updating legacy PRD references to the new `SuperPRD` format.
+- **Documentation**: Updated the `/document` workflow to explicitly mandate `README.md` updates alongside the `CHANGELOG.md`.
+- **Documentation**: Updated `README.md` to document the `.agents/workflows/` directory.
 
 ### Removed
 - **Archived Workflows**: Deleted the obsolete `.agents/workflows/archive/` directory.
+- **Workflows**: Deleted obsolete `.agents/workflows/review.md` in favor of newer workflow structures.
 
 
 ## [0.2.0] - 2026-02-21

@@ -27,6 +27,7 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
     -   `skills/`: Custom slash commands (`/architect`, `/redteam`, etc.).
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
+    -   `workflows/`: Automated agent workflows (e.g., Antigravity integration).
 -   `spec/`
     -   `active/`: Working drafts and Red Team reports (untrusted/temporary).
     -   `compiled/`: Ground truth (SuperPRD, MiniPRDs, `architecture.yml`).

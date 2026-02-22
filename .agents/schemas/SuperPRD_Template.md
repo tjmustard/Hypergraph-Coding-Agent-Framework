@@ -1,5 +1,5 @@
 
-# Product Requirements Document (PRD)
+# SuperPRD Template
 
 ## Metadata
 - **Project Name**: [Project Name]
@@ -39,10 +39,25 @@
 | US-002 | ... | ... | Medium |
 
 ## 5. Technical Specifications (The Blueprint)
-### 5.1 Architecture
+### 5.1 Architecture & Resolved Trade-offs
 [Describe the system architecture, data flow, etc.]
 
-### 5.2 API Contracts / Schema
+**Resolved Trade-offs Log:**
+- **Issue:** [Description of architectural conflict raised by Red Team]
+- **Options Considered:** [Option A] vs [Option B]
+- **Resolution:** [Why the specific decision was made]
+
+### 5.2 System Graph Blast Radius
+The following nodes in `spec/compiled/architecture.yml` will be affected/modified by this feature:
+- `[node_id_1]`
+- `[node_id_2]`
+
+### 5.3 Execution Checklist (MiniPRDs)
+The following modular PRDs have been generated to execute this SuperPRD in isolated branches:
+- [ ] `spec/compiled/MiniPRD_[Module_Name_1].md`
+- [ ] `spec/compiled/MiniPRD_[Module_Name_2].md`
+
+### 5.4 API Contracts / Schema
 ```typescript
 interface User {
   id: string;
@@ -51,7 +66,7 @@ interface User {
 }
 ```
 
-### 5.3 Dependencies
+### 5.5 Dependencies
 - [List major libraries/frameworks]
 
 ## 6. Negative Constraints (The "Do NOTs")

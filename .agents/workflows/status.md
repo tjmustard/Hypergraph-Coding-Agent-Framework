@@ -1,6 +1,7 @@
 ---
 description: Immediately output the current, fully updated 'Living Master Plan.'
 ---
+
 # /status Workflow
 
 When the user invokes `/status`:

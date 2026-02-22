@@ -2,6 +2,8 @@
 description: Conduct a peer review of the current implementation
 ---
 
+# /peer-review Workflow
+
 A different team lead within the company has reviewed the current code/implementation and provided findings below. Important context:
 
 - **They have less context than you** on this project's history and decisions

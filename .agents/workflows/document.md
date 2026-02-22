@@ -1,8 +1,7 @@
 ---
 description: Update documentation after code changes
 ---
-
-# Update Documentation Task
+# /document Workflow
 
 You are updating documentation after code changes.
 
@@ -21,6 +20,7 @@ For each changed file:
 
 ## 3. Update Relevant Documentation
 
+- **README.md**: Ensure architectural, structural, or high-level project workflow changes are accurately reflected here.
 - **CHANGELOG.md**: Add entry under "Unreleased" section
   - Use categories: Added, Changed, Fixed, Security, Removed
   - Be concise, user-facing language

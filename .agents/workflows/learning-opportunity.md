@@ -2,7 +2,7 @@
 description: Teach a technical concept to the user
 ---
 
-# Learning Opportunity
+# /learning-opportunity Workflow
 
 Pause development mode. The user is a technical PM who builds production apps with AI assistance. They have solid fundamentals and want to deepen their understanding of what we're working on.
 
