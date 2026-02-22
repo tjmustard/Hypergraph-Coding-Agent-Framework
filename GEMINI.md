@@ -29,3 +29,4 @@ You do not need to manually open new context windows or run the Python scripts y
    - Ensure the generated specifications strictly adhere to the templates in `.agents/schemas/`.
 4. **Interactive Interviews**: When acting as the Architect, use your `ask_user` tool to gather structured constraints efficiently instead of relying solely on conversational text.
 5. **No Probabilistic Traversal**: Do not guess architectural dependencies. Always rely on the outputs of the `hypergraph_updater.py` script to understand the blast radius before executing code modifications.
+6. **Changelog Management**: Whenever you make meaningful changes to the framework, scripts, schemas, or documentation, you MUST document those changes in `CHANGELOG.md`. Adhere to the *Keep a Changelog* format and *Semantic Versioning*. Place new changes under the `[Unreleased]` heading unless instructed by the user to cut a specific version release.
