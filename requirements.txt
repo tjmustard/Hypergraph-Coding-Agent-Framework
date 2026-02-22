@@ -1,0 +1,4 @@
+# Hypergraph Coding Agent Framework Dependencies
+
+# Core: Used by .agents/scripts/ for Hypergraph YAML management
+PyYAML>=6.0.0
