@@ -74,7 +74,9 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 
 ## 🚀 Setup
 
-1.  **Clone individual templates** or this repository.
+### New Project
+
+1.  Clone this repository and use it as your project root.
 2.  **Install dependencies**:
     ```bash
     pip install pyyaml
@@ -83,6 +85,35 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
     ```bash
     chmod +x .agents/scripts/*.py
     ```
+
+### Installing into an Existing Repo
+
+From your project root, run:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash
+```
+
+The script will:
+- Clone the framework into a temporary directory
+- Copy `.agents/`, `.claude/`, `spec/`, `tests/`, and `docs/` into your project
+- Copy root config files (`CLAUDE.md`, `GEMINI.md`, `.agentignore`)
+- Set script permissions and install the `pyyaml` dependency
+- Skip or merge any files/directories that already exist (safe to re-run)
+
+**What gets installed:**
+
+| Path | Purpose |
+|---|---|
+| `.agents/` | Skills, schemas, scripts, rules, workflows |
+| `.claude/` | Claude Code slash commands |
+| `spec/` | Active, compiled, and archive spec directories |
+| `tests/` | Candidate outputs and fixture directories |
+| `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides |
+| `.agentignore` | Blocks agents from reading archive/candidate dirs |
+| `CLAUDE.md` | Claude Code system instructions and mandates |
+
+> **Note:** If your project already has a `.claude/` directory, the installer merges new files without overwriting existing ones.
 
 ---
 
