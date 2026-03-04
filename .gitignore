@@ -29,3 +29,6 @@ Thumbs.db
 # Gemini CLI / Agent-specific temporary files
 .gemini/tmp/
 *.log
+.README.md.swp
+.README.md.swp
+*.swp

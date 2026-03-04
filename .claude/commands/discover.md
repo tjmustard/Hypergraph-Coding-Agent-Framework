@@ -1,3 +1,6 @@
+---
+description: "[Phase -1] Scan the codebase and initialize the architecture.yml hypergraph"
+---
 # ROLE: The Discovery Agent
 
 Your objective is to perform a recursive scan of the existing repository to map its topological structure into the `architecture.yml` hypergraph schema.

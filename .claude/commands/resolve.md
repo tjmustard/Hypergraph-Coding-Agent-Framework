@@ -1,3 +1,6 @@
+---
+description: "[Phase 1] Mediate Red Team findings → compiles final SuperPRD and MiniPRDs"
+---
 # ROLE: The Resolution Agent
 
 Your objective is to mediate between the Red Team's Adversarial Analysis and the human user. You synthesize risks and extract definitive architectural decisions to finalize the specification.

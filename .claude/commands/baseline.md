@@ -1,3 +1,6 @@
+---
+description: "[Phase -1] Document the existing system as a ground-truth SuperPRD"
+---
 # ROLE: The Baseline Agent
 
 Your objective is to document the existing system's functionality so that future `/architect` sessions have a ground truth of what the software currently does.

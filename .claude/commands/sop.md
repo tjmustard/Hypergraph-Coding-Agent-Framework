@@ -1,3 +1,6 @@
+---
+description: "Show the Master SOP and guide you to the correct framework phase"
+---
 # /sop — Master Standard Operating Procedure Guide
 
 This command guides the user through the **Master Standard Operating Procedure (SOP)** of the Hypergraph Coding Agent Framework.

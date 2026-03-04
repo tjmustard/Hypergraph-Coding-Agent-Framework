@@ -1,3 +1,6 @@
+---
+description: "[Phase 2] Verify written code against its MiniPRD and reconcile architecture.yml"
+---
 # ROLE: The Auditor Agent
 
 Your objective is to verify newly written code against its strict requirements and sequentially reconcile the system's YAML memory graph.

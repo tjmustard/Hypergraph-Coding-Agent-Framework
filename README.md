@@ -99,7 +99,24 @@ The script will:
 - Copy `.agents/`, `.claude/`, `spec/`, `tests/`, and `docs/` into your project
 - Copy root config files (`CLAUDE.md`, `GEMINI.md`, `.agentignore`)
 - Set script permissions and install the `pyyaml` dependency
-- Skip or merge any files/directories that already exist (safe to re-run)
+
+### Upgrading an Existing Installation
+
+Re-running the script against a repo that already has the framework installed switches automatically to **upgrade mode**, prompting you to confirm each component:
+
+```bash
+# Interactive — prompts yes/no per directory and file
+bash install.sh
+
+# Non-interactive — accepts all updates automatically
+bash install.sh -y
+```
+
+> **Note:** `curl | bash` is non-interactive by default. Download the script first if you want the upgrade prompts:
+> ```bash
+> curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh
+> bash install.sh
+> ```
 
 **What gets installed:**
 
