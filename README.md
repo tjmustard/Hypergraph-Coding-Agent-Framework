@@ -86,7 +86,15 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 
 ---
 
-## 🤖 Gemini CLI Integration
+## 🤖 AI Agent Integrations
+
+### Claude Code
+
+This framework provides native support for **Claude Code** via a `CLAUDE.md` root file and custom slash commands in `.claude/commands/`. Check out the **[Claude Code Integration Guide (CLAUDE.md)](./CLAUDE.md)** to see how Claude Code orchestrates the scripts and agents autonomously.
+
+Available slash commands: `/architect`, `/redteam`, `/resolve`, `/audit`, `/discover`, `/baseline`, `/sop`
+
+### Gemini CLI
 
 This framework provides native support for fully automated, multi-agent workflows using [Gemini CLI](https://github.com/google/gemini-cli). Check out the **[Gemini Integration Guide (GEMINI.md)](./GEMINI.md)** to see how `gemini-cli` orchestrates the scripts and agents autonomously.
 
@@ -107,6 +115,7 @@ This framework provides native support for fully automated, multi-agent workflow
 ## Roadmap
 
 - [ ] Agent Compatibility
-  - [ ] Claude Code
+  - [x] Claude Code
+  - [x] Gemini CLI
   - [ ] Cursor
   - [ ] Antigravity
