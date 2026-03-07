@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.1] - 2026-02-22
+## [0.2.3] - 2026-02-22
+
+### Changed
+- **Workflows**: Replaced the automated git-history approach in the `/document` workflow with an explicit, interactive user prompt for semantic versioning.
+- **Workflows**: Upgraded the `/document` workflow to gracefully structure and label stamped release sections derived from the `[Unreleased]` block.
+
+## [0.2.2] - 2026-02-22
 
 ### Added
+- **Agent Resources**: Added new directories `.agents/memory/`, `.agents/rules/`, and `.agents/schemas/` housing agent rule templates and schema templates (`DESIGN_Template.md`, `PRD_Template.md`, `plan_Template.md`, `todo_Template.md`).
+- **Workflows**: Duplicated and formatted agent skills into the `.agents/workflows/` directory for Antigravity integration (e.g., `code-auditor.md`, `consult-cto.md`, `create-issue.md`, `create-plan.md`, `execute.md`, `explore.md`, `review.md`, etc.).
 - **Gemini CLI Integration**: Added `GEMINI.md` to automate Hypergraph framework orchestration using Gemini CLI's Skills and autonomous tool execution.
 - **Maintainability Tools**: Added `.gitignore` to prevent project-specific draft specifications from being accidentally committed.
 - **Standard Dependency Management**: Added `requirements.txt` to replace manual `pip install` instructions.
@@ -17,8 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tutorial Visibility**: Updated `README.md` to point more clearly to the `Tutorial.md` and `GEMINI.md` guides.
 
 ### Changed
+- **Documentation Structure**: Moved `MasterSOP.md`, `Troubleshooting.md`, `Tutorial.md`, and `Whitepaper.md` to a new `docs/` directory, updating `README.md` links accordingly.
 - **Documentation**: Enhanced `README.md` to include references to Gemini CLI's native multi-agent capabilities.
 - **Workflow**: Updated the repository's core mandates to prioritize automated state management when operated by Gemini CLI.
+- **Workflows**: Refined formatting of agent workflows in `.agents/workflows/` by adding standard titles and updating legacy PRD references to the new `SuperPRD` format.
+- **Documentation**: Updated the `/document` workflow to explicitly mandate `README.md` updates alongside the `CHANGELOG.md`.
+- **Documentation**: Updated `README.md` to document the `.agents/workflows/` directory.
+
+### Removed
+- **Archived Workflows**: Deleted the obsolete `.agents/workflows/archive/` directory.
+- **Workflows**: Deleted obsolete `.agents/workflows/review.md` in favor of newer workflow structures.
+
 
 ## [0.2.0] - 2026-02-21
 

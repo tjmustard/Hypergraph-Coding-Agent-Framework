@@ -46,7 +46,18 @@ def propagate_blast_radius(yaml_path: str, dirty_node_ids: List[str]):
     with open(yaml_path, 'w') as f:
         yaml.dump(data, f, sort_keys=False, default_flow_style=False)
         
-    print(f"SUCCESS: Propagated blast radius. Affected nodes: {list(processed)}")
+    print("=" * 50)
+    print("HYPERGRAPH UPDATER: SUCCESS")
+    print("=" * 50)
+    print(f"Target YAML: {yaml_path}")
+    print(f"Nodes dirtied by direct execution: {dirty_node_ids}")
+    print(f"Total nodes needing review (Blast Radius): {list(processed)}")
+    print("=" * 50)
+    print("AGENT INSTRUCTION: If you are the Builder Agent, your job is complete.")
+    print("If you are the Auditor Agent, you must now semantically rewrite the")
+    print("'outputs', 'inputs', and 'description' of these nodes based on the")
+    print("new code, and return their state to 'clean'.")
+    print("=" * 50)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

@@ -26,15 +26,28 @@ def archive_active_specs(feature_name: str):
     sanitized_name = "".join([c if c.isalnum() else "_" for c in feature_name])
     target_folder = os.path.join(archive_dir, f"{timestamp}_{sanitized_name}")
     
-    os.makedirs(target_folder)
+    if not os.path.exists(target_folder):
+        os.makedirs(target_folder)
 
     for filename in files_to_move:
         src = os.path.join(active_dir, filename)
         dst = os.path.join(target_folder, filename)
         shutil.move(src, dst)
         print(f"Archived: {filename} -> {target_folder}/")
+        
+    # Strictly enforce the .gitkeep initialized state
+    gitkeep_path = os.path.join(active_dir, '.gitkeep')
+    if not os.path.exists(gitkeep_path):
+        with open(gitkeep_path, 'w') as f:
+            pass
 
-    print(f"SUCCESS: Active directory flushed. Artifacts stored in {target_folder}/")
+    print("=" * 50)
+    print("ARCHIVAL SCRIPT: SUCCESS")
+    print("=" * 50)
+    print(f"Active directory flushed.")
+    print(f"Artifacts permanently stored at absolute path:")
+    print(f"{target_folder}/")
+    print("=" * 50)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

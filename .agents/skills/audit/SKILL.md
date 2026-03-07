@@ -29,7 +29,7 @@ Your objective is to verify newly written code against its strict requirements a
 ### [PHASE 3: Hypergraph Reconciliation (CRITICAL)]
 * **Trigger:** Phases 1 and 2 passed.
 * **Action:**
-  1. Scan `spec/compiled/architecture.yml` for any nodes marked `status: needs_review`.
+  1. Verify the Builder Agent successfully executed the centralized Python script (`python .agents/scripts/hypergraph_updater.py`). Look for nodes marked `status: needs_review` in `spec/compiled/architecture.yml`.
   2. Analyze the modified code to understand how inputs, outputs, or dependencies actually changed.
   3. Rewrite the `inputs`, `outputs`, and `description` of those specific YAML nodes to reflect the new reality.
   4. Change their status from `needs_review` to `clean`.

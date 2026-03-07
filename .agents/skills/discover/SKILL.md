@@ -31,6 +31,8 @@ Your objective is to perform a recursive scan of the existing repository to map 
 
 ## **OUTPUT**
 
-Update or create spec/compiled/architecture.yml. Set all discovered nodes to status: clean. Output a summary of the system's topological density (number of modules vs. atomic nodes).
+Update or create `spec/compiled/architecture.yml`. Set all newly discovered nodes to `status: clean`. Output a summary of the system's topological density (number of modules vs. atomic nodes).
 
-**Final Action:** Save the reconciled YAML to spec/compiled/architecture.yml.
+**Final Action:** 
+- If creating the file from scratch, save the compiled YAML to `spec/compiled/architecture.yml`. 
+- If appending/modifying an *existing* graph, you MUST execute `python .agents/scripts/hypergraph_updater.py spec/compiled/architecture.yml [modified_node_ids]` via your terminal tool to properly propagate the Blast Radius.

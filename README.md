@@ -18,10 +18,16 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 
 ## 📁 Directory Structure
 
+-   `docs/`
+    -   [`MasterSOP.md`](docs/MasterSOP.md): Comprehensive Standard Operating Procedure.
+    -   [`Troubleshooting.md`](docs/Troubleshooting.md): Solutions to common issues.
+    -   [`Tutorial.md`](docs/Tutorial.md): Step-by-step framework guide.
+    -   [`Whitepaper.md`](docs/Whitepaper.md): Foundational theory and architecture.
 -   `.agents/`
     -   `skills/`: Custom slash commands (`/architect`, `/redteam`, etc.).
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
+    -   `workflows/`: Automated agent workflows (e.g., Antigravity integration).
 -   `spec/`
     -   `active/`: Working drafts and Red Team reports (untrusted/temporary).
     -   `compiled/`: Ground truth (SuperPRD, MiniPRDs, `architecture.yml`).
@@ -40,6 +46,8 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 ---
 
 ## 📖 Standard Operating Procedure (SOP)
+
+*(For full details, see the [Master SOP](docs/MasterSOP.md))*
 
 The Hypergraph workflow is strictly sequential to prevent race conditions and graph corruption.
 
@@ -66,7 +74,9 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 
 ## 🚀 Setup
 
-1.  **Clone individual templates** or this repository.
+### New Project
+
+1.  Clone this repository and use it as your project root.
 2.  **Install dependencies**:
     ```bash
     pip install pyyaml
@@ -76,15 +86,71 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
     chmod +x .agents/scripts/*.py
     ```
 
+### Installing into an Existing Repo
+
+From your project root, run:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash
+```
+
+The script will:
+- Clone the framework into a temporary directory
+- Copy `.agents/`, `.claude/`, `spec/`, `tests/`, and `docs/` into your project
+- Copy root config files (`CLAUDE.md`, `GEMINI.md`, `.agentignore`)
+- Set script permissions and install the `pyyaml` dependency
+
+### Upgrading an Existing Installation
+
+Re-running the script against a repo that already has the framework installed switches automatically to **upgrade mode**, prompting you to confirm each component:
+
+```bash
+# Interactive — prompts yes/no per directory and file
+bash install.sh
+
+# Non-interactive — accepts all updates automatically
+bash install.sh -y
+```
+
+> **Note:** `curl | bash` is non-interactive by default. Download the script first if you want the upgrade prompts:
+> ```bash
+> curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh
+> bash install.sh
+> ```
+
+**What gets installed:**
+
+| Path | Purpose |
+|---|---|
+| `.agents/` | Skills, schemas, scripts, rules, workflows |
+| `.claude/` | Claude Code slash commands |
+| `spec/` | Active, compiled, and archive spec directories |
+| `tests/` | Candidate outputs and fixture directories |
+| `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides |
+| `.agentignore` | Blocks agents from reading archive/candidate dirs |
+| `CLAUDE.md` | Claude Code system instructions and mandates |
+
+> **Note:** If your project already has a `.claude/` directory, the installer merges new files without overwriting existing ones.
+
 ---
 
-## 🤖 Gemini CLI Integration
+## 🤖 AI Agent Integrations
+
+### Claude Code
+
+This framework provides native support for **Claude Code** via a `CLAUDE.md` root file and custom slash commands in `.claude/commands/`. Check out the **[Claude Code Integration Guide (CLAUDE.md)](./CLAUDE.md)** to see how Claude Code orchestrates the scripts and agents autonomously.
+
+Available slash commands: `/architect`, `/redteam`, `/resolve`, `/audit`, `/discover`, `/baseline`, `/sop`
+
+### Gemini CLI
 
 This framework provides native support for fully automated, multi-agent workflows using [Gemini CLI](https://github.com/google/gemini-cli). Check out the **[Gemini Integration Guide (GEMINI.md)](./GEMINI.md)** to see how `gemini-cli` orchestrates the scripts and agents autonomously.
 
 ---
 
 ## ❓ Troubleshooting Overview
+
+*(For an in-depth guide, see [Troubleshooting.md](docs/Troubleshooting.md))*
 
 -   **Hallucinations**: Usually caused by forgotten archives. Run `archive_specs.py`.
 -   **Desynchronization**: Builder missed `hypergraph_updater.py`. Run it manually.
@@ -97,6 +163,7 @@ This framework provides native support for fully automated, multi-agent workflow
 ## Roadmap
 
 - [ ] Agent Compatibility
-  - [ ] Claude Code
+  - [x] Claude Code
+  - [x] Gemini CLI
   - [ ] Cursor
   - [ ] Antigravity
