@@ -100,21 +100,38 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 
 ### Installing into an Existing Repo
 
-From your project root, run:
+Download and run the installer from your project root:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh && bash install.sh
 ```
 
-The script will:
-- Clone the framework into a temporary directory
-- Copy all IDE bridge directories and central `.agents/` content into your project
-- Copy root config files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agentignore`)
-- Set script permissions and install the `pyyaml` dependency
+The interactive installer will:
+1. **Ask which IDE(s) to install support for** — pick from a numbered menu or type `a` for all
+2. **Ask whether to add installed paths to `.gitignore`**
+3. Clone the framework, copy selected files, set permissions, and install `pyyaml`
+
+#### IDE Selection Options
+
+```bash
+# Interactive menu — choose which IDEs to install
+bash install.sh
+
+# Install specific IDEs only (comma-separated IDs)
+bash install.sh --ides="claude,windsurf"
+
+# Install all IDEs, accept all prompts automatically
+bash install.sh -y
+
+# Non-interactive (e.g. curl | bash) — installs all IDEs, skips .gitignore prompt
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash -s -- -y
+```
+
+Available IDE IDs: `claude`, `antigravity`, `windsurf`, `cursor`, `cline`, `roo`, `universal`
 
 ### Upgrading an Existing Installation
 
-Re-running the script against a repo that already has the framework installed switches automatically to **upgrade mode**, prompting you to confirm each component:
+Re-running the script against a repo that already has `.agents/` installed switches automatically to **upgrade mode**, prompting you to confirm each component:
 
 ```bash
 # Interactive — prompts yes/no per directory and file
@@ -124,29 +141,23 @@ bash install.sh
 bash install.sh -y
 ```
 
-> **Note:** `curl | bash` is non-interactive by default. Download the script first if you want the upgrade prompts:
-> ```bash
-> curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh
-> bash install.sh
-> ```
-
 **What gets installed:**
 
-| Path | Purpose |
-|---|---|
-| `.agents/` | Skills (source of truth), schemas, scripts, rules, memory |
-| `.claude/` | Claude Code slash command bridges |
-| `.windsurf/` | Windsurf rule and workflow bridges |
-| `.cursor/` | Cursor `.mdc` rule bridges |
-| `.clinerules/` | Cline rule bridges |
-| `.roo/` | Roo Code rule bridges |
-| `spec/` | Active, compiled, and archive spec directories |
-| `tests/` | Candidate outputs and fixture directories |
-| `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides |
-| `AGENTS.md` | Cross-IDE always-on system manifest |
-| `CLAUDE.md` | Claude Code tool overrides |
-| `GEMINI.md` | Gemini CLI tool overrides |
-| `.agentignore` | Blocks agents from reading archive/candidate dirs |
+| Path | Purpose | Always / IDE-specific |
+|---|---|---|
+| `.agents/` | Skills (source of truth), schemas, scripts, rules, memory | Always |
+| `spec/` | Active, compiled, and archive spec directories | Always |
+| `tests/` | Candidate outputs and fixture directories | Always |
+| `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides | Always |
+| `.agentignore` | Blocks agents from reading archive/candidate dirs | Always |
+| `.claude/` | Claude Code slash command bridges | `claude` |
+| `CLAUDE.md` | Claude Code tool overrides | `claude` |
+| `GEMINI.md` | Gemini CLI tool overrides | `antigravity` |
+| `.windsurf/` | Windsurf rule and workflow bridges | `windsurf` |
+| `.cursor/` | Cursor `.mdc` rule bridges | `cursor` |
+| `.clinerules/` | Cline rule bridges | `cline` |
+| `.roo/` | Roo Code rule bridges | `roo` |
+| `AGENTS.md` | Cross-IDE always-on system manifest | `universal` |
 
 > **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
 
