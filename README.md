@@ -161,6 +161,23 @@ bash install.sh -y
 
 > **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
 
+### Uninstalling
+
+To remove the framework from a project without affecting your work:
+
+```bash
+bash uninstall.sh        # interactive — confirms before removing
+bash uninstall.sh -y     # non-interactive — removes without prompting
+```
+
+The uninstaller clones the framework to get the authoritative file list, then removes every file it installed. Key behaviours:
+
+- **`spec/` and `tests/` are never touched** — your compiled specs, active drafts, candidate outputs, and fixtures are preserved.
+- **Non-empty directories are kept** — if you added custom skills or files inside a framework directory (e.g. `.agents/skills/myskill/`), that directory stays.
+- **Re-install at any time** — run `install.sh` again to restore the full framework.
+
+> **Use case:** When the project you scaffolded with the framework is ready for independent development, uninstalling removes the framework's own skill files so they don't interfere with your project-specific agents — while leaving `spec/` and `tests/` intact for continued use.
+
 ---
 
 ## 🤖 AI Agent Integrations
