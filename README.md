@@ -18,16 +18,27 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 
 ## 📁 Directory Structure
 
--   `docs/`
-    -   [`MasterSOP.md`](docs/MasterSOP.md): Comprehensive Standard Operating Procedure.
-    -   [`Troubleshooting.md`](docs/Troubleshooting.md): Solutions to common issues.
-    -   [`Tutorial.md`](docs/Tutorial.md): Step-by-step framework guide.
-    -   [`Whitepaper.md`](docs/Whitepaper.md): Foundational theory and architecture.
--   `.agents/`
-    -   `skills/`: Custom slash commands (`/architect`, `/redteam`, etc.).
+### Central Source of Truth
+-   `.agents/` — **All skill, rule, schema, and script content lives here.**
+    -   `skills/`: All 25 skill definitions (the source of truth for every IDE).
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
-    -   `workflows/`: Automated agent workflows (e.g., Antigravity integration).
+    -   `rules/`: Always-on coding standards (Python, security, testing, packages).
+    -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
+
+### IDE Bridge Directories (thin, no duplicated content)
+-   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`.
+-   `.windsurf/rules/` + `.windsurf/workflows/`: Windsurf rule and workflow bridges.
+-   `.cursor/rules/`: Cursor `.mdc` rule bridges.
+-   `.clinerules/`: Cline rule bridges.
+-   `.roo/rules/` + `.roo/rules-code/`: Roo Code rule bridges.
+
+### Universal Standard
+-   `AGENTS.md`: Cross-IDE always-on manifest (Windsurf, Cursor, Roo Code, GitHub Copilot, Zed).
+-   `CLAUDE.md`: Claude Code-specific tool overrides (references `AGENTS.md`).
+-   `GEMINI.md`: Gemini CLI-specific tool overrides (references `AGENTS.md`).
+
+### Spec and Test Directories
 -   `spec/`
     -   `active/`: Working drafts and Red Team reports (untrusted/temporary).
     -   `compiled/`: Ground truth (SuperPRD, MiniPRDs, `architecture.yml`).
@@ -35,6 +46,7 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 -   `tests/`
     -   `candidate_outputs/`: Unverified AI outputs for manual review.
     -   `fixtures/`: Verified baselines for regression testing.
+-   `docs/`: Human-readable guides (SOP, Tutorial, Whitepaper, Troubleshooting).
 
 ---
 
@@ -96,8 +108,8 @@ curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Fr
 
 The script will:
 - Clone the framework into a temporary directory
-- Copy `.agents/`, `.claude/`, `spec/`, `tests/`, and `docs/` into your project
-- Copy root config files (`CLAUDE.md`, `GEMINI.md`, `.agentignore`)
+- Copy all IDE bridge directories and central `.agents/` content into your project
+- Copy root config files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agentignore`)
 - Set script permissions and install the `pyyaml` dependency
 
 ### Upgrading an Existing Installation
@@ -122,29 +134,68 @@ bash install.sh -y
 
 | Path | Purpose |
 |---|---|
-| `.agents/` | Skills, schemas, scripts, rules, workflows |
-| `.claude/` | Claude Code slash commands |
+| `.agents/` | Skills (source of truth), schemas, scripts, rules, memory |
+| `.claude/` | Claude Code slash command bridges |
+| `.windsurf/` | Windsurf rule and workflow bridges |
+| `.cursor/` | Cursor `.mdc` rule bridges |
+| `.clinerules/` | Cline rule bridges |
+| `.roo/` | Roo Code rule bridges |
 | `spec/` | Active, compiled, and archive spec directories |
 | `tests/` | Candidate outputs and fixture directories |
 | `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides |
+| `AGENTS.md` | Cross-IDE always-on system manifest |
+| `CLAUDE.md` | Claude Code tool overrides |
+| `GEMINI.md` | Gemini CLI tool overrides |
 | `.agentignore` | Blocks agents from reading archive/candidate dirs |
-| `CLAUDE.md` | Claude Code system instructions and mandates |
 
-> **Note:** If your project already has a `.claude/` directory, the installer merges new files without overwriting existing ones.
+> **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
 
 ---
 
 ## 🤖 AI Agent Integrations
 
+### Architecture: No Duplication
+
+All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads from that single source:
+
+```
+.agents/skills/architect/SKILL.md  ← source of truth
+    ↑ referenced by:
+    .claude/commands/architect.md      (Claude Code)
+    .windsurf/workflows/architect.md   (Windsurf)
+    AGENTS.md                          (Cursor, Roo Code, Copilot, Zed)
+    GEMINI.md                          (Gemini CLI / Antigravity)
+```
+
 ### Claude Code
 
-This framework provides native support for **Claude Code** via a `CLAUDE.md` root file and custom slash commands in `.claude/commands/`. Check out the **[Claude Code Integration Guide (CLAUDE.md)](./CLAUDE.md)** to see how Claude Code orchestrates the scripts and agents autonomously.
+Native support via `CLAUDE.md` and `.claude/commands/`. Each command is a one-line bridge to `.agents/skills/`. See **[CLAUDE.md](./CLAUDE.md)** for Claude Code-specific tool overrides.
 
-Available slash commands: `/architect`, `/redteam`, `/resolve`, `/audit`, `/discover`, `/baseline`, `/sop`
+Available slash commands: `/architect`, `/redteam`, `/resolve`, `/audit`, `/execute`, `/discover`, `/baseline`, `/sop`, `/status`, `/consult-cto`, `/co-research`, `/deepdive`, and more — see `.claude/commands/` for the full list.
 
-### Gemini CLI
+### Gemini CLI / Antigravity
 
-This framework provides native support for fully automated, multi-agent workflows using [Gemini CLI](https://github.com/google/gemini-cli). Check out the **[Gemini Integration Guide (GEMINI.md)](./GEMINI.md)** to see how `gemini-cli` orchestrates the scripts and agents autonomously.
+Native support via `.agents/skills/` (Antigravity's native skill format) and `GEMINI.md`. See **[GEMINI.md](./GEMINI.md)** for Gemini CLI-specific tool overrides.
+
+### Windsurf
+
+Support via `.windsurf/rules/` (coding standards) and `.windsurf/workflows/` (slash command bridges). All files reference `.agents/` content.
+
+### Cursor
+
+Support via `.cursor/rules/*.mdc` with YAML frontmatter for glob-based activation. The `hypergraph-agent.mdc` rule is always-on and directs Cursor to read `AGENTS.md` and skill files by name.
+
+### Cline
+
+Support via `.clinerules/` directory with rule bridges to `.agents/rules/`.
+
+### Roo Code
+
+Support via `.roo/rules/` (all modes) and `.roo/rules-code/` (code mode only), with rule bridges to `.agents/rules/`.
+
+### GitHub Copilot / Zed / Others
+
+Support via `AGENTS.md` at the repository root, which is the universal always-on standard read by Copilot Workspace, Zed, and any IDE supporting the `AGENTS.md` protocol.
 
 ---
 
@@ -164,6 +215,12 @@ This framework provides native support for fully automated, multi-agent workflow
 
 - [ ] Agent Compatibility
   - [x] Claude Code
-  - [x] Gemini CLI
-  - [ ] Cursor
-  - [ ] Antigravity
+  - [x] Gemini CLI / Antigravity
+  - [x] Windsurf
+  - [x] Cursor
+  - [x] Cline
+  - [x] Roo Code
+  - [x] GitHub Copilot (via AGENTS.md)
+  - [x] Zed (via AGENTS.md)
+  - [ ] Aider
+  - [ ] Continue.dev

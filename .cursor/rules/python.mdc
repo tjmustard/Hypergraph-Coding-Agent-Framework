@@ -1,0 +1,6 @@
+---
+description: Python coding standards for all Python files
+globs: ["**/*.py"]
+alwaysApply: false
+---
+Read and apply all rules defined in `.agents/rules/python.md`.

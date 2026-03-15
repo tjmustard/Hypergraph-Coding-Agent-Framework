@@ -1,0 +1,6 @@
+---
+description: Testing standards for test files
+globs: ["tests/**/*", "**/*_test.py", "**/*.test.*", "**/*.spec.*"]
+alwaysApply: false
+---
+Read and apply all rules defined in `.agents/rules/testing.md`.

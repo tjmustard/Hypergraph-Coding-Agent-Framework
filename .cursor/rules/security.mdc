@@ -1,0 +1,6 @@
+---
+description: Security and safety rules — always active
+globs: []
+alwaysApply: true
+---
+Read and apply all rules defined in `.agents/rules/security.md`.

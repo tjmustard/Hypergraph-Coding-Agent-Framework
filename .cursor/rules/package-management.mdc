@@ -1,0 +1,6 @@
+---
+description: Package management standards using uv — always active
+globs: []
+alwaysApply: true
+---
+Read and apply all rules defined in `.agents/rules/package-management.md`.

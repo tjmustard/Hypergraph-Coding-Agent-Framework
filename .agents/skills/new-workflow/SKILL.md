@@ -20,17 +20,37 @@ This skill converts a description of desired agent behavior into a properly form
    - If only a description is provided, suggest a short, hyphen-separated name (e.g., `code-review`, `api-design`).
    - Confirm a concise description for the frontmatter.
 
-2. **Draft the Workflow File**
-   - Create a new markdown file at `.agents/workflows/<command-name>.md`.
+2. **Draft the Skill File**
+   - Create the skill directory: `.agents/skills/<command-name>/`
+   - Create the main file: `.agents/skills/<command-name>/SKILL.md`
    - **Mandatory frontmatter** — start the file with:
      ```yaml
      ---
-     description: <short description of what this workflow does>
+     name: <command-name>
+     description: <concise third-person description of what this skill does>
+     trigger: /<command-name>
      ---
      ```
-   - **Structure the content**: Write specific, actionable steps for what the agent should do when the command is invoked. Use numbered lists or bullet points. Be explicit about agent actions, not just outcomes.
+   - **Structure the content** using the standard skill format:
+     - `## When to use this skill` — trigger conditions
+     - `## How to use it` — numbered steps for the agent to follow. Be explicit about agent actions, not just outcomes.
 
-3. **Verify and Notify**
-   - Confirm the file is well-formed with valid YAML frontmatter.
-   - Confirm it has been written to `.agents/workflows/`.
-   - Notify the user: "The `/<command-name>` workflow is ready. Here's what it does: [summary]."
+3. **Create IDE Bridge Files**
+   - Create a thin bridge in `.claude/commands/<command-name>.md`:
+     ```markdown
+     ---
+     description: "<description matching SKILL.md>"
+     ---
+     Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
+     ```
+   - Create a thin bridge in `.windsurf/workflows/<command-name>.md`:
+     ```markdown
+     ---
+     description: "<description matching SKILL.md>"
+     ---
+     Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
+     ```
+
+4. **Verify and Notify**
+   - Confirm all files are well-formed with valid YAML frontmatter.
+   - Notify the user: "The `/<command-name>` skill is ready. The SKILL.md is the source of truth in `.agents/skills/<command-name>/`, with IDE bridges in `.claude/commands/` and `.windsurf/workflows/`."
