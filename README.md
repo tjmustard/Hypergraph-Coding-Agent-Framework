@@ -20,14 +20,14 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 
 ### Central Source of Truth
 -   `.agents/` — **All skill, rule, schema, and script content lives here.**
-    -   `skills/`: All 25 skill definitions (the source of truth for every IDE).
+    -   `skills/`: All 25 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
     -   `rules/`: Always-on coding standards (Python, security, testing, packages).
     -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
 
 ### IDE Bridge Directories (thin, no duplicated content)
--   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`.
+-   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`. Commands use the `hyper-` prefix (e.g. `/hyper-architect`).
 -   `.windsurf/rules/` + `.windsurf/workflows/`: Windsurf rule and workflow bridges.
 -   `.cursor/rules/`: Cursor `.mdc` rule bridges.
 -   `.clinerules/`: Cline rule bridges.
@@ -160,6 +160,8 @@ bash install.sh -y
 | `AGENTS.md` | Cross-IDE always-on system manifest | `universal` |
 
 > **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
+>
+> **Naming convention:** All framework skills and commands use the `hyper-` prefix (e.g. `hyper-architect`, `/hyper-redteam`) so they never collide with skills or commands you create for your own project.
 
 ### Uninstalling
 
