@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-03-15
+
+### Changed
+- **`hyper-audit` skill**: Added Phase 4 — MiniPRD Archival. After a successful audit, the MiniPRD is automatically moved from `spec/compiled/` to `spec/archive/` (renamed with `_AUDITED` suffix). Since `spec/archive/` is blocked by `.agentignore`, the completed MiniPRD no longer surfaces in subsequent `/hyper-execute` runs.
+- **`hyper-execute` skill**: Added a note in the halt/report step informing developers that a passing audit will archive the MiniPRD automatically.
+
 ## [0.3.2] - 2026-03-15
 
 ### Changed
