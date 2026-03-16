@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-03-15
+
+### Changed
+- **Skill namespace prefix**: All 25 skills renamed from `<name>` to `hyper-<name>` to prevent collisions with project-specific skills in consumer repos.
+  - `.agents/skills/<name>/` → `.agents/skills/hyper-<name>/`
+  - `.claude/commands/<name>.md` → `.claude/commands/hyper-<name>.md`
+  - `.windsurf/workflows/<name>.md` → `.windsurf/workflows/hyper-<name>.md`
+  - All slash command invocations updated (`/architect` → `/hyper-architect`, etc.)
+  - All references in `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `README.md`, rule bridges, and `docs/` updated accordingly.
+
 ## [0.3.0] - 2026-03-15
 
 ### Added
