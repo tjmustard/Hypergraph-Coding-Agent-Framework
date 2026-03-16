@@ -106,7 +106,7 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-deepdive` | `/hyper-deepdive` | any | Exhaustive First Principles topic research |
 | `hyper-create-skill` | `/hyper-create-skill` | any | Convert a prompt into a new skill |
 | `hyper-new-workflow` | `/hyper-new-workflow` | any | Scaffold a new skill and IDE bridges |
-| `hyper-document` | `/hyper-document` | any | Update docs after code changes |
+| `hyper-document` | `/hyper-document` | any | Update README, CHANGELOG, docs/, AGENTS.md, and memory files after any change |
 | `hyper-session-update` | `/hyper-session-update` | any | Sync memory with session work |
 | `hyper-refresh-memory` | `/hyper-refresh-memory` | any | Rebuild mental model from codebase |
 | `hyper-troubleshooting` | `/hyper-troubleshooting` | any | Diagnose framework failure states |

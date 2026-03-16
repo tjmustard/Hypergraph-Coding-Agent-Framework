@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-03-15
+
+### Changed
+- **`hyper-document` skill**: Expanded from a minimal 5-step outline to a full per-target documentation guide. Now covers `README.md`, `CHANGELOG.md`, `docs/MasterSOP.md`, `docs/Tutorial.md`, `docs/Troubleshooting.md`, `docs/Whitepaper.md`, `AGENTS.md`, `.agents/memory/` files, and `skills-info.md`. Each target includes explicit update triggers and style rules (tone, formatting, heading levels, prohibited language).
+- **`AGENTS.md`**: Updated `hyper-document` skill description to reflect expanded scope.
+
 ## [0.3.3] - 2026-03-15
 
 ### Changed
