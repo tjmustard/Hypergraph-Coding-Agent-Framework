@@ -1,52 +1,205 @@
 ---
-name: document
-description: Updates project documentation (README, CHANGELOG, design docs) after code changes. Reads actual code before writing — never trusts existing docs. Use after completing a feature, fix, or refactor.
+name: hyper-document
+description: Updates all project documentation after code or skill changes. Always reads actual implementation before writing. Covers README, CHANGELOG, docs/, AGENTS.md, memory files, and skills-info.md. Use after completing any feature, fix, refactor, or skill update.
+trigger: /hyper-document
 ---
 
-# Document
+# Hyper-Document
 
-This skill updates project documentation after code changes. It reads the actual implementation before writing anything — existing documentation is treated as potentially stale.
+This skill updates the full documentation suite after changes to the codebase, skills, or framework structure. It reads actual implementation before writing anything — existing documentation is treated as potentially stale.
+
+---
 
 ## When to use this skill
 
-- After completing a feature, bug fix, or refactor that changed user-facing behavior.
+- After completing a feature, bug fix, refactor, or skill change.
+- When `README.md`, `CHANGELOG.md`, `docs/`, or other docs are out of sync with the codebase.
 - When the user explicitly runs `/hyper-document`.
-- When README, CHANGELOG, or design docs are out of sync with the codebase.
 
-## How to use it
+---
 
-1. **Identify Changes**
-   - Check `git diff` or recent commits for modified files.
-   - Identify which features/modules were changed.
-   - Note any new files, deleted files, or renamed files.
+## Step 1 — Identify What Changed
 
-2. **Verify Current Implementation**
-   **CRITICAL:** Do NOT trust existing documentation. Read the actual code.
-   - Read the current implementation of each changed file.
-   - Understand actual behavior, not documented behavior.
-   - Note any discrepancies between existing docs and actual behavior.
+Run the following to understand scope:
 
-3. **Update Relevant Documentation**
+```bash
+git log --oneline -10
+git diff HEAD~1 --name-only
+```
 
-   - **`README.md`**: Reflect architectural, structural, or high-level project workflow changes.
-   - **`CHANGELOG.md`**:
-     - **CRITICAL:** Before modifying the CHANGELOG, ask the user: *"Are we bumping the version? If so, what is the new semantic version and today's date?"*
-     - Wait for their response.
-     - **If a version/date is provided:** Rename `## [Unreleased]` to `## [Version] - Date` and create a fresh `## [Unreleased]` block above it.
-     - **If no version bump:** Add entries under the existing `## [Unreleased]` section.
-     - Use categories: `Added`, `Changed`, `Fixed`, `Security`, `Removed`.
-     - Write in concise, user-facing language.
+Identify:
+- Which files were modified, added, or deleted.
+- Whether the change is user-facing (affects README, CHANGELOG, docs) or internal (affects memory files, skills-info).
+- Whether any skills were added, renamed, or removed.
 
-4. **Documentation Style Rules**
+---
 
-   ✅ **Concise** — Sacrifice grammar for brevity
-   ✅ **Practical** — Examples over theory
-   ✅ **Accurate** — Code-verified, not assumed
-   ✅ **Current** — Matches actual implementation
+## Step 2 — Read Before Writing
 
-   ❌ No enterprise fluff
-   ❌ No outdated information
-   ❌ No assumptions without verification
+**CRITICAL: Do NOT trust existing documentation. Read the actual implementation.**
 
-5. **Ask if Uncertain**
-   If the intent behind a change or its user-facing impact is unclear, ask the user — don't guess.
+- Read every changed file before updating any doc.
+- Note discrepancies between existing docs and actual behavior.
+- Never assume — verify.
+
+---
+
+## Step 3 — Update Documentation by Target
+
+Work through each target below. Skip targets that are clearly unaffected by the change.
+
+---
+
+### `README.md`
+
+**Purpose:** Entry point for new users and project overview.
+
+**Update when:** Architecture changes, new features, new IDE support, install/uninstall changes, workflow changes, new slash commands, or directory structure changes.
+
+**Style rules:**
+- Lead with what it does, not how it works.
+- Use H2 (`##`) for top-level sections, H3 (`###`) for subsections.
+- Prefer tables for structured comparisons (IDE support, installed paths, commands).
+- Use fenced code blocks with language tags for all commands and examples.
+- Bullet lists for feature enumerations; numbered lists for sequential steps only.
+- No marketing language. No "powerful", "robust", "seamless".
+- Every slash command mentioned must use the `hyper-` prefix (e.g. `/hyper-architect`).
+- Callout blocks (`> **Note:**`) for caveats, naming conventions, and non-obvious behaviors.
+
+---
+
+### `CHANGELOG.md`
+
+**Purpose:** Auditable history of changes following [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+**CRITICAL:** Before modifying, ask the user:
+> *"Are we bumping the version? If so, what is the new semantic version?"*
+
+Wait for the response, then:
+- **Version bump:** Add a new `## [X.Y.Z] - YYYY-MM-DD` block below `## [Unreleased]`.
+- **No version bump:** Add entries under `## [Unreleased]`.
+
+**Style rules:**
+- Use only these categories: `Added`, `Changed`, `Fixed`, `Removed`, `Security`.
+- One bullet per logical change. Bold the affected component: `- **`hyper-audit`**: ...`
+- Write in past tense, imperative voice: "Added", "Fixed", "Moved", not "Adds", "Fixes".
+- Be specific — name the file, skill, or behavior. No vague entries like "misc improvements".
+- Never delete historical entries.
+
+---
+
+### `docs/MasterSOP.md`
+
+**Purpose:** The canonical sequential workflow guide for the framework.
+
+**Update when:** Phase flow changes, new phases added, skill names or trigger commands change, or the execution sequence is modified.
+
+**Style rules:**
+- Numbered phases with bold headers.
+- Each step references the exact slash command (e.g. `/hyper-discover`).
+- Warn explicitly about sequence violations and their consequences.
+- Keep it prescriptive — tell the user exactly what to do, in order.
+
+---
+
+### `docs/Tutorial.md`
+
+**Purpose:** Hands-on walkthrough for first-time users.
+
+**Update when:** New skills are added, workflow changes break existing examples, or install steps change.
+
+**Style rules:**
+- Assume zero prior knowledge.
+- Every action shown as a concrete command or code snippet.
+- Explain *why* each step matters, not just what to do.
+- Use `> 💡 Tip:` callouts for non-obvious shortcuts.
+
+---
+
+### `docs/Troubleshooting.md`
+
+**Purpose:** Diagnostic guide for known failure states.
+
+**Update when:** New failure modes are discovered, or a fix changes how a known problem is resolved.
+
+**Style rules:**
+- Problem → Cause → Fix format per entry.
+- Symptoms written as what the user sees, not internal state.
+- Keep fixes as concrete commands where possible.
+
+---
+
+### `docs/Whitepaper.md`
+
+**Purpose:** Conceptual architecture and design rationale.
+
+**Update when:** Core architectural pillars change, new design decisions are made, or the hypergraph model evolves.
+
+**Style rules:**
+- Conceptual, not procedural — explain *why*, not *how*.
+- Cite trade-offs explicitly.
+- Avoid referencing specific file paths that may change.
+
+---
+
+### `AGENTS.md`
+
+**Purpose:** Universal cross-IDE always-on manifest. Read by Windsurf, Cursor, Roo Code, GitHub Copilot, Zed.
+
+**Update when:** Skills are added/renamed/removed, system mandates change, or the directory structure changes.
+
+**Style rules:**
+- Skills table must stay in sync with `.agents/skills/hyper-*/` — one row per skill.
+- Trigger column must use exact slash command with `hyper-` prefix.
+- Directory references must use actual current paths.
+- Mandates must be actionable rules, not suggestions.
+
+---
+
+### `.agents/memory/` files
+
+**Purpose:** Agent-facing project context (activeContext, productContext, systemPatterns).
+
+**Update when:** Core project goals, active work, or architectural patterns change.
+
+**Files:**
+- `activeContext.md` — current sprint focus, active MiniPRDs, recent decisions.
+- `productContext.md` — what the product is, who it's for, core value proposition.
+- `systemPatterns.md` — recurring architectural patterns, conventions, anti-patterns.
+
+**Style rules:**
+- Written for an agent reading cold — no assumed context.
+- Short, factual, structured with headers.
+- Timestamp significant updates.
+
+---
+
+### `skills-info.md`
+
+**Purpose:** Human-readable index of all available skills and their purpose.
+
+**Update when:** Skills are added, renamed, removed, or their descriptions change.
+
+**Style rules:**
+- One entry per skill: name, trigger, one-line description.
+- Keep aligned with actual `SKILL.md` frontmatter descriptions.
+- Organized by workflow phase where applicable.
+
+---
+
+## Step 4 — Style Rules (All Files)
+
+| Rule | Detail |
+|---|---|
+| Accurate | Verified against actual code, not assumed |
+| Concise | Cut filler words; prefer short sentences |
+| Current | Matches the implementation as of this change |
+| No fluff | No "powerful", "robust", "seamlessly", "leverages" |
+| Slash commands | Always `hyper-` prefixed |
+| Paths | Always reflect actual current directory structure |
+
+---
+
+## Step 5 — Ask if Uncertain
+
+If the intent behind a change or its user-facing impact is unclear, ask the user before writing. Never guess.
