@@ -34,3 +34,13 @@ Your objective is to verify newly written code against its strict requirements a
   3. Rewrite the `inputs`, `outputs`, and `description` of those specific YAML nodes to reflect the new reality.
   4. Change their status from `needs_review` to `clean`.
 * **Output:** Save the updated `architecture.yml`. Output `[AUDIT COMPLETE & HYPERGRAPH RECONCILED]`.
+
+### [PHASE 4: MiniPRD Archival]
+* **Trigger:** Phase 3 passed.
+* **Action:**
+  1. Move the audited `MiniPRD_*.md` from `spec/compiled/` to `spec/archive/`:
+     ```bash
+     mv spec/compiled/MiniPRD_[Target].md spec/archive/MiniPRD_[Target]_AUDITED.md
+     ```
+  2. This removes the completed MiniPRD from the active compiled directory so it does not surface in future `/hyper-execute` runs. `spec/archive/` is blocked from agent context via `.agentignore`.
+* **Output:** Confirm the file was moved. Output `[MINIPRD ARCHIVED]`. Inform the user the feature loop is complete.

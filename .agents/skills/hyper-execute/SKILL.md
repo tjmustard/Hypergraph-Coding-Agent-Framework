@@ -36,3 +36,4 @@ This skill implements a plan precisely, minimally, and in full — adhering to e
 4. **Halt and Report**
    - Output a summary of all files modified and nodes flagged.
    - Instruct the user: "Implementation complete. Start a new conversation and run `/hyper-audit spec/compiled/MiniPRD_[Target].md` to verify the code against the contract."
+   - Note: a successful `/hyper-audit` run will move the MiniPRD to `spec/archive/` automatically, removing it from future execute runs.
