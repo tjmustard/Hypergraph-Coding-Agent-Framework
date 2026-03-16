@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-03-15
+
+### Changed
+- **`hyper-execute` skill**: Added Step 1 — Memory Check. The skill now reads `.agents/memory/activeContext.md` before touching the MiniPRD. If the target MiniPRD is listed as complete or already audited, execution halts with a warning that explains the collision, provides the manual archive command as a fallback, and requires explicit user confirmation before proceeding.
+- **`AGENTS.md`**: Updated `hyper-execute` description to reflect the memory check step.
+
 ## [0.3.4] - 2026-03-15
 
 ### Changed

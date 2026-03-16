@@ -96,7 +96,7 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-redteam` | `/hyper-redteam` | 1 | Adversarial analysis → RedTeam_Report.md |
 | `hyper-resolve` | `/hyper-resolve` | 1 | Trade-off mediation → SuperPRD + MiniPRDs |
 | `hyper-audit` | `/hyper-audit` | 2 | Code verification → reconciles architecture.yml |
-| `hyper-execute` | `/hyper-execute` | 2 | Implements a MiniPRD with hypergraph update |
+| `hyper-execute` | `/hyper-execute` | 2 | Checks activeContext.md, implements a MiniPRD, updates hypergraph |
 | `hyper-discover` | `/hyper-discover` | -1 | Scans codebase → initializes architecture.yml |
 | `hyper-baseline` | `/hyper-baseline` | -1 | Reverse-engineers system → baseline SuperPRD |
 | `hyper-sop` | `/hyper-sop` | any | Master SOP guide and phase orientation |
