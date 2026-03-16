@@ -55,17 +55,21 @@ Which path do we take for V1?
 
 **You:** Option B for now.
 
-*(The Resolution Agent compiles the final SuperPRD and MiniPRD\_Newsletter.md into spec/compiled/. It then instructs you to run python .agent/scripts/archive\_specs.py Newsletter\_Feature. You run the script in your terminal, and the active drafts are safely archived.)*
+*(The Resolution Agent compiles the final SuperPRD and MiniPRD\_Newsletter.md into spec/compiled/. It then instructs you to run the archival script. You run it in your terminal, and the active drafts are safely archived.)*
+
+```bash
+python .agents/scripts/archive_specs.py Newsletter_Feature
+```
 
 ## **Phase 2: The Execution Engine**
 
-### **Step 4: The Builder**
+### **Step 4: /hyper-execute**
 
-You open a **fresh chat context** and instantiate your standard coding agent.
+You open a **fresh chat context**.
 
-**You:** Implement spec/compiled/MiniPRD\_Newsletter.md. When finished, execute python .agent/scripts/hypergraph\_updater.py spec/compiled/architecture.yml \[node\_ids\_you\_changed\]
+**You:** `/hyper-execute spec/compiled/MiniPRD_Newsletter.md`
 
-*(The agent writes the HTML form and the backend API route. It then runs the Python script in the terminal. The script flags the database\_module and homepage\_ui nodes in architecture.yml as status: needs\_review.)*
+*(The skill reads the MiniPRD, writes the HTML form and the backend API route, then automatically runs `hypergraph_updater.py`. The script flags `database_module` and `homepage_ui` in `architecture.yml` as `status: needs_review`. The skill halts and instructs you to open a new context for `/hyper-audit`.)*
 
 ### **Step 5: /hyper-audit**
 
@@ -73,12 +77,14 @@ You wait for the Builder to completely finish. You open a **fresh chat context**
 
 **You:** /hyper-audit spec/compiled/MiniPRD\_Newsletter.md
 
-*(The Auditor reads the code, verifies the honeypot was implemented correctly, and checks the deterministic tests. It then reads architecture.yml, sees the needs\_review flags, and rewrites the YAML definitions to include the new POST /subscribe data flow. It sets the status back to clean.)*
+*(The Auditor reads the code, verifies the honeypot was implemented correctly, and checks the deterministic tests. It then reads `architecture.yml`, sees the `needs_review` flags, and rewrites the YAML definitions to include the new `POST /subscribe` data flow. It resets the status to `clean`, then moves `MiniPRD_Newsletter.md` from `spec/compiled/` to `spec/archive/` so it won't surface in future `/hyper-execute` runs.)*
 
 **Auditor Agent:**
 
-\[VERIFICATION: PASSED\]
+`[VERIFICATION: PASSED]`
 
-\[AUDIT COMPLETE & HYPERGRAPH RECONCILED\]
+`[AUDIT COMPLETE & HYPERGRAPH RECONCILED]`
+
+`[MINIPRD ARCHIVED]`
 
 **Feature Complete.** You have successfully built a secure, audited feature without writing a single line of code yourself.

@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
 The agents are bound by rigid markdown and YAML templates to ensure output consistency.
 
-### **3.1 The Hypergraph Schema (`.agent/schemas/hypergraph\_schema.md`)**
+### **3.1 The Hypergraph Schema (`.agents/schemas/hypergraph_schema.md`)**
 
 ```yaml
 # architecture.yml Standard
@@ -160,7 +160,7 @@ nodes:
 
 ```
 
-### **3.2 The MiniPRD Template (`.agent/schemas/MiniPRD\_Template.md`)**
+### **3.2 The MiniPRD Template (`.agents/schemas/MiniPRD_Template.md`)**
 
 ```yaml
 # MiniPRD: [Module Name]
@@ -284,16 +284,38 @@ Your objective is to mediate between the Red Team's Adversarial Analysis and the
 
 ```
 
-### **4.4 The Code Auditor `(/hyper-audit)`**
+### **4.4 The Execute Skill (`/hyper-execute`)**
 
 ```
 ---
-name: audit
+name: hyper-execute
+description: Implements a compiled MiniPRD precisely and updates the hypergraph after every modification.
+trigger: /hyper-execute [Path to MiniPRD]
+---
+# Execute
+
+## INPUTS
+1. The target `MiniPRD_*.md` from `spec/compiled/`.
+
+## STATE MACHINE PHASES
+* **[PHASE 1: Confidence Check]:** Read the MiniPRD. Output a Confidence Score (1–10). If below 9, list clarifying questions before proceeding.
+* **[PHASE 2: Implementation]:** Write minimal, modular code strictly following the MiniPRD's task list and Negative Space constraints.
+* **[PHASE 3: Hypergraph Update (MANDATORY)]:** Execute:
+  python .agents/scripts/hypergraph_updater.py spec/compiled/architecture.yml [modified_node_ids]
+* **[PHASE 4: Halt and Report]:** Output a summary of all files modified and nodes flagged. Instruct the user to open a new context and run `/hyper-audit`.
+
+```
+
+### **4.5 The Code Auditor (`/hyper-audit`)**
+
+```
+---
+name: hyper-audit
 description: Strictly verifies the codebase against a specific MiniPRD and reconciles the Hypergraph memory.
 trigger: /hyper-audit [Path to MiniPRD]
 ---
 # ROLE: The Auditor Agent
-Your objective is to verify newly written code against its strict requirements and sequentially reconcile the system's YAML memory graph. 
+Your objective is to verify newly written code against its strict requirements and sequentially reconcile the system's YAML memory graph.
 
 ## INPUTS
 1. The target `MiniPRD.md`.
@@ -301,9 +323,10 @@ Your objective is to verify newly written code against its strict requirements a
 3. The specific source code files recently modified.
 
 ## STATE MACHINE PHASES
-* **[PHASE 1: Contract Verification]:** Analyze the modified code against the MiniPRD. Output a `Punch List` if failed.
-* **[PHASE 2: Test Validation]:** Verify Deterministic Tests pass. 
+* **[PHASE 1: Contract Verification]:** Analyze the modified code against the MiniPRD. Output a `Punch List` if failed. Output `[VERIFICATION: PASSED]` if passed.
+* **[PHASE 2: Test Validation]:** Verify Deterministic Tests pass. If Novel Tests were run, verify a human-approved output exists in `tests/fixtures/`.
 * **[PHASE 3: Hypergraph Reconciliation]:** Scan `architecture.yml` for `needs_review` nodes. Rewrite their `inputs`, `outputs`, and `description` to reflect the new code. Change status to `clean`. Save the updated YAML.
+* **[PHASE 4: MiniPRD Archival]:** Move the audited MiniPRD from `spec/compiled/` to `spec/archive/` (renamed with `_AUDITED` suffix). This prevents the completed MiniPRD from surfacing in future `/hyper-execute` runs.
 
 ```
 
@@ -311,14 +334,14 @@ Your objective is to verify newly written code against its strict requirements a
 
 The workflow is strictly sequential to prevent race conditions and graph corruption.
 
-1. **Initialization:** Clone the repository and install pyyaml.  
-2. **Specification Phase:** \- Execute /hyper-architect to generate the initial Draft.  
-   * Execute /hyper-redteam to hunt for vulnerabilities.  
-   * Execute /hyper-resolve to finalize the MiniPRDs and archive the drafts via the python script.  
-3. **Execution Phase:**  
-   * Prompt the standard Builder Agent to implement a MiniPRD.  
-   * **MANDATORY:** The Builder must execute hypergraph\_updater.py before completing its turn.  
-   * Execute /hyper-audit to verify the code and automatically reconcile the architecture.yml.
+1. **Initialization:** Clone the repository and install pyyaml.
+2. **Specification Phase:**
+   * Execute `/hyper-architect` to generate the initial Draft PRD.
+   * Execute `/hyper-redteam` to hunt for vulnerabilities.
+   * Execute `/hyper-resolve` to finalize the MiniPRDs and archive the active drafts.
+3. **Execution Phase:**
+   * Execute `/hyper-execute spec/compiled/MiniPRD_[Target].md` to implement the feature. The skill automatically runs `hypergraph_updater.py` before halting.
+   * Execute `/hyper-audit spec/compiled/MiniPRD_[Target].md` to verify the code, reconcile `architecture.yml`, and archive the completed MiniPRD.
 
 ## **Conclusion**
 

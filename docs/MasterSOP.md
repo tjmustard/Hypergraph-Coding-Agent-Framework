@@ -19,15 +19,16 @@ If you are implementing this framework in an existing repository, you must map t
 
 ### **Greenfield Project Setup**
 
-1. **Clone the Template:** Clone this repository into your target directory. It contains the required .agent/ tooling and empty .gitkeep directories.  
-2. **Environment Validation:** Ensure Python 3 is installed. Install the PyYAML dependency required for graph traversal:  
-   Bash  
+1. **Clone the Template:** Clone this repository into your target directory. It contains the required `.agents/` tooling and empty `.gitkeep` directories.
+2. **Environment Validation:** Ensure Python 3 is installed. Install the PyYAML dependency required for graph traversal:
+   ```bash
    pip install pyyaml
-
-3. **Execution Permissions:** Ensure the deterministic scripts are executable:  
-   Bash  
-   chmod \+x .agent/scripts/hypergraph\_updater.py  
-   chmod \+x .agent/scripts/archive\_specs.py
+   ```
+3. **Execution Permissions:** Ensure the deterministic scripts are executable:
+   ```bash
+   chmod +x .agents/scripts/hypergraph_updater.py
+   chmod +x .agents/scripts/archive_specs.py
+   ```
 
 ## **Phase 1: The Specification Engine**
 
@@ -53,28 +54,29 @@ This phase is entirely conversational. It is designed to extract constraints, ma
 2. Execute the /hyper-resolve command.  
 3. The agent will read the Draft PRD and Red Team Report. It will present you with forced trade-offs (Option A vs. Option B) for every vulnerability found.  
 4. **Artifact Generation:** Upon completion, the agent will compile the final SuperPRD.md and the granular MiniPRD\_\[Module\].md files, saving them to spec/compiled/.  
-5. **Memory Flush:** The agent will instruct you (or automatically attempt) to execute the archival script. Run it to clear the active workspace:  
-   Bash  
-   python .agent/scripts/archive\_specs.py \[Feature\_Name\]
+5. **Memory Flush:** The agent will instruct you to execute the archival script. Run it to clear the active workspace:
+   ```bash
+   python .agents/scripts/archive_specs.py [Feature_Name]
+   ```
 
 ## **Phase 2: The Execution Engine (The Build Loop)**
 
 This phase maps to the actual writing of syntax. It is governed by a strict state-machine boundary and deterministic graph traversal.
 
-### **Step 1: The Builder Agent**
+### **Step 1: The Builder (/hyper-execute)**
 
-1. Open a **New Context Window**.  
-2. Prompt your standard Builder agent with a specific MiniPRD target.  
-   * *Example Prompt:* "Implement spec/compiled/MiniPRD\_Auth.md. Follow the atomic user stories strictly."  
-3. **The Graph Traversal Mandate:** You MUST enforce the following rule on the Builder Agent before it finishes its turn:"Once you have modified the code, execute python .agent/scripts/hypergraph\_updater.py spec/compiled/architecture.yml \[modified\_node\_ids\] to deterministically flag the hypergraph."
+1. Open a **New Context Window**.
+2. Execute: `/hyper-execute spec/compiled/MiniPRD_[Target].md`
+   The skill reads the MiniPRD, implements the code precisely, and automatically runs `hypergraph_updater.py` before halting.
+3. **Wait for the skill to fully complete** before proceeding to Step 2. Do NOT run `/hyper-audit` in the same context window.
 
 ### **Step 2: Contract Verification (/hyper-audit)**
 
-1. **CRITICAL:** Ensure the Builder Agent has completely stopped generating. *Parallel execution will corrupt the YAML graph.*  
-2. Open a **New Context Window**.  
-3. Execute the command: /hyper-audit spec/compiled/MiniPRD\_\[Target\].md.  
-4. The Auditor will evaluate the code against the strict MiniPRD constraints.  
-5. **Reconciliation:** If the code passes, the Auditor will semantically rewrite the needs\_review nodes in architecture.yml to match the new inputs/outputs of your codebase, resetting their status to clean.
+1. **CRITICAL:** Ensure `/hyper-execute` has completely finished. *Parallel execution will corrupt the YAML graph.*
+2. Open a **New Context Window**.
+3. Execute: `/hyper-audit spec/compiled/MiniPRD_[Target].md`
+4. The Auditor evaluates the code against the strict MiniPRD constraints.
+5. **Reconciliation:** If the code passes, the Auditor rewrites the `needs_review` nodes in `architecture.yml` to match the new inputs/outputs, resets their status to `clean`, and moves the MiniPRD to `spec/archive/` to prevent it from surfacing in future `/hyper-execute` runs.
 
 ## **Phase 3: Novel Test Protocol (Human-in-the-Loop)**
 
@@ -89,6 +91,8 @@ Standard CI/CD cannot test subjective or AI-generated outputs. If a MiniPRD cont
 
 When adding new features weeks or months later, the process remains identical.
 
-1. Run /hyper-architect. The agent will detect the existing architecture.yml and switch to the **Delta Extraction** protocol.  
-2. Run /hyper-redteam. It will extract the **Blast Radius** subgraph to identify exactly how your new feature breaks the existing code.  
-3. Proceed through /hyper-resolve and /hyper-audit sequentially.
+1. Run `/hyper-architect`. The agent detects the existing `architecture.yml` and switches to the **Delta Extraction** protocol.
+2. Run `/hyper-redteam`. It extracts the **Blast Radius** subgraph to identify exactly how the new feature collides with existing code.
+3. Run `/hyper-resolve` to finalize MiniPRDs and archive active drafts.
+4. Run `/hyper-execute spec/compiled/MiniPRD_[Target].md` to implement.
+5. Run `/hyper-audit spec/compiled/MiniPRD_[Target].md` to verify and reconcile.

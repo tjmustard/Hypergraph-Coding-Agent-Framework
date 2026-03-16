@@ -10,10 +10,14 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 
 **The Fix:**
 
-1. Halt the Builder Agent.  
-2. Ensure .agentignore contains spec/archive/.  
-3. Run python .agent/scripts/archive\_specs.py cleanup.  
-4. Open a *completely new* agent chat window and restart the Builder prompt pointing strictly to the compiled MiniPRD.
+1. Halt the agent.
+2. Ensure `.agentignore` contains `spec/archive/`.
+3. Run:
+   ```bash
+   python .agents/scripts/archive_specs.py cleanup
+   ```
+4. Open a **completely new context window** and run:
+   `/hyper-execute spec/compiled/MiniPRD_[Target].md`
 
 ## **2\. Hypergraph Desynchronization**
 
@@ -23,10 +27,13 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 
 **The Fix:**
 
-1. You must manually execute the traversal script.  
-2. Look at the files the Builder just modified. Identify their corresponding node\_ids in architecture.yml.  
-3. Run: python .agent/scripts/hypergraph\_updater.py spec/compiled/architecture.yml \[node\_id\_1\] \[node\_id\_2\]  
-4. Run the /hyper-audit agent again to perform the semantic update.
+1. Manually execute the traversal script.
+2. Look at the files `/hyper-execute` modified. Identify their corresponding `node_ids` in `architecture.yml`.
+3. Run:
+   ```bash
+   python .agents/scripts/hypergraph_updater.py spec/compiled/architecture.yml [node_id_1] [node_id_2]
+   ```
+4. Open a **new context window** and run `/hyper-audit spec/compiled/MiniPRD_[Target].md` to perform the semantic update.
 
 ## **3\. Red Team "Scope Creep"**
 
@@ -54,6 +61,26 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 3. Identify the last modified files.  
 4. Manually add the status: needs\_review flag to the relevant nodes in the restored YAML file.  
 5. Re-run /hyper-audit to let the agent re-attempt the semantic update.
+
+## **6\. MiniPRD Showing Up in Subsequent Execute Runs**
+
+**The Symptom:** Running `/hyper-execute` picks up a MiniPRD that was already implemented and audited in a previous session.
+
+**The Cause:** `/hyper-audit` did not complete successfully, so the MiniPRD was never moved from `spec/compiled/` to `spec/archive/`. Any MiniPRD remaining in `spec/compiled/` is treated as pending work.
+
+**The Fix:**
+
+Option A — Re-run the audit to let it archive automatically:
+1. Open a **new context window**.
+2. Run `/hyper-audit spec/compiled/MiniPRD_[Target].md`.
+3. On success, the skill moves the file to `spec/archive/MiniPRD_[Target]_AUDITED.md`.
+
+Option B — Archive manually if the code is already verified:
+```bash
+mv spec/compiled/MiniPRD_[Target].md spec/archive/MiniPRD_[Target]_AUDITED.md
+```
+
+---
 
 ## **5\. The "Infinite Loop" Interview**
 
