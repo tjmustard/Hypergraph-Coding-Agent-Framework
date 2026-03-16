@@ -40,7 +40,7 @@ IDE_DEFS=(
 )
 
 # Always installed regardless of IDE selection
-CORE_DIRS=(".agents" "spec" "tests" "docs")
+CORE_DIRS=(".agents" "spec" "tests")
 CORE_FILES=(".agentignore")
 
 # ---------------------------------------------------------------------------
