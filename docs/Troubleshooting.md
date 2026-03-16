@@ -17,7 +17,7 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 
 ## **2\. Hypergraph Desynchronization**
 
-**The Symptom:** The /audit agent fails to reconcile the hypergraph, or the /redteam agent hallucinates the Blast Radius.
+**The Symptom:** The /hyper-audit agent fails to reconcile the hypergraph, or the /hyper-redteam agent hallucinates the Blast Radius.
 
 **The Cause:** The Builder Agent forgot or failed to execute hypergraph\_updater.py, meaning the YAML file is unaware that the codebase has changed.
 
@@ -26,7 +26,7 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 1. You must manually execute the traversal script.  
 2. Look at the files the Builder just modified. Identify their corresponding node\_ids in architecture.yml.  
 3. Run: python .agent/scripts/hypergraph\_updater.py spec/compiled/architecture.yml \[node\_id\_1\] \[node\_id\_2\]  
-4. Run the /audit agent again to perform the semantic update.
+4. Run the /hyper-audit agent again to perform the semantic update.
 
 ## **3\. Red Team "Scope Creep"**
 
@@ -38,7 +38,7 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
 
 1. Do not pass this report to the Resolution Agent; it will waste your time asking about trade-offs for features you don't want.  
 2. Delete the RedTeam\_Report.md.  
-3. Open a new chat window and re-run /redteam, but append a strict override: /redteam Analyze the Draft PRD. CRITICAL: Identify technical vulnerabilities ONLY. Reject any product feature suggestions.
+3. Open a new chat window and re-run /hyper-redteam, but append a strict override: /hyper-redteam Analyze the Draft PRD. CRITICAL: Identify technical vulnerabilities ONLY. Reject any product feature suggestions.
 
 ## **4\. YAML File Corruption**
 
@@ -53,7 +53,7 @@ Large Language Models are probabilistic engines. Even with rigid constraints, th
    git checkout \-- spec/compiled/architecture.yml  
 3. Identify the last modified files.  
 4. Manually add the status: needs\_review flag to the relevant nodes in the restored YAML file.  
-5. Re-run /audit to let the agent re-attempt the semantic update.
+5. Re-run /hyper-audit to let the agent re-attempt the semantic update.
 
 ## **5\. The "Infinite Loop" Interview**
 

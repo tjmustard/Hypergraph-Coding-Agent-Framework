@@ -8,11 +8,11 @@ Your project currently has a basic frontend and a user database. You want to add
 
 ## **Phase 1: The Specification Engine**
 
-### **Step 1: /architect**
+### **Step 1: /hyper-architect**
 
 You open your IDE and trigger the Architect skill.
 
-**You:** /architect I want to add an email newsletter subscription box to the homepage.
+**You:** /hyper-architect I want to add an email newsletter subscription box to the homepage.
 
 **Architect Agent:**
 
@@ -23,11 +23,11 @@ You open your IDE and trigger the Architect skill.
 
 *(The Architect continues its paced interview, asking about spam prevention and frontend UI. Once satisfied, it generates spec/active/Draft\_PRD.md)*
 
-### **Step 2: /redteam**
+### **Step 2: /hyper-redteam**
 
 You open a **fresh chat context** so the Red Team doesn't get confused by the Architect's conversation.
 
-**You:** /redteam Analyze the Draft\_PRD.md
+**You:** /hyper-redteam Analyze the Draft\_PRD.md
 
 *(The Red Team reads the Draft PRD and queries architecture.yml to find the Blast Radius. It outputs spec/active/RedTeam\_Report.md)*
 
@@ -37,11 +37,11 @@ You open a **fresh chat context** so the Red Team doesn't get confused by the Ar
 
 **Missing NFRs:** There is no Double Opt-in (verification email) specified. This violates standard anti-spam compliance.
 
-### **Step 3: /resolve**
+### **Step 3: /hyper-resolve**
 
 You open another **fresh chat context**.
 
-**You:** /resolve
+**You:** /hyper-resolve
 
 **Resolution Agent:**
 
@@ -67,11 +67,11 @@ You open a **fresh chat context** and instantiate your standard coding agent.
 
 *(The agent writes the HTML form and the backend API route. It then runs the Python script in the terminal. The script flags the database\_module and homepage\_ui nodes in architecture.yml as status: needs\_review.)*
 
-### **Step 5: /audit**
+### **Step 5: /hyper-audit**
 
 You wait for the Builder to completely finish. You open a **fresh chat context**.
 
-**You:** /audit spec/compiled/MiniPRD\_Newsletter.md
+**You:** /hyper-audit spec/compiled/MiniPRD\_Newsletter.md
 
 *(The Auditor reads the code, verifies the honeypot was implemented correctly, and checks the deterministic tests. It then reads architecture.yml, sees the needs\_review flags, and rewrites the YAML definitions to include the new POST /subscribe data flow. It sets the status back to clean.)*
 

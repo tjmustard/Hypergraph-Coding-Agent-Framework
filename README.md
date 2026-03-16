@@ -64,18 +64,18 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 The Hypergraph workflow is strictly sequential to prevent race conditions and graph corruption.
 
 ### Phase -1: Legacy Onboarding (Existing Projects)
-1.  **Initialize**: Run `/discover` to scan code and populate `architecture.yml`.
-2.  **Baseline**: Run `/baseline` to generate the first `SuperPRD.md`.
+1.  **Initialize**: Run `/hyper-discover` to scan code and populate `architecture.yml`.
+2.  **Baseline**: Run `/hyper-baseline` to generate the first `SuperPRD.md`.
 
 ### Phase 1: The Specification Engine (Conversational)
-1.  **Requirements Extraction (`/architect`)**: Exhaustive interview asking max 2 questions per turn. Generates `Draft_PRD.md`.
-2.  **Adversarial Analysis (`/redteam`)**: Run in a **New Context Window**. Hunts for vulnerabilities and NFRs within the Hypergraph's Blast Radius. Generates `RedTeam_Report.md`.
-3.  **Trade-off Resolution (`/resolve`)**: Run in a **New Context Window**. Present forced trade-offs (Option A vs B). Compiles final `SuperPRD.md` and `MiniPRD` files.
+1.  **Requirements Extraction (`/hyper-architect`)**: Exhaustive interview asking max 2 questions per turn. Generates `Draft_PRD.md`.
+2.  **Adversarial Analysis (`/hyper-redteam`)**: Run in a **New Context Window**. Hunts for vulnerabilities and NFRs within the Hypergraph's Blast Radius. Generates `RedTeam_Report.md`.
+3.  **Trade-off Resolution (`/hyper-resolve`)**: Run in a **New Context Window**. Present forced trade-offs (Option A vs B). Compiles final `SuperPRD.md` and `MiniPRD` files.
 4.  **Memory Flush**: Run `python .agents/scripts/archive_specs.py [Feature_Name]` to clear active workspace.
 
 ### Phase 2: The Execution Engine (Building)
 1.  **The Builder**: Prompt agent with a specific `MiniPRD`. Force execution of `hypergraph_updater.py` after code modification.
-2.  **Contract Verification (`/audit`)**: Run in a **New Context Window**. Evaluates code against MiniPRD and reconciles the `architecture.yml` hypergraph.
+2.  **Contract Verification (`/hyper-audit`)**: Run in a **New Context Window**. Evaluates code against MiniPRD and reconciles the `architecture.yml` hypergraph.
 
 ### Phase 3: Novel Test Protocol (Human-in-the-Loop)
 1.  Outputs to `tests/candidate_outputs/`.
@@ -173,7 +173,7 @@ bash uninstall.sh -y     # non-interactive — removes without prompting
 The uninstaller clones the framework to get the authoritative file list, then removes every file it installed. Key behaviours:
 
 - **`spec/` and `tests/` are never touched** — your compiled specs, active drafts, candidate outputs, and fixtures are preserved.
-- **Non-empty directories are kept** — if you added custom skills or files inside a framework directory (e.g. `.agents/skills/myskill/`), that directory stays.
+- **Non-empty directories are kept** — if you added custom skills or files inside a framework directory (e.g. `.agents/skills/hyper-myskill/`), that directory stays.
 - **Re-install at any time** — run `install.sh` again to restore the full framework.
 
 > **Use case:** When the project you scaffolded with the framework is ready for independent development, uninstalling removes the framework's own skill files so they don't interfere with your project-specific agents — while leaving `spec/` and `tests/` intact for continued use.
@@ -187,10 +187,10 @@ The uninstaller clones the framework to get the authoritative file list, then re
 All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads from that single source:
 
 ```
-.agents/skills/architect/SKILL.md  ← source of truth
+.agents/skills/hyper-architect/SKILL.md  ← source of truth
     ↑ referenced by:
-    .claude/commands/architect.md      (Claude Code)
-    .windsurf/workflows/architect.md   (Windsurf)
+    .claude/commands/hyper-architect.md      (Claude Code)
+    .windsurf/workflows/hyper-architect.md   (Windsurf)
     AGENTS.md                          (Cursor, Roo Code, Copilot, Zed)
     GEMINI.md                          (Gemini CLI / Antigravity)
 ```
@@ -199,7 +199,7 @@ All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads
 
 Native support via `CLAUDE.md` and `.claude/commands/`. Each command is a one-line bridge to `.agents/skills/`. See **[CLAUDE.md](./CLAUDE.md)** for Claude Code-specific tool overrides.
 
-Available slash commands: `/architect`, `/redteam`, `/resolve`, `/audit`, `/execute`, `/discover`, `/baseline`, `/sop`, `/status`, `/consult-cto`, `/co-research`, `/deepdive`, and more — see `.claude/commands/` for the full list.
+Available slash commands: `/hyper-architect`, `/hyper-redteam`, `/hyper-resolve`, `/hyper-audit`, `/hyper-execute`, `/hyper-discover`, `/hyper-baseline`, `/hyper-sop`, `/hyper-status`, `/hyper-consult-cto`, `/hyper-co-research`, `/hyper-deepdive`, and more — see `.claude/commands/` for the full list.
 
 ### Gemini CLI / Antigravity
 
@@ -233,7 +233,7 @@ Support via `AGENTS.md` at the repository root, which is the universal always-on
 
 -   **Hallucinations**: Usually caused by forgotten archives. Run `archive_specs.py`.
 -   **Desynchronization**: Builder missed `hypergraph_updater.py`. Run it manually.
--   **Scope Creep**: Red Team suggesting features. Re-run `/redteam` with strict override.
+-   **Scope Creep**: Red Team suggesting features. Re-run `/hyper-redteam` with strict override.
 -   **Corruption**: Malformed YAML. Restore `architecture.yml` from Git.
 -   **Infinite Loop**: Vague answers to Architect. Provide quantified technical details.
 

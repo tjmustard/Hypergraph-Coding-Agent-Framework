@@ -35,7 +35,7 @@ tests/
 ## System Mandates
 
 ### 1. Skill Invocation
-When the user invokes a skill command (e.g., `/architect`, `/redteam`), read the
+When the user invokes a skill command (e.g., `/hyper-architect`, `/hyper-redteam`), read the
 corresponding `.agents/skills/<name>/SKILL.md` and follow its instructions precisely.
 
 To discover all available skills:
@@ -74,7 +74,7 @@ to understand the blast radius before executing code modifications.
 - **Never** write to `spec/archive/` manually — use `archive_specs.py` exclusively.
 - **Never** read from `spec/archive/` or `tests/candidate_outputs/` during agentic tasks
   (treated as blocked per `.agentignore`).
-- **Never** edit `spec/compiled/architecture.yml` directly — use `/audit` or `/discover`.
+- **Never** edit `spec/compiled/architecture.yml` directly — use `/hyper-audit` or `/hyper-discover`.
 
 ### 7. Always-On Coding Rules
 Apply the rules in `.agents/rules/` to all code generation:
@@ -92,42 +92,42 @@ Apply the rules in `.agents/rules/` to all code generation:
 
 | Skill | Trigger | Phase | Description |
 |---|---|---|---|
-| `architect` | `/architect` | 1 | Requirements interview → Draft_PRD.md |
-| `redteam` | `/redteam` | 1 | Adversarial analysis → RedTeam_Report.md |
-| `resolve` | `/resolve` | 1 | Trade-off mediation → SuperPRD + MiniPRDs |
-| `audit` | `/audit` | 2 | Code verification → reconciles architecture.yml |
-| `execute` | `/execute` | 2 | Implements a MiniPRD with hypergraph update |
-| `discover` | `/discover` | -1 | Scans codebase → initializes architecture.yml |
-| `baseline` | `/baseline` | -1 | Reverse-engineers system → baseline SuperPRD |
-| `sop` | `/sop` | any | Master SOP guide and phase orientation |
-| `status` | `/status` | any | Living Master Plan snapshot |
-| `consult-cto` | `/consult-cto` | pre-spec | CTO advisor for architectural decisions |
-| `co-research` | `/co-research` | any | Peer-level AI research partner |
-| `deepdive` | `/deepdive` | any | Exhaustive First Principles topic research |
-| `create-skill` | `/create-skill` | any | Convert a prompt into a new skill |
-| `new-workflow` | `/new-workflow` | any | Scaffold a new skill and IDE bridges |
-| `document` | `/document` | any | Update docs after code changes |
-| `session-update` | `/session-update` | any | Sync memory with session work |
-| `refresh-memory` | `/refresh-memory` | any | Rebuild mental model from codebase |
-| `troubleshooting` | `/troubleshooting` | any | Diagnose framework failure states |
-| `tutorial` | `/tutorial` | any | Framework walkthrough for new users |
-| `stitch-design` | `/stitch-design` | any | UI/UX → Design System specification |
-| `prompt-engineer` | `/prompt-engineer` | any | Collaborative prompt design |
-| `template-architect` | `/template-architect` | any | Reverse-engineer document into template |
-| `peer-review` | `/peer-review` | any | Evaluate and triage peer review findings |
-| `create-issue` | `/create-issue` | any | Format and file a GitHub issue |
-| `learning-opportunity` | `/learning-opportunity` | any | Structured teaching on any concept |
+| `hyper-architect` | `/hyper-architect` | 1 | Requirements interview → Draft_PRD.md |
+| `hyper-redteam` | `/hyper-redteam` | 1 | Adversarial analysis → RedTeam_Report.md |
+| `hyper-resolve` | `/hyper-resolve` | 1 | Trade-off mediation → SuperPRD + MiniPRDs |
+| `hyper-audit` | `/hyper-audit` | 2 | Code verification → reconciles architecture.yml |
+| `hyper-execute` | `/hyper-execute` | 2 | Implements a MiniPRD with hypergraph update |
+| `hyper-discover` | `/hyper-discover` | -1 | Scans codebase → initializes architecture.yml |
+| `hyper-baseline` | `/hyper-baseline` | -1 | Reverse-engineers system → baseline SuperPRD |
+| `hyper-sop` | `/hyper-sop` | any | Master SOP guide and phase orientation |
+| `hyper-status` | `/hyper-status` | any | Living Master Plan snapshot |
+| `hyper-consult-cto` | `/hyper-consult-cto` | pre-spec | CTO advisor for architectural decisions |
+| `hyper-co-research` | `/hyper-co-research` | any | Peer-level AI research partner |
+| `hyper-deepdive` | `/hyper-deepdive` | any | Exhaustive First Principles topic research |
+| `hyper-create-skill` | `/hyper-create-skill` | any | Convert a prompt into a new skill |
+| `hyper-new-workflow` | `/hyper-new-workflow` | any | Scaffold a new skill and IDE bridges |
+| `hyper-document` | `/hyper-document` | any | Update docs after code changes |
+| `hyper-session-update` | `/hyper-session-update` | any | Sync memory with session work |
+| `hyper-refresh-memory` | `/hyper-refresh-memory` | any | Rebuild mental model from codebase |
+| `hyper-troubleshooting` | `/hyper-troubleshooting` | any | Diagnose framework failure states |
+| `hyper-tutorial` | `/hyper-tutorial` | any | Framework walkthrough for new users |
+| `hyper-stitch-design` | `/hyper-stitch-design` | any | UI/UX → Design System specification |
+| `hyper-prompt-engineer` | `/hyper-prompt-engineer` | any | Collaborative prompt design |
+| `hyper-template-architect` | `/hyper-template-architect` | any | Reverse-engineer document into template |
+| `hyper-peer-review` | `/hyper-peer-review` | any | Evaluate and triage peer review findings |
+| `hyper-create-issue` | `/hyper-create-issue` | any | Format and file a GitHub issue |
+| `hyper-learning-opportunity` | `/hyper-learning-opportunity` | any | Structured teaching on any concept |
 
-Full skill instructions: `.agents/skills/<name>/SKILL.md`
+Full skill instructions: `.agents/skills/hyper-<name>/SKILL.md`
 
 ---
 
 ## Framework Workflow (Quick Reference)
 
 ```
-Phase -1 (Brownfield): /discover → /baseline
-Phase  1 (Spec):       /architect → /redteam → /resolve → archive_specs.py
-Phase  2 (Build):      /execute → hypergraph_updater.py → /audit
+Phase -1 (Brownfield): /hyper-discover → /hyper-baseline
+Phase  1 (Spec):       /hyper-architect → /hyper-redteam → /hyper-resolve → archive_specs.py
+Phase  2 (Build):      /hyper-execute → hypergraph_updater.py → /hyper-audit
 Phase  3 (Novel):      Human review → tests/fixtures/ → update MiniPRD
 ```
 

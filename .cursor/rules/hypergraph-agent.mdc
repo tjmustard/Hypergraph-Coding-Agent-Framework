@@ -5,5 +5,5 @@ alwaysApply: true
 ---
 Read `AGENTS.md` and adhere to all system mandates defined there.
 
-When the user invokes a skill (e.g., "/architect", "/redteam", "/resolve"), read the
+When the user invokes a skill (e.g., "/hyper-architect", "/hyper-redteam", "/hyper-resolve"), read the
 corresponding `.agents/skills/<name>/SKILL.md` and follow its instructions precisely.

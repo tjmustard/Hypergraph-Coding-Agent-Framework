@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.cursor/rules/`**: New directory with `.mdc` rule bridges using Cursor's YAML frontmatter (`globs`, `alwaysApply`) for contextual activation.
 - **`.clinerules/`**: New directory with plain markdown rule bridges for Cline.
 - **`.roo/`**: New directory with mode-aware rule bridges (`rules/` for all modes, `rules-code/` for code mode only).
-- **`sop` skill**: Created missing `.agents/skills/sop/SKILL.md` — the skill existed as a `.claude/commands/` entry but had no backing SKILL.md.
+- **`sop` skill**: Created missing `.agents/skills/hyper-sop/SKILL.md` — the skill existed as a `.claude/commands/` entry but had no backing SKILL.md.
 - **`install.sh` IDE selection menu**: Interactive numbered menu to select which IDE(s) to install support for; supports `--ides=` flag and `-y` for non-interactive installs.
 - **`install.sh` `.gitignore` prompt**: After installation, offers to append installed IDE-specific paths to the project's `.gitignore`.
 
@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.claude/commands/`**: All 25 command files converted to thin bridges. Previously, 7 files (architect, redteam, resolve, audit, discover, baseline, sop) contained full duplicate skill content.
 - **`CLAUDE.md`**: Slimmed from ~103 lines to ~40 lines. Removed duplicate content now covered by `AGENTS.md`; retained only Claude Code-specific tool name overrides and task tracking mandate.
 - **`GEMINI.md`**: Same treatment as `CLAUDE.md` — slimmed to Gemini CLI-specific tool overrides only, references `AGENTS.md` for shared content.
-- **`.agents/skills/new-workflow/SKILL.md`**: Fixed scaffold target from `.agents/workflows/` to `.agents/skills/*/SKILL.md` to prevent regenerating the removed duplication layer.
-- **`.agents/skills/architect/SKILL.md`**: Fixed truncated Phase 5 — content was cut off mid-sentence; full action steps restored.
+- **`.agents/skills/hyper-new-workflow/SKILL.md`**: Fixed scaffold target from `.agents/workflows/` to `.agents/skills/*/SKILL.md` to prevent regenerating the removed duplication layer.
+- **`.agents/skills/hyper-architect/SKILL.md`**: Fixed truncated Phase 5 — content was cut off mid-sentence; full action steps restored.
 - **`install.sh`**: Rewrote with modular `IDE_DEFS` array, upgrade-mode detection, migration block, and per-component update prompts.
 - **`README.md`**: Full rewrite to document the no-duplication architecture, all new IDE bridge directories, per-IDE integration sections, and updated install.sh features.
 
@@ -36,8 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.3] - 2026-02-22
 
 ### Changed
-- **Workflows**: Replaced the automated git-history approach in the `/document` workflow with an explicit, interactive user prompt for semantic versioning.
-- **Workflows**: Upgraded the `/document` workflow to gracefully structure and label stamped release sections derived from the `[Unreleased]` block.
+- **Workflows**: Replaced the automated git-history approach in the `/hyper-document` workflow with an explicit, interactive user prompt for semantic versioning.
+- **Workflows**: Upgraded the `/hyper-document` workflow to gracefully structure and label stamped release sections derived from the `[Unreleased]` block.
 
 ## [0.2.2] - 2026-02-22
 
@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation**: Enhanced `README.md` to include references to Gemini CLI's native multi-agent capabilities.
 - **Workflow**: Updated the repository's core mandates to prioritize automated state management when operated by Gemini CLI.
 - **Workflows**: Refined formatting of agent workflows in `.agents/workflows/` by adding standard titles and updating legacy PRD references to the new `SuperPRD` format.
-- **Documentation**: Updated the `/document` workflow to explicitly mandate `README.md` updates alongside the `CHANGELOG.md`.
+- **Documentation**: Updated the `/hyper-document` workflow to explicitly mandate `README.md` updates alongside the `CHANGELOG.md`.
 - **Documentation**: Updated `README.md` to document the `.agents/workflows/` directory.
 
 ### Removed
@@ -67,11 +67,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Created `skills-info.md` to document the purpose and usage of each agent skill.
-- Created `baseline` skill directory (`.agents/skills/baseline/SKILL.md`).
-- Created `discover` skill directory (`.agents/skills/discover/SKILL.md`) with its own `hypergraph_schema.md` and `hypergraph_updater.py`.
+- Created `baseline` skill directory (`.agents/skills/hyper-baseline/SKILL.md`).
+- Created `discover` skill directory (`.agents/skills/hyper-discover/SKILL.md`) with its own `hypergraph_schema.md` and `hypergraph_updater.py`.
 
 ### Changed
-- **Major Skill Directory Refactor**: Transitioned from flat markdown files in `.agents/skills/` to dedicated skill folders (e.g., `.agents/skills/architect/SKILL.md`).
+- **Major Skill Directory Refactor**: Transitioned from flat markdown files in `.agents/skills/` to dedicated skill folders (e.g., `.agents/skills/hyper-architect/SKILL.md`).
 - Copied necessary resources (`hypergraph_schema.md`, `MiniPRD_template.md`) and scripts (`archive_specs.py`, `hypergraph_updater.py`) directly into their respective skill directories to make them self-contained.
 - Overhauled `README.md` to reflect the new directory structure and refined workflow.
 - Updated `MasterSOP.md`, `Tutorial.md`, `Troubleshooting.md`, and `Whitepaper.md` to align with the new structure.

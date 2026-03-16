@@ -26,7 +26,7 @@ When skills say "read/write/run/edit a file," use these Claude Code tools:
 
 ### Skill Invocation
 Skills are available as slash commands in `.claude/commands/`. Each command is a thin bridge
-that reads its corresponding `.agents/skills/<name>/SKILL.md`. When the user invokes a command,
+that reads its corresponding `.agents/skills/hyper-<name>/SKILL.md`. When the user invokes a command,
 the skill file provides the full instructions.
 
 ### Task Tracking
