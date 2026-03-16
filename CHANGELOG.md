@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-03-15
+
+### Changed
+- **`README.md`**: Documented the `hyper-` naming convention — added explanations in the directory structure section (`.agents/skills/`, `.claude/commands/`) and a callout block in the Setup section clarifying that the prefix prevents collisions with project-specific skills and commands.
+
 ## [0.3.1] - 2026-03-15
 
 ### Changed
