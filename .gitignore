@@ -32,3 +32,6 @@ Thumbs.db
 .README.md.swp
 .README.md.swp
 *.swp
+
+# Temp files and folders
+tmp/

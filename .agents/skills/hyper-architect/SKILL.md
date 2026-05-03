@@ -35,6 +35,6 @@ You must move sequentially. Do not advance to the next phase until the current p
 * **Trigger:** Phase 4 is complete.
 * **Action:**
   1. Cease questioning.
-  2. Read `.agents/schemas/SuperPRD_Template.md` to ensure correct output structure.
+  2. Review CLAUDE.md: "Schema Definitions › SuperPRD Schema" to ensure correct output structure.
   3. Generate the complete `Draft_PRD.md` and save it to `spec/active/Draft_PRD.md`.
   4. Inform the user: "Draft PRD is complete. **Start a new conversation** and run `/hyper-redteam` to perform the adversarial analysis."

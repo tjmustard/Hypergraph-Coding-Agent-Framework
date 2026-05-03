@@ -1,0 +1,172 @@
+nodes:
+- id: context_clearing
+  dimension: Module
+  status: clean
+  associated_file: .agents/skills/clear/SKILL.md
+  description: Clears conversation history between feature cycles. Idempotent, preserves
+    specifications and hypergraph. Triggered manually via /clear or automatically
+    post-audit.
+  inputs:
+  - data_type: command_trigger
+    source_id: user_or_post_audit_hook
+  outputs:
+  - data_type: session_state_update
+    target_id: activeContext
+  - data_type: log_message
+    target_id: user_interface
+  edges:
+    depends_on:
+    - orchestration_layer
+    implements: []
+- id: context_compaction
+  dimension: Module
+  status: clean
+  associated_file: .agents/scripts/compaction_engine.py
+  description: Collapses /hyper-resolve debate transcripts into Final Truth documents
+    preserving trade-off reasoning (architect & red team positions, resolution, risks,
+    mitigations). Archives full transcript with metadata and retention policy. Auto-recovers
+    if /hyper-resolve interrupted.
+  inputs:
+  - data_type: debate_transcript
+    source_id: hyper_resolve_output
+  - data_type: recovery_trigger
+    source_id: hyper_execute_interrupt_check
+  outputs:
+  - data_type: final_truth_document
+    target_id: spec_compiled
+  - data_type: archived_transcript
+    target_id: spec_archive
+  - data_type: recovery_status
+    target_id: execution_context
+  edges:
+    depends_on:
+    - orchestration_layer
+    - hyper_resolve
+    implements: []
+- id: model_router
+  dimension: Module
+  status: clean
+  associated_file: .agents/scripts/model_router.py
+  description: Routes skills to appropriate Claude model tiers (Opus/Sonnet/Haiku)
+    based on META.yml metadata and heuristic classification rules. Detects missing
+    metadata and falls back to Opus with warning. Verifies version compatibility (warns
+    on retired models). Supports temporary user overrides. Non-blocking fallback ensures
+    graceful degradation.
+  inputs:
+  - data_type: skill_metadata
+    source_id: skill_meta_yml
+  - data_type: heuristic_rules
+    source_id: heuristic_rules_yaml
+  - data_type: user_override
+    source_id: user_command
+  outputs:
+  - data_type: routing_decision
+    target_id: execution_engine
+  - data_type: warning_log
+    target_id: logging_system
+  - data_type: classifier_suggestion
+    target_id: developer_ui
+  edges:
+    depends_on:
+    - orchestration_layer
+    implements: []
+- id: rules_migration
+  dimension: Module
+  status: clean
+  associated_file: CLAUDE.md
+  description: Consolidates static schemas (SuperPRD, MiniPRD, Hypergraph) from spec/schemas/
+    into CLAUDE.md to reduce per-message context token overhead (~10-15% reduction).
+    Provides 6-week backward compatibility period until 2026-06-17. Updates skill
+    references (hyper-architect, hyper-template-architect). Adds deprecation headers
+    to old files. Includes migration guide (docs/MIGRATION_RULES.md) with before/after
+    examples. Ensures gradual adoption without breaking changes.
+  inputs:
+  - data_type: schema_definitions
+    source_id: spec_schemas_directory
+  - data_type: skill_references
+    source_id: skill_md_files
+  outputs:
+  - data_type: migrated_schemas
+    target_id: claude_md
+  - data_type: deprecation_markers
+    target_id: spec_schemas_directory
+  - data_type: migration_guide
+    target_id: docs_migration_rules_md
+  - data_type: updated_skill_references
+    target_id: skill_md_files
+  edges:
+    depends_on:
+    - framework_optimization
+    implements: []
+- id: skill_metadata
+  dimension: Module
+  status: clean
+  associated_file: .agents/scripts/meta_loader.py
+  description: Manages per-skill metadata including model assignment, version pinning,
+    and thinking token ceiling overrides. Provides MetaLoader for reading/validating
+    META.yml, OverrideManager for model overrides (single_run/permanent), and CeilingResolver
+    for token ceiling management. Supports schema validation and fallback defaults.
+  inputs:
+  - data_type: meta_yml_files
+    source_id: skills_directory
+  outputs:
+  - data_type: skill_metadata_object
+    target_id: model_router
+  - data_type: override_status
+    target_id: execution_context
+  - data_type: token_ceiling
+    target_id: reasoning_engine
+  edges:
+    depends_on:
+    - orchestration_layer
+    - model_router
+    implements: []
+- id: thinking_token_monitor
+  dimension: Module
+  status: clean
+  associated_file: .agents/scripts/thinking_token_monitor.py
+  description: Monitors thinking token usage and enforces model-tier ceilings (Opus
+    20k, Sonnet 10k, Haiku 2k). Detects ceiling breaches, emits terminal alerts with
+    recovery suggestions (task splitting, temporary overrides). Integrates with skill
+    metadata for per-skill override support. Logs utilization metrics for observability.
+  inputs:
+  - data_type: skill_metadata
+    source_id: skill_metadata
+  - data_type: execution_tokens
+    source_id: reasoning_engine
+  outputs:
+  - data_type: ceiling_decision
+    target_id: execution_engine
+  - data_type: breach_alert
+    target_id: user_interface
+  - data_type: utilization_metrics
+    target_id: observability_layer
+  edges:
+    depends_on:
+    - orchestration_layer
+    - skill_metadata
+    implements: []
+- id: token_budget_enforcer
+  dimension: Module
+  status: clean
+  associated_file: .agents/scripts/token_budget_checker.py
+  description: Enforces output token budgets per MiniPRD (50k ceiling). Estimates
+    tokens using heuristic formula (code_lines/40 + doc_pages*500 + test_cases*100),
+    flags oversized tasks with split suggestions, reconciles estimated vs. actual
+    post-execution, and tracks variance for estimation model accuracy.
+  inputs:
+  - data_type: miniprd_metadata
+    source_id: miniprd_files
+  - data_type: execution_output_tokens
+    source_id: execution_engine
+  outputs:
+  - data_type: budget_check_result
+    target_id: execution_context
+  - data_type: split_suggestions
+    target_id: developer_ui
+  - data_type: variance_metrics
+    target_id: observability_layer
+  edges:
+    depends_on:
+    - orchestration_layer
+    implements: []

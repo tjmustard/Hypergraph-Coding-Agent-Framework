@@ -99,6 +99,7 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-execute` | `/hyper-execute` | 2 | Checks activeContext.md, implements a MiniPRD, updates hypergraph |
 | `hyper-discover` | `/hyper-discover` | -1 | Scans codebase → initializes architecture.yml |
 | `hyper-baseline` | `/hyper-baseline` | -1 | Reverse-engineers system → baseline SuperPRD |
+| `hyper-clear` | `/hyper-clear` | post-audit | Idempotent context flushing; flushes conversation history while preserving specs and metrics |
 | `hyper-sop` | `/hyper-sop` | any | Master SOP guide and phase orientation |
 | `hyper-status` | `/hyper-status` | any | Living Master Plan snapshot |
 | `hyper-consult-cto` | `/hyper-consult-cto` | pre-spec | CTO advisor for architectural decisions |
@@ -119,6 +120,47 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-learning-opportunity` | `/hyper-learning-opportunity` | any | Structured teaching on any concept |
 
 Full skill instructions: `.agents/skills/hyper-<name>/SKILL.md`
+
+---
+
+## Cost Optimization: Hybrid Model Orchestration
+
+### Model Routing
+
+Skills automatically route to the optimal Claude model tier based on metadata:
+
+- **Haiku** (2k thinking ceiling): Routine, deterministic tasks. ~70% cost savings.
+- **Sonnet** (10k thinking ceiling): Tactical reasoning, trade-off analysis. ~50% cost savings.
+- **Opus** (20k thinking ceiling): Strategic decisions, adversarial analysis.
+
+**Configuration**: Each skill has a `.agents/skills/hyper-<name>/META.yml` file specifying its assigned model:
+
+```yaml
+assigned_model: haiku
+model_version: "claude-haiku-4-5-20251001"
+max_thinking_tokens: 2000  # Optional per-skill override
+```
+
+### Manual Overrides
+
+Temporarily override a skill's model assignment:
+
+```bash
+# Single execution only (resets after)
+/hyper-config set-model /hyper-execute sonnet --scope single_run
+
+# Permanent (until manually reverted)
+/hyper-config set-model /hyper-execute sonnet --scope permanent --reason "Debugging complex case"
+
+# Revert to default
+/hyper-config revert-override /hyper-execute
+```
+
+### Token Enforcement
+
+- **Thinking Token Ceilings**: Enforced per model; execution halts with warning if exceeded. Per-skill overrides available via META.yml.
+- **Output Token Budgets**: 50k ceiling per task. MiniPRDs exceeding this are flagged for splitting.
+- **Variance Tracking**: Post-execution reconciliation logs estimated vs. actual tokens. Deviations >20% flagged for investigation.
 
 ---
 

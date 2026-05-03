@@ -66,11 +66,30 @@ Work through each target below. Skip targets that are clearly unaffected by the 
 - Every slash command mentioned must use the `hyper-` prefix (e.g. `/hyper-architect`).
 - Callout blocks (`> **Note:**`) for caveats, naming conventions, and non-obvious behaviors.
 
+**Before writing:** Read the current `README.md` fully. Identify which sections are affected by the change. Do not rewrite unaffected sections.
+
+**Section checklist (verify each section matches current state):**
+
+| Section | Update when |
+|---|---|
+| Core Architectural Pillars | New architectural mechanism added; existing pillar changes scope |
+| Directory Structure | Directories added, removed, or renamed |
+| Deterministic Tooling | New scripts added to `.agents/scripts/`; existing tools renamed or removed |
+| Standard Operating Procedure | Workflow phases change; new phase added; new mandatory commands |
+| AI Agent Integrations / slash commands | Skills added, renamed, or removed; new IDE support added |
+| Setup / Installation | Install or uninstall behavior changes |
+| Troubleshooting | New failure mode introduced; existing workaround changes |
+| Roadmap | Completed items checked off; new items added |
+
+**Adding a new H2 section:** Only for features that introduce a distinct user-facing capability that doesn't fit under an existing section. Examples: "Token Efficiency & Cost Optimization", "Multi-IDE Support". Do not create a new H2 for routine bugfixes or small enhancements.
+
 ---
 
 ### `CHANGELOG.md`
 
 **Purpose:** Auditable history of changes following [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+**Find the current version:** Check the most recent `## [X.Y.Z]` header in `CHANGELOG.md`. That is the current released version. `## [Unreleased]` entries are pending release.
 
 **CRITICAL:** Before modifying, ask the user:
 > *"Are we bumping the version? If so, what is the new semantic version?"*
@@ -82,9 +101,26 @@ Wait for the response, then:
 **Style rules:**
 - Use only these categories: `Added`, `Changed`, `Fixed`, `Removed`, `Security`.
 - One bullet per logical change. Bold the affected component: `- **`hyper-audit`**: ...`
-- Write in past tense, imperative voice: "Added", "Fixed", "Moved", not "Adds", "Fixes".
+- Use changelog-style verbs (past participial): "Added", "Fixed", "Moved", not present tense "Adds", "Fixes", "Moves".
 - Be specific — name the file, skill, or behavior. No vague entries like "misc improvements".
 - Never delete historical entries.
+
+**Example entry:**
+
+```
+## [0.4.0] - 2026-05-03
+
+### Added
+- **`model_router.py`**: Routes skills to optimal Claude model tier based on META.yml metadata.
+- **`hyper-clear` skill**: Idempotent context flushing at end of `/hyper-audit`.
+
+### Changed
+- **`hyper-execute` skill**: Routes to Haiku by default; logs token usage per execution.
+- **`CLAUDE.md`**: Added Schema Definitions section; deprecated `.agents/schemas/` files.
+
+### Removed
+- **`.agents/schemas/` files**: Marked deprecated; will be deleted after 2026-06-17.
+```
 
 ---
 

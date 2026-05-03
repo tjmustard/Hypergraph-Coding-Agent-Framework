@@ -29,6 +29,8 @@ This skill assumes the role of an expert Template Architect. Given a filled-out 
 
 3. **Anti-Overwrite Check**
    Before finalizing a filename, check the `.agents/schemas/` directory. If the intended filename already exists, append a version number (e.g., `api-integration-template-v2.md`).
+   
+   **Migration Note:** Static reference schemas have been migrated to CLAUDE.md (see CLAUDE.md: Schema Definitions). New custom templates continue to be saved in `.agents/schemas/` for project-specific use.
 
 4. **Output**
    Your response must follow this exact sequence:

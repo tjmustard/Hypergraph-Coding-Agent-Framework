@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-03
+
+### Added
+- **Hybrid Model Orchestration**: Three-tier model routing system (Opus/Sonnet/Haiku) for cost-optimized skill execution. Routes simple deterministic tasks to Haiku (~70% cost reduction), complex reasoning to Opus, with fallback logic and comprehensive logging.
+- **`model_router.py`**: Core module implementing model assignment logic, heuristic-based routing decisions, Opus fallback with alerting, and version compatibility checking.
+- **`heuristic_classifier.py`**: YAML-based rule engine for automatic model tier suggestions during skill creation. Analyzes tool count, reasoning intensity, I/O complexity to recommend appropriate model.
+- **`.agents/config/heuristic_rules.yaml`**: Declarative rule definitions for model tier classification with per-rule confidence scoring and model mapping (thinking tokens, costs, latency).
+- **Skill Metadata System**: Per-skill `META.yml` configuration files in `.agents/skills/hyper-*/` with model assignment, version pinning, and override management.
+- **`meta_loader.py`**: MetaLoader class for reading/validating skill metadata with schema validation and fallback defaults.
+- **`override_manager.py`**: OverrideManager class for managing model assignment overrides with scope lifecycle (single_run/permanent), persistence, and terminal warning on activation.
+- **Thinking Token Ceiling Enforcement**: Per-model defaults (Opus 20k, Sonnet 10k, Haiku 2k) with optional per-skill overrides via META.yml.
+- **`thinking_token_monitor.py`**: ThinkingTokenMonitor class for resolving and logging thinking token ceilings with META.yml override support.
+- **`ceiling_enforcer.py`**: CeilingEnforcer class for detecting ceiling breaches, emitting structured warnings with recovery suggestions (task splitting, temporary overrides), and tracking utilization metrics.
+- **Output Token Budget Enforcement**: 50k output token ceiling with heuristic estimation formula (code_lines/40 + doc_pages*500 + test_cases*100).
+- **`token_budget_checker.py`**: BudgetChecker class for validating estimated output tokens against 50k ceiling and suggesting task split points.
+- **`token_budget_reconciler.py`**: TokenBudgetReconciler class for post-execution variance tracking (estimated vs. actual tokens) with investigation flag for >20% deviation.
+- **Context Compaction Engine**: Automatic debate transcript compression preserving trade-off reasoning (both positions + resolution + risks), with interrupt recovery.
+- **`compaction_engine.py`**: CompactionEngine class for extracting and compacting debate transcripts into Final Truth documents with archived full history links.
+- **`interrupt_detector.py`**: InterruptDetector class for detecting incomplete compactions and auto-triggering compaction before /hyper-execute.
+- **Context Clearing Mechanism**: Idempotent session context flushing via `/hyper-clear` command with state preservation (specs, metrics, performance data retained).
+- **`clear` skill**: New `.agents/skills/hyper-clear/SKILL.md` implementing idempotent context clearing with post-audit hook integration.
+- **Persistent Rules Migration**: Schema consolidation from `.agents/schemas/` into CLAUDE.md to reduce per-message token overhead (~10-15% reduction).
+- **`final_truth_template.md`**: Schema for compacted debate output format with trade-off context preservation and archive links.
+- **`META_template.md`**: Schema for per-skill metadata files with model assignment, version pinning, and override management guidance.
+- **7 Integration Test Suites**: Comprehensive test documentation covering model routing, skill metadata, context compaction, thinking token ceilings, and token budget enforcement (46 tests total, all passing).
+
+### Changed
+- **`hyper-architect` skill**: Now routes to Opus by default; documents model assignment in execution logs.
+- **`hyper-redteam` skill**: Now routes to Sonnet by default; logs thinking token usage separately from input/output.
+- **`hyper-execute` skill**: Routes to Haiku by default; checks for missing compaction files and auto-compacts before proceeding; updated to support cost metrics collection.
+- **`hyper-resolve` skill**: Automatically triggers context compaction after completion; outputs both full debate history and compacted Final Truth document.
+- **`hyper-audit` skill**: Automatically triggers `/hyper-clear` after completion; updated to reconcile token-budget-enforcer node.
+- **`CLAUDE.md`**: Added comprehensive "Schema Definitions" section with embedded SuperPRD, MiniPRD, and Hypergraph schemas (~800 lines consolidated); deprecated `.agents/schemas/` files with 6-week migration window (deadline: 2026-06-17).
+- **`AGENTS.md`**: Updated skill descriptions for model routing, thinking token monitoring, and token budget enforcement; added `/hyper-clear` command documentation.
+- **`spec/compiled/architecture.yml`**: Added 7 new nodes (context_clearing, context_compaction, model_router, skill_metadata, thinking_token_monitor, token_budget_enforcer, rules_migration); all marked clean and verified.
+- **`.agents/memory/activeContext.md`**: Updated with Token Efficiency implementation status; all 7 MiniPRDs audited and archived.
+
+### Removed
+- Deprecated `.agents/schemas/` files (SuperPRD_Template.md, MiniPRD_template.md, hypergraph_schema.md) marked with deprecation headers; old files retained until 2026-06-17 for backward compatibility.
+
 ## [0.3.5] - 2026-03-15
 
 ### Changed
