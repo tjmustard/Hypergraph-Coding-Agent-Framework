@@ -170,3 +170,29 @@ nodes:
     depends_on:
     - orchestration_layer
     implements: []
+- id: hyper_update
+  dimension: Module
+  status: clean
+  associated_file: .agents/skills/hyper-update/SKILL.md
+  description: Interactive smart-upgrade command. Fetches latest upstream framework,
+    auto-updates non-sensitive files (skills, specs, tests), and guides user through
+    section-by-section (###-level) collaborative merge of sensitive customizable files
+    (CLAUDE.md, AGENTS.md, IDE rules). Backs up any replaced or merged file to .agents/.backup/YYYY-MM-DD/.
+  inputs:
+  - data_type: upstream_repo_clone
+    source_id: github_remote
+  - data_type: local_sensitive_files
+    source_id: filesystem
+  - data_type: command_trigger
+    source_id: user
+  outputs:
+  - data_type: updated_framework_files
+    target_id: filesystem
+  - data_type: backup_snapshot
+    target_id: agents_backup_dir
+  - data_type: merge_report
+    target_id: user_interface
+  edges:
+    depends_on:
+    - orchestration_layer
+    implements: []
