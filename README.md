@@ -229,6 +229,30 @@ bash install.sh -y
 >
 > **Naming convention:** All framework skills and commands use the `hyper-` prefix (e.g. `hyper-architect`, `/hyper-redteam`) so they never collide with skills or commands you create for your own project.
 
+### Upgrading via `/hyper-update` (Recommended)
+
+After the initial installation, use the `/hyper-update` command to safely upgrade to the latest framework version while preserving your customizations:
+
+```bash
+/hyper-update
+```
+
+This command:
+1. Fetches the latest framework from GitHub
+2. Verifies the upstream commit with GPG signature (security-first)
+3. Auto-updates framework files (.agents/skills/, .agents/scripts/, spec/, tests/)
+4. Guides you through merging changes to CLAUDE.md, AGENTS.md, and IDE rules
+5. Creates timestamped backups before any file mutation
+6. Logs all operations for audit trail
+
+**Backups:** All replaced/merged files are backed up to `.agents/.backup/YYYY-MM-DDTHH-MM-SSZ/` and retained for 30 days. To restore a file:
+
+```bash
+/hyper-recover --file=CLAUDE.md --date=2026-05-04
+```
+
+See [AGENTS.md](AGENTS.md) for full upgrade documentation.
+
 ### Uninstalling
 
 To remove the framework from a project without affecting your work:

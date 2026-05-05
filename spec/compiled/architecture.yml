@@ -195,4 +195,132 @@ nodes:
   edges:
     depends_on:
     - orchestration_layer
+    implements:
+    - hyper_update_core_logic
+- id: hyper_update_core_logic
+  dimension: Atomic
+  status: needs_review
+  associated_file: .agents/scripts/hyper_update_core.py
+  description: Core logic for framework upgrade implementing 5 phases. (A) Fetches
+    upstream with GPG signature verification, fails-fast on invalid signatures. (B)
+    Manages mutex lock (.agents/.hyper-update.lock) to prevent concurrent invocations,
+    cleans up on error via try/finally. (C) Detects file changes via byte-level diff
+    comparison on sensitive and non-sensitive files. (D) Auto-updates non-sensitive
+    files (.agents/skills/, .agents/scripts/, spec/, tests/, .agentignore) without
+    prompting. (E) Performs preflight validation, detects uncommitted changes in sensitive
+    areas, returns early with preflight_warning status if found. Returns JSON state
+    for downstream merge and recovery phases.
+  inputs:
+  - data_type: command_trigger
+    source_id: hyper_update
+  - data_type: local_repository_state
+    source_id: filesystem
+  outputs:
+  - data_type: upgrade_result_json
+    target_id: hyper_update
+  - data_type: change_detection_manifest
+    target_id: hyper_update_merge_engine
+  - data_type: auto_updated_files_state
+    target_id: filesystem
+  - data_type: gpg_verification_status
+    target_id: hyper_update
+  - data_type: mutex_lock_state
+    target_id: filesystem
+  edges:
+    depends_on:
+    - orchestration_layer
+    - hyper_update_upstream_verification
+    implements: []
+- id: hyper_update_upstream_verification
+  dimension: Atomic
+  status: clean
+  associated_file: .agents/scripts/hyper_update_verification.py
+  description: Upstream verification and backup lifecycle management. (A) Checks GPG
+    binary availability before signature verification; fails-fast with installation
+    guidance if missing. Provides reusable verify_upstream_commit(commit_sha) method
+    for signature verification. (B) Implements 30-day backup retention policy; auto-deletes
+    backups older than 30 days on each upgrade. (C) Logs audit trail (JSON format)
+    to .agents/logs/hyper-update.log with commit SHA, GPG status, cleanup count. (D)
+    Implements log rotation; keeps last 10 log files, deletes older ones when size
+    exceeds 1MB. (E) Provides backup age warnings (within 2 days of expiration) for
+    user awareness.
+  inputs:
+  - data_type: upstream_repo_state
+    source_id: hyper_update_core_logic
+  - data_type: local_backup_directory
+    source_id: filesystem
+  outputs:
+  - data_type: gpg_availability_check
+    target_id: hyper_update_core_logic
+  - data_type: signature_verification_method
+    target_id: hyper_update_core_logic
+  - data_type: backup_cleanup_manifest
+    target_id: filesystem
+  - data_type: audit_log_entry
+    target_id: agents_logs_dir
+  - data_type: backup_age_warnings
+    target_id: user_interface
+  edges:
+    depends_on:
+    - orchestration_layer
+    implements: []
+- id: hyper_update_merge_engine
+  dimension: Atomic
+  status: needs_review
+  associated_file: .agents/scripts/hyper_update_merge_engine.py
+  description: 'Sensitive file merge orchestration with per-section approval. (A)
+    Prompts user for Replace/Merge/Skip action on sensitive files with changes. (B)
+    Parses markdown into sections by ### headings, preserving code blocks. (C) Shows
+    each differing section and prompts Keep local / Accept upstream / Edit manually
+    with per-section approval gates. (D) Assembles approved sections and validates
+    syntax (YAML safe_load, markdown unmatched code block delimiters). (E) Generates
+    summary report with file counts and backup path.'
+  inputs:
+  - data_type: sensitive_file_pair
+    source_id: hyper_update_core_logic
+  - data_type: user_approval_input
+    source_id: user_interface
+  outputs:
+  - data_type: merged_file_content
+    target_id: filesystem
+  - data_type: summary_report
+    target_id: user_interface
+  - data_type: validation_status
+    target_id: hyper_update_core_logic
+  edges:
+    depends_on:
+    - orchestration_layer
+    - hyper_update_core_logic
+    implements: []
+- id: hyper_update_recovery
+  dimension: Atomic
+  status: clean
+  associated_file: .agents/scripts/hyper_update_recovery.py
+  description: Backup management and interrupt recovery. (A) Creates timestamped backup
+    directories (ISO 8601 UTC) with lazy initialization on first mutation. (B) Backs
+    up files before Replace/Merge, verifying file size > 0. (C) Saves merge state
+    to .merge-in-progress.lock (JSON format) after each section approval. (D) Detects
+    interrupted merges, prompts resume/restart, handles stale locks (>24hrs). (E)
+    Provides restore operations with meta-backup of current version; lists available
+    backups by date.
+  inputs:
+  - data_type: file_mutation_request
+    source_id: hyper_update_merge_engine
+  - data_type: merge_section_approval
+    source_id: hyper_update_merge_engine
+  - data_type: restore_request
+    source_id: hyper_recover_command
+  outputs:
+  - data_type: backup_directory
+    target_id: filesystem
+  - data_type: merge_state_lock
+    target_id: filesystem
+  - data_type: restore_confirmation
+    target_id: user_interface
+  - data_type: backup_list
+    target_id: user_interface
+  edges:
+    depends_on:
+    - orchestration_layer
+    - hyper_update_merge_engine
     implements: []

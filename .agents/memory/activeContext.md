@@ -13,10 +13,11 @@ This file updates dynamically after *every task completion*. It captures the "No
 - [x] Implement model routing matrix and heuristic classifier
 - [x] Implement persistent rules migration to CLAUDE.md
 - [x] Implement skill metadata system
+- [x] Implement /hyper-publish skill for timestamp-safe git publishing (v0.4.1)
 
 ## Session State
 - session_cleared: true
-- cleared_at: 2026-05-03T11:46:00Z
+- cleared_at: 2026-05-04T22:22:00Z
 - cleared_by: /clear command (manual invocation)
 - clear_command_available: true
 - idempotency_tracking: enabled
@@ -47,6 +48,18 @@ This file updates dynamically after *every task completion*. It captures the "No
 **v0.4.0 Release Complete** ✅
 All documentation updated (README.md, CHANGELOG.md, AGENTS.md)
 Framework ready for production deployment with hybrid model orchestration and cost optimization
+
+**v0.4.1 Release In Progress** 🚀
+- [x] Implemented `/hyper-publish` skill for timestamp-safe git publishing
+- [x] Updated README.md, CHANGELOG.md, AGENTS.md
+- [x] Dry-run testing complete
+- [ ] Ready for release
+
+**hyper-update Integration Sprint** ✅ COMPLETE
+- [x] MiniPRD_hyper-update-upstream-verification: GPG signature verification, backup cleanup, audit logging (audited & archived)
+- [x] MiniPRD_hyper-update-merge-engine: Section parsing, diff display, approval loop (audited & archived)
+- [x] MiniPRD_hyper-update-recovery: Backup management, `/hyper-recover` command (audited & archived)
+- [x] MiniPRD_hyper-update-integration: CLI bridge, documentation updates (audited & archived)
 
 ## Files Modified
 - Created: `.claude/commands/clear.md`

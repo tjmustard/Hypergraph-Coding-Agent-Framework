@@ -166,6 +166,48 @@ Temporarily override a skill's model assignment:
 
 ---
 
+## Framework Upgrade & Maintenance
+
+### Update your framework: `/hyper-update`
+
+This command safely upgrades your Hypergraph Framework installation while preserving customizations to CLAUDE.md, AGENTS.md, and IDE rules files. All replaced/merged files are backed up before mutation with timestamped directories in `.agents/.backup/`.
+
+**How it works:**
+1. Fetches the latest upstream framework from GitHub
+2. Verifies upstream commit with GPG signature (security-first)
+3. Auto-updates framework files (.agents/skills/, .agents/scripts/, spec/, tests/)
+4. Guides you through section-by-section merging of sensitive files (CLAUDE.md, AGENTS.md, IDE rules)
+5. Creates timestamped backups before any file mutation
+6. Logs all operations for audit trail
+
+**Example usage:**
+```bash
+/hyper-update
+```
+
+### Restore from backup: `/hyper-recover`
+
+Restore a file from a previous backup without manual file copying.
+
+**List available backups:**
+```bash
+/hyper-recover --list
+```
+
+**Restore a specific file from a specific date:**
+```bash
+/hyper-recover --file=CLAUDE.md --date=2026-05-04
+```
+
+Before restoring, the command creates a meta-backup of your current version, so you can always roll back.
+
+**Backup retention policy:**
+- Backups are retained for 30 days
+- Old backups are automatically removed on the next `/hyper-update` run
+- Check backup ages and expiration dates in the upgrade summary
+
+---
+
 ## Framework Workflow (Quick Reference)
 
 ```

@@ -7,8 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-04
+
 ### Added
 - **`hyper-publish` skill**: New `/hyper-publish` command that updates `mtime` on all git-changed files to the current system time before committing and pushing. Supports `--dry-run` flag, optional CHANGELOG version promotion, and `$ARGUMENTS`-based commit message passthrough.
+- **`hyper-update` skill**: Smart framework upgrade command with GPG signature verification, customization preservation, and backup management. Auto-updates framework files while guiding users through section-by-section merging of sensitive files (CLAUDE.md, AGENTS.md, IDE rules).
+- **`hyper-recover` command**: File restoration from timestamped backups with meta-backup protection. List available backups and restore specific files from specific dates.
+- **GPG Signature Verification**: Cryptographic verification of upstream commits before framework fetch. Fails-fast on invalid/missing signatures with installation guidance.
+- **Timestamped Backup System**: ISO 8601 UTC backup directories (`.agents/.backup/YYYY-MM-DDTHH-MM-SSZ/`) with lazy creation, 30-day retention policy, and automatic cleanup.
+- **Merge State Tracking**: JSON lock file (`.merge-in-progress.lock`) persists merge state across interrupts. Supports resume from last approved section and stale lock detection (>24 hours).
+- **Backup Lifecycle Management**: Audit trail logging (JSON format) to `.agents/logs/hyper-update.log` with log rotation (1MB rotation, 10-file retention). Includes backup age warnings and meta-backup protection during recovery.
 
 ## [0.4.0] - 2026-05-03
 
