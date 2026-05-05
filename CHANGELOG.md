@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **`hyper-publish` skill**: New `/hyper-publish` command that updates `mtime` on all git-changed files to the current system time before committing and pushing. Supports `--dry-run` flag, optional CHANGELOG version promotion, and `$ARGUMENTS`-based commit message passthrough.
+
 ## [0.4.0] - 2026-05-03
 
 ### Added

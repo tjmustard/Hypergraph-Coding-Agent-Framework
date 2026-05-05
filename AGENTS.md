@@ -109,6 +109,7 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-new-workflow` | `/hyper-new-workflow` | any | Scaffold a new skill and IDE bridges |
 | `hyper-document` | `/hyper-document` | any | Update README, CHANGELOG, docs/, AGENTS.md, and memory files after any change |
 | `hyper-session-update` | `/hyper-session-update` | any | Sync memory with session work |
+| `hyper-update` | `/hyper-update` | any | Smart upgrade framework while preserving customizations |
 | `hyper-refresh-memory` | `/hyper-refresh-memory` | any | Rebuild mental model from codebase |
 | `hyper-troubleshooting` | `/hyper-troubleshooting` | any | Diagnose framework failure states |
 | `hyper-tutorial` | `/hyper-tutorial` | any | Framework walkthrough for new users |
@@ -117,6 +118,7 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-template-architect` | `/hyper-template-architect` | any | Reverse-engineer document into template |
 | `hyper-peer-review` | `/hyper-peer-review` | any | Evaluate and triage peer review findings |
 | `hyper-create-issue` | `/hyper-create-issue` | any | Format and file a GitHub issue |
+| `hyper-publish` | `/hyper-publish` | any | Touch git-changed files (mtime), commit, and push to remote |
 | `hyper-learning-opportunity` | `/hyper-learning-opportunity` | any | Structured teaching on any concept |
 
 Full skill instructions: `.agents/skills/hyper-<name>/SKILL.md`

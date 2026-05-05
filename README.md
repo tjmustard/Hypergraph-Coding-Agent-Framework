@@ -267,7 +267,7 @@ All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads
 
 Native support via `CLAUDE.md` and `.claude/commands/`. Each command is a one-line bridge to `.agents/skills/`. See **[CLAUDE.md](./CLAUDE.md)** for Claude Code-specific tool overrides.
 
-Available slash commands: `/hyper-architect`, `/hyper-redteam`, `/hyper-resolve`, `/hyper-audit`, `/hyper-execute`, `/hyper-discover`, `/hyper-baseline`, `/hyper-clear`, `/hyper-document`, `/hyper-sop`, `/hyper-status`, `/hyper-consult-cto`, `/hyper-co-research`, `/hyper-deepdive`, and more — see `.claude/commands/` for the full list.
+Available slash commands: `/hyper-architect`, `/hyper-redteam`, `/hyper-resolve`, `/hyper-audit`, `/hyper-execute`, `/hyper-discover`, `/hyper-baseline`, `/hyper-clear`, `/hyper-document`, `/hyper-sop`, `/hyper-status`, `/hyper-consult-cto`, `/hyper-co-research`, `/hyper-deepdive`, `/hyper-publish`, and more — see `.claude/commands/` for the full list.
 
 > **Cost Optimization**: As of v0.4.0, the framework implements hybrid model orchestration. Skills automatically route to Haiku (routine tasks, ~70% cost savings), Sonnet (tactical reasoning), or Opus (complex architectural analysis) based on metadata and heuristic rules. Thinking token ceilings and output token budgets prevent runaway costs. See the Token Efficiency feature below.
 
