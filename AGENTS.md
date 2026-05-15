@@ -113,12 +113,13 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `hyper-refresh-memory` | `/hyper-refresh-memory` | any | Rebuild mental model from codebase |
 | `hyper-troubleshooting` | `/hyper-troubleshooting` | any | Diagnose framework failure states |
 | `hyper-tutorial` | `/hyper-tutorial` | any | Framework walkthrough for new users |
+| `hyper-tutorial-generator` | `/hyper-tutorial-generator` | any | Generate markdown tutorial from integration test or user-provided files via iterative LLM collaboration |
 | `hyper-stitch-design` | `/hyper-stitch-design` | any | UI/UX → Design System specification |
 | `hyper-prompt-engineer` | `/hyper-prompt-engineer` | any | Collaborative prompt design |
 | `hyper-template-architect` | `/hyper-template-architect` | any | Reverse-engineer document into template |
 | `hyper-peer-review` | `/hyper-peer-review` | any | Evaluate and triage peer review findings |
 | `hyper-create-issue` | `/hyper-create-issue` | any | Format and file a GitHub issue |
-| `hyper-publish` | `/hyper-publish` | any | Touch git-changed files (mtime), commit, and push to remote |
+| `hyper-publish` | `/hyper-publish` | any | AI-proposes commit messages from CHANGELOG; HITL approval gates at each step; optional PR creation with auto-drafted descriptions. Touches git-changed files (mtime), commits, pushes, and optionally creates GitHub PR. |
 | `hyper-learning-opportunity` | `/hyper-learning-opportunity` | any | Structured teaching on any concept |
 
 Full skill instructions: `.agents/skills/hyper-<name>/SKILL.md`

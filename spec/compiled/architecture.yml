@@ -2,9 +2,9 @@ nodes:
 - id: context_clearing
   dimension: Module
   status: clean
-  associated_file: .agents/skills/clear/SKILL.md
+  associated_file: .agents/skills/hyper-clear/SKILL.md
   description: Clears conversation history between feature cycles. Idempotent, preserves
-    specifications and hypergraph. Triggered manually via /clear or automatically
+    specifications and hypergraph. Triggered manually via /hyper-clear or automatically
     post-audit.
   inputs:
   - data_type: command_trigger

@@ -1,5 +1,5 @@
 ---
-name: clear
+name: hyper-clear
 description: Flushes conversation history and resets session context between feature cycles. Idempotent—safe to call multiple times.
 ---
 
@@ -20,14 +20,14 @@ This skill clears session context to prevent cross-feature bleed and allow fresh
 ### Step 1: Check Idempotency State
 
 Read `.agents/memory/activeContext.md`:
-- If the `session_cleared` flag is `true`: /clear has already been called in this session. Return OK (idempotent, no action needed).
+- If the `session_cleared` flag is `true`: /hyper-clear has already been called in this session. Return OK (idempotent, no action needed).
 - If the `session_cleared` flag is `false` or missing: Proceed to Step 2.
 
 ### Step 2: Flush Conversation History
 
 Clear conversation history by **starting a new conversation** in Claude Code:
 1. Inform the user: "Context cleared. Starting fresh session for next feature cycle."
-2. The user manually starts a new conversation thread (or you can suggest: "You may now `/clear` by opening a new chat window").
+2. The user manually starts a new conversation thread (or you can suggest: "You may now `/hyper-clear` by opening a new chat window").
 
 **Specification Retained:**
 - `spec/compiled/architecture.yml` — preserved
@@ -47,7 +47,7 @@ Edit `.agents/memory/activeContext.md`:
 ## Session State
 - session_cleared: true
 - cleared_at: [CURRENT_TIMESTAMP]
-- cleared_by: /clear command
+- cleared_by: /hyper-clear command
 ```
 
 ### Step 4: Log Result
@@ -62,7 +62,7 @@ Architecture.yml and spec/compiled/ retained.
 Ready for next feature cycle.
 
 Idempotency: This is a fresh clear.
-(Calling /clear again will be a no-op.)
+(Calling /hyper-clear again will be a no-op.)
 ========================================
 ```
 
@@ -72,7 +72,7 @@ Idempotency: This is a fresh clear.
 
 ### First Call (Fresh)
 ```
-/clear invoked
+/hyper-clear invoked
 activeContext.md session_cleared = false
 → Perform flush
 → Set session_cleared = true
@@ -81,7 +81,7 @@ activeContext.md session_cleared = false
 
 ### Subsequent Calls (Idempotent)
 ```
-/clear invoked
+/hyper-clear invoked
 activeContext.md session_cleared = true
 → No action (already cleared)
 → Return: "Already cleared (idempotent, no action)"
@@ -92,7 +92,7 @@ activeContext.md session_cleared = true
 ## Integration with /hyper-audit
 
 When `/hyper-audit` completes successfully:
-1. Automatically trigger `/clear` as a post-phase hook.
+1. Automatically trigger `/hyper-clear` as a post-phase hook.
 2. Log: "Post-audit hook: clearing context for next cycle."
 3. Update `activeContext.md` to reflect the clear.
 
@@ -100,9 +100,9 @@ When `/hyper-audit` completes successfully:
 
 ## Manual Triggering
 
-Users can invoke `/clear` at any time during a feature cycle:
+Users can invoke `/hyper-clear` at any time during a feature cycle:
 ```
-/clear
+/hyper-clear
 ```
 
 This will:
@@ -116,7 +116,7 @@ This will:
 
 | State Type | Preserved? | Details |
 |---|---|---|
-| **Conversation History** | ❌ No | Flushed on /clear |
+| **Conversation History** | ❌ No | Flushed on /hyper-clear |
 | **architecture.yml** | ✅ Yes | Ground truth preserved |
 | **SuperPRD.md** | ✅ Yes | Specification preserved |
 | **MiniPRD_*.md** | ✅ Yes | All specs preserved |
@@ -131,7 +131,7 @@ This will:
 
 - **DO NOT** delete architecture.yml or spec/compiled/ files.
 - **DO NOT** delete performance metrics or heuristics.
-- **DO NOT** fail on idempotent re-calls. Make /clear a no-op if already cleared.
+- **DO NOT** fail on idempotent re-calls. Make /hyper-clear a no-op if already cleared.
 - **DO NOT** require confirmation from the user.
 - **DO NOT** delete debate transcripts in spec/archive/ (separate archival process).
 
@@ -139,7 +139,7 @@ This will:
 
 ## Post-Execution
 
-After `/clear` completes:
+After `/hyper-clear` completes:
 - User is ready for a fresh feature cycle.
 - Next `/hyper-architect` run will have a clean slate.
 - No cross-feature context bleed.

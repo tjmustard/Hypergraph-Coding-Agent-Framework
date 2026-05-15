@@ -22,7 +22,7 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 
 ### Central Source of Truth
 -   `.agents/` — **All skill, rule, schema, and script content lives here.**
-    -   `skills/`: All 25 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
+    -   `skills/`: All 29 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
     -   `rules/`: Always-on coding standards (Python, security, testing, packages).
@@ -212,7 +212,7 @@ bash install.sh -y
 | Path | Purpose | Always / IDE-specific |
 |---|---|---|
 | `.agents/` | Skills (source of truth), schemas, scripts, rules, memory | Always |
-| `spec/` | Active, compiled, and archive spec directories | Always |
+| `spec/` | Scaffolded empty directories (active/, compiled/, archive/) for your project specs | Always |
 | `tests/` | Candidate outputs and fixture directories | Always |
 | `docs/` | SOP, tutorial, whitepaper, and troubleshooting guides | Always |
 | `.agentignore` | Blocks agents from reading archive/candidate dirs | Always |

@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-05-14
+
+### Added
+- **Enhanced `/hyper-publish` skill**: AI-proposes commit messages from CHANGELOG `[Unreleased]` + git diff; uses human-in-the-loop approval gates at each step (7 decision points); supports optional PR creation with auto-drafted descriptions from changelog.
+- **Helper scripts for `/hyper-publish`**: 
+  - `generate_commit_message.py` — reads CHANGELOG and recent commits to suggest subject/body
+  - `generate_pr_description.py` — formats PR body from changelog with Summary and Test plan sections
+  - `setup_permissions.py` — patches `.claude/settings.json` to pre-approve git/gh commands (eliminates per-invocation prompts)
+- **Command Normalization**: Renamed `/clear` command to `/hyper-clear` to resolve naming conflict with Claude Code's built-in `/clear` command. All references updated across framework.
+- **Examples and Templates for `/hyper-publish`**: 
+  - `examples/example_commit_messages.md` — 5 real commit patterns from framework history
+  - `examples/example_pr_description.md` — example PR description format
+  - `resources/commit_template.md` — blank commit message template with guidelines
+  - `resources/pr_description_template.md` — blank PR body template with section structure
+- **`hyper-tutorial-generator` skill**: New `/hyper-tutorial-generator` command that converts existing integration tests or user-provided files into polished markdown tutorials via iterative LLM collaboration. Two input modes (Integration Test or User Files); section-by-section drafting with HITL approval gates; auto-scaffolds tutorial directory structure with supporting subdirectories (input_files/, output_files/, code_samples/, screenshots/).
+
+### Changed
+- **AskUserQuestion enforcement across 18 skills**: Standardized all structured user-facing choice prompts to explicitly invoke the `AskUserQuestion` tool instead of relying on freeform conversation turns. Affected skills: `hyper-sop` (phase selection), `hyper-troubleshooting` (symptom triage + follow-up), `hyper-update` (Replace/Merge/Skip gate + per-section merge approval), `hyper-execute` (re-implement confirmation + confidence gate), `hyper-resolve` (forced trade-off choices + NFR approval), `hyper-architect` (phase advance confirmation), `hyper-tutorial` (all 6 readiness checks), `hyper-deepdive` (integration question), `hyper-document` (version bump gate), `hyper-peer-review` (input method), `hyper-create-issue` (issue type + priority), `hyper-stitch-design` (style reference), `hyper-template-architect` (source document gate), `hyper-new-workflow` (name confirmation), `hyper-prompt-engineer` (output format + export), `hyper-co-research` (scoping gate), `hyper-consult-cto` (clarifying questions), `hyper-learning-opportunity` (depth selection + between-level readiness). Open-ended free-text interview questions (e.g., Architect phase questions) remain as freeform input.
+- **`hyper-execute` and `hyper-audit` skills**: Enhanced with Haiku sub-agents for cost optimization. `/hyper-execute` delegates file pre-loading to a Haiku sub-agent (Step 2.5) before implementation. `/hyper-audit` delegates YAML reconciliation to a Haiku sub-agent (Phase 3) for mechanical node updates. Both include fallback logic to operate manually if sub-agent fails.
+- **`install.sh`**: `spec/` directory is now scaffolded (empty subdirs created) instead of copied from framework. Ensures users start with clean slate for their own specification files, not framework's internal development history.
+- **`.agents/memory/activeContext.md`**: Updated all references from `/clear` to `/hyper-clear`; noted command rename rationale.
+- **`spec/compiled/architecture.yml`**: Updated context_clearing node to reference hyper-clear skill path and command name.
+- **`.claude/settings.json`**: Added `"permissions": {"allow": ["Bash(git *)", "Bash(gh *)", "Bash(touch *)"]}` to pre-approve framework commands without per-invocation prompts.
+
+### Removed
+- **Deprecated `/clear` command**: Removed `.claude/commands/clear.md` command bridge and `.agents/skills/clear/` directory. Users must use `/hyper-clear` instead (same functionality, no naming conflict).
+
 ## [0.4.1] - 2026-05-04
 
 ### Added

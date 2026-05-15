@@ -91,10 +91,16 @@ Work through each target below. Skip targets that are clearly unaffected by the 
 
 **Find the current version:** Check the most recent `## [X.Y.Z]` header in `CHANGELOG.md`. That is the current released version. `## [Unreleased]` entries are pending release.
 
-**CRITICAL:** Before modifying, ask the user:
-> *"Are we bumping the version? If so, what is the new semantic version?"*
+**CRITICAL:** Before modifying, use **AskUserQuestion**:
 
-Wait for the response, then:
+```
+Are we releasing a new version with this change?
+
+- Option A: Yes — bump version (specify the new semantic version via Other)
+- Option B: No — update [Unreleased] only (add changes to the Unreleased section)
+```
+
+Then:
 - **Version bump:** Add a new `## [X.Y.Z] - YYYY-MM-DD` block below `## [Unreleased]`.
 - **No version bump:** Add entries under `## [Unreleased]`.
 

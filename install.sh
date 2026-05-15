@@ -40,7 +40,7 @@ IDE_DEFS=(
 )
 
 # Always installed regardless of IDE selection
-CORE_DIRS=(".agents" "spec" "tests")
+CORE_DIRS=(".agents" "tests")
 CORE_FILES=(".agentignore")
 
 # ---------------------------------------------------------------------------
@@ -254,6 +254,20 @@ for dir in "${CORE_DIRS[@]}"; do
   else
     cp -r "$TMP_DIR/$dir" "$dir"
     echo "    ✅  $dir/ installed."
+  fi
+done
+echo ""
+
+# ---------------------------------------------------------------------------
+# Scaffold spec/ directory structure (never copy framework content)
+# ---------------------------------------------------------------------------
+echo "📁  Spec directory scaffold:"
+for spec_dir in spec/active spec/archive spec/compiled; do
+  if [ -d "$spec_dir" ]; then
+    echo "    ✓  $spec_dir/ already exists."
+  else
+    mkdir -p "$spec_dir"
+    echo "    ✅  $spec_dir/ created."
   fi
 done
 echo ""
