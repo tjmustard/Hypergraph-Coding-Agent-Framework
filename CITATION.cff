@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: >-
+  If you use Hypergraph Coding Agent Framework in your research or reference it in a paper,
+  please cite it using the metadata below.
+type: software
+title: "Hypergraph Coding Agent Framework"
+abstract: >-
+  A rigorously structured framework designed to solve the Specification Alignment Problem in AI-assisted coding.
+authors:
+  - given-names: Thomas
+    family-names: Mustard
+    alias: tjmustard
+repository-code: "https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework"
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-17"
+keywords:
+  - Hypergraph Coding Agent Framework

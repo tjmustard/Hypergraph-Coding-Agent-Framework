@@ -130,6 +130,20 @@ Then:
 
 ---
 
+### Standard Repository Documents
+(`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `DEVELOPMENT.md`, `CITATION.cff`)
+
+**Purpose:** Provide consistent community, security, and development guidelines across all Hypergraph framework projects.
+
+**Update when:** The framework's core policies change, testing requirements change (affecting `DEVELOPMENT.md` or `CONTRIBUTING.md`), or project authors/metadata change.
+
+**Style rules:**
+- These files should largely remain stable once scaffolded via `/hyper-init`.
+- If a project-specific modification is required, ensure it doesn't violate the baseline rules established in the `.agents/schemas/project-templates/` directory.
+- When regenerating these files, always refer to `.agents/schemas/project-templates/` as the ground truth format and apply variable substitution.
+
+---
+
 ### `AGENTS.md`
 
 **Purpose:** Universal cross-IDE always-on manifest. Read by Windsurf, Cursor, Roo Code, GitHub Copilot, Zed.

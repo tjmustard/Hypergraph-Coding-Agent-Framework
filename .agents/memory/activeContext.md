@@ -50,7 +50,7 @@ This file updates dynamically after *every task completion*. It captures the "No
 All documentation updated (README.md, CHANGELOG.md, AGENTS.md)
 Framework ready for production deployment with hybrid model orchestration and cost optimization
 
-**v0.4.2 Release In Progress** 🚀
+**v0.4.2 Release Complete** ✅
 - [x] Enhanced `/hyper-publish` with AI-proposed commit messages and PR creation
 - [x] Renamed `/clear` → `/hyper-clear` to resolve naming conflict
 - [x] Updated `install.sh` to scaffold spec/ instead of copy
@@ -60,7 +60,15 @@ Framework ready for production deployment with hybrid model orchestration and co
 - [x] Integrated Haiku sub-agents into `/hyper-execute` (Step 2.5) and `/hyper-audit` (Phase 3) for cost optimization
 - [x] Updated documentation for all v0.4.2 changes
 - [x] Enforced `AskUserQuestion` tool across 18 skills (structured choice prompts replace freeform conversation turns)
-- [x] Ready for release
+
+**v0.4.3: Standardizing Repository Documentation Framework** 🚀
+- [x] Convert repository documentation (README, CHANGELOG, CITATION, CODE_OF_CONDUCT, CONTRIBUTING, DEVELOPMENT, SECURITY) into reusable, generalized templates in `.agents/schemas/project-templates/`
+- [x] Implement `/hyper-init` skill for project bootstrapping via user interviews
+- [x] Bootstrap the framework's own repo with standard templated files
+- [x] Merge IDE configs (`GEMINI.md`, `CLAUDE.md`, etc.) into centralized `AGENTS.md` standard
+- [x] Update `/hyper-document` skill to enforce baseline standards and keep templates in sync
+- [x] Restructure framework's core `README.md` to follow template style and layout
+- [x] Run `/hyper-document` to finalize and verify the entire documentation suite
 
 **hyper-update Integration Sprint** ✅ COMPLETE
 - [x] MiniPRD_hyper-update-upstream-verification: GPG signature verification, backup cleanup, audit logging (audited & archived)
@@ -69,8 +77,13 @@ Framework ready for production deployment with hybrid model orchestration and co
 - [x] MiniPRD_hyper-update-integration: CLI bridge, documentation updates (audited & archived)
 
 ## Files Modified
-- Created: `.claude/commands/hyper-clear.md`
-- Created: `.agents/skills/hyper-clear/SKILL.md`
-- Created: `tests/integration/test_context_clearing.md`
-- Updated: `.agents/memory/activeContext.md` (session state tracking)
-- Created: `spec/compiled/architecture.yml` (context_clearing node)
+- Created: `.agents/schemas/project-templates/` (standard doc templates)
+- Created: `.agents/skills/hyper-init/` (project bootstrapping skill)
+- Created: `CITATION.cff`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `DEVELOPMENT.md`, `SECURITY.md` (bootstrapped from templates)
+- Updated: `README.md` (restructured to match template style)
+- Updated: `CHANGELOG.md` (documented v0.4.3 changes)
+- Updated: `AGENTS.md` (registered /hyper-init skill, centralized IDE specs, embedded schemas)
+- Updated: `CLAUDE.md`, `GEMINI.md` (linked to authoritative AGENTS.md)
+- Updated: `.agents/skills/hyper-document/SKILL.md` (integrated standard repo templates rules)
+- Updated: `skills-info.md` (added available skills index table)
+- Updated: `.agents/memory/activeContext.md` (sprint state tracking)

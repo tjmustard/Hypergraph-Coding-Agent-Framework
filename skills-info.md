@@ -1,111 +1,126 @@
-Agent Skills
-Skills are an open standard for extending agent capabilities. A skill is a folder containing a SKILL.md file with instructions that the agent can follow when working on specific tasks.
+# 🛠️ Hypergraph Skill Index & Developer Guide
 
-What are skills?
-Skills are reusable packages of knowledge that extend what the agent can do. Each skill contains:
+*Comprehensive catalog of available AI agent capabilities and the open standard for extending them.*
 
-Instructions for how to approach a specific type of task
-Best practices and conventions to follow
-Optional scripts and resources the agent can use
-When you start a conversation, the agent sees a list of available skills with their names and descriptions. If a skill looks relevant to your task, the agent reads the full instructions and follows them.
+---
 
-Where skills live
-Antigravity supports two types of skills:
+## 📂 Available Skills Index
 
-Location	Scope
-<workspace-root>/.agent/skills/<skill-folder>/	Workspace-specific
-~/.gemini/antigravity/skills/<skill-folder>/	Global (all workspaces)
+The Hypergraph framework leverages a modular skill system to route specialized reasoning tiers. Below is the authoritative index of all available skills, organized by workflow phase.
 
-Workspace skills are great for project-specific workflows, like your team's deployment process or testing conventions.
+### Phase -1: Legacy Onboarding (Brownfield Projects)
+| Skill Name | Slash Trigger | Description |
+| :--- | :--- | :--- |
+| **`hyper-discover`** | `/hyper-discover` | Scans the existing codebase to initialize or update the `architecture.yml` hypergraph. |
+| **`hyper-baseline`** | `/hyper-baseline` | Reverse-engineers the existing codebase to generate a "Current State" SuperPRD. |
 
-Global skills work across all your projects. Use these for personal utilities or general-purpose tools you want everywhere.
+### Phase 0: Scaffolding
+| Skill Name | Slash Trigger | Description |
+| :--- | :--- | :--- |
+| **`hyper-init`** | `/hyper-init` | Scaffolds standard repository documentation templates (`README.md`, `CONTRIBUTING.md`, etc.) via an interactive user interview. |
 
-Creating a skill
-To create a skill:
+### Phase 1: Specification Engine (Conversational)
+| Skill Name | Slash Trigger | Description |
+| :--- | :--- | :--- |
+| **`hyper-architect`** | `/hyper-architect` | Conducts a state-machine interview to extract requirements and compile the initial `Draft_PRD.md`. |
+| **`hyper-redteam`** | `/hyper-redteam` | Runs adversarial analysis on the Draft PRD to identify edge cases, vulnerabilities, and system-level blast radius risks. |
+| **`hyper-resolve`** | `/hyper-resolve` | Mediates Red Team findings, forces architectural trade-offs, and compiles the final `SuperPRD` + modular `MiniPRD` specifications. |
 
-Create a folder for your skill in one of the skill directories
-Add a SKILL.md file inside that folder
-.agent/skills/
-└─── my-skill/
+### Phase 2: Build & Verification Engine
+| Skill Name | Slash Trigger | Description |
+| :--- | :--- | :--- |
+| **`hyper-execute`** | `/hyper-execute` | Implements changes precisely against a compiled MiniPRD, updates hypergraph status, and triggers updater scripts. |
+| **`hyper-audit`** | `/hyper-audit` | Strictly verifies implementation correctness against its MiniPRD and reconciles the hypergraph state. |
+| **`hyper-clear`** | `/hyper-clear` | Idempotently flushes conversation context between build cycles while preserving specifications and metrics. |
+
+### Phase Any: Developer Productivity & Utilities
+| Skill Name | Slash Trigger | Description |
+| :--- | :--- | :--- |
+| **`hyper-status`** | `/hyper-status` | Outputs the current, live-updated "Living Master Plan" snapshot including project status, constraints, and task progress. |
+| **`hyper-sop`** | `/hyper-sop` | Re-anchors the agent and user to the correct framework phase and Master SOP guidelines. |
+| **`hyper-consult-cto`** | `/hyper-consult-cto` | Activates a CTO persona for brainstorming architecture, trade-offs, and early feature planning. |
+| **`hyper-co-research`** | `/hyper-co-research` | Instantiates a peer-level research partner applying First Principles thinking and strict epistemic humility. |
+| **`hyper-deepdive`** | `/hyper-deepdive` | Pauses building to explore a technical topic deeply from first principles before making structural decisions. |
+| **`hyper-create-skill`** | `/hyper-create-skill` | Converts an agent prompt or custom instruction set into a new structured skill for the framework. |
+| **`hyper-new-workflow`** | `/hyper-new-workflow` | Generates a new slash command workflow with accompanying IDE rule bridges. |
+| **`hyper-document`** | `/hyper-document` | Updates README, CHANGELOG, docs/, AGENTS.md, memory, and templates after code or skill changes. |
+| **`hyper-session-update`** | `/hyper-session-update` | Syncs agent memory files (`activeContext.md`, `systemPatterns.md`, etc.) with the work done in the current session. |
+| **`hyper-update`** | `/hyper-update` | Smart-upgrade CLI to safely fetch upstream framework updates while preserving local rules customizations. |
+| **`hyper-refresh-memory`** | `/hyper-refresh-memory` | Rebuilds the agent's mental model and synchronization state by reading memory, rules, and source files. |
+| **`hyper-troubleshooting`** | `/hyper-troubleshooting` | Guides users through recovering from framework errors, hallucinations, or desynchronized state. |
+| **`hyper-tutorial`** | `/hyper-tutorial` | Runs an interactive step-by-step tutorial walkthrough (Email Newsletter Subscription scenario). |
+| **`hyper-tutorial-generator`** | `/hyper-tutorial-generator` | Collaboratively generates markdown tutorials from integration tests or provided source files. |
+| **`hyper-stitch-design`** | `/hyper-stitch-design` | Translates UX ideas and visual mockups into a concrete Design System specification with design tokens. |
+| **`hyper-prompt-engineer`** | `/hyper-prompt-engineer` | Designs and optimizes prompts using advanced LLM structuring and meta-prompting techniques. |
+| **`hyper-template-architect`** | `/hyper-template-architect` | Reverse-engineers a completed document into a reusable template for downstream AI pipelines. |
+| **`hyper-peer-review`** | `/hyper-peer-review` | Triages and evaluates external model code reviews against the actual codebase to produce an action plan. |
+| **`hyper-create-issue`** | `/hyper-create-issue` | Captures bugs or feature ideas into a structured GitHub issue format without breaking development flow. |
+| **`hyper-publish`** | `/hyper-publish` | Automated commit-push-PR routine using AI-proposed summaries and interactive HITL gates. |
+| **`hyper-learning-opportunity`** | `/hyper-learning-opportunity` | Pauses development to teach a technical concept at multiple layers of complexity (tailored to PMs). |
+
+---
+
+## 🛠️ The Skill Standard (For Developers)
+
+Skills are an open standard for extending agent capabilities. A skill is a folder containing a `SKILL.md` file with instructions that the agent can discover, activate, and follow when working on specific tasks.
+
+### Where Skills Live
+Antigravity supports two scopes of skills:
+
+| Scope | Location | Use Case |
+| :--- | :--- | :--- |
+| **Workspace-Specific** | `<workspace-root>/.agents/skills/<skill-folder>/` | Team deployment workflows, local testing conventions, project-specific code generators. |
+| **Global** | `~/.gemini/antigravity/skills/<skill-folder>/` | Universal developer utilities, personal code formatters, general research prompts. |
+
+### Creating a Skill
+
+To create a new skill, create a folder in one of the directories above with a `SKILL.md` file:
+
+```
+.agents/skills/
+└─── my-custom-skill/
     └─── SKILL.md
-Every skill needs a SKILL.md file with YAML frontmatter at the top:
+```
 
+### Frontmatter Schema
+
+Every skill needs a `SKILL.md` file containing YAML frontmatter at the very top:
+
+```markdown
 ---
-name: my-skill
-description: Helps with a specific task. Use when you need to do X or Y.
----
-
-# My Skill
-
-Detailed instructions for the agent go here.
-
-## When to use this skill
-
-- Use this when...
-- This is helpful for...
-
-## How to use it
-
-Step-by-step guidance, conventions, and patterns the agent should follow.
-Frontmatter fields
-Field	Required	Description
-name	No	A unique identifier for the skill (lowercase, hyphens for spaces). Defaults to the folder name if not provided.
-description	Yes	A clear description of what the skill does and when to use it. This is what the agent sees when deciding whether to apply the skill.
-
-Tip: Write your description in third person and include keywords that help the agent recognize when the skill is relevant. For example: "Generates unit tests for Python code using pytest conventions."
-
-Skill folder structure
-While SKILL.md is the only required file, you can include additional resources:
-
-.agent/skills/my-skill/
-├─── SKILL.md       # Main instructions (required)
-├─── scripts/       # Helper scripts (optional)
-├─── examples/      # Reference implementations (optional)
-└─── resources/     # Templates and other assets (optional)
-The agent can read these files when following your skill's instructions.
-
-How the agent uses skills
-Skills follow a progressive disclosure pattern:
-
-Discovery: When a conversation starts, the agent sees a list of available skills with their names and descriptions
-Activation: If a skill looks relevant to your task, the agent reads the full SKILL.md content
-Execution: The agent follows the skill's instructions while working on your task
-You don't need to explicitly tell the agent to use a skill—it decides based on context. However, you can mention a skill by name if you want to ensure it's used.
-
-Best practices
-Keep skills focused
-Each skill should do one thing well. Instead of a "do everything" skill, create separate skills for distinct tasks.
-
-Write clear descriptions
-The description is how the agent decides whether to use your skill. Make it specific about what the skill does and when it's useful.
-
-Use scripts as black boxes
-If your skill includes scripts, encourage the agent to run them with --help first rather than reading the entire source code. This keeps the agent's context focused on the task.
-
-Include decision trees
-For complex skills, add a section that helps the agent choose the right approach based on the situation.
-
-Example: A code review skill
-Here's a simple skill that helps the agent review code:
-
----
-name: code-review
-description: Reviews code changes for bugs, style issues, and best practices. Use when reviewing PRs or checking code quality.
+name: my-custom-skill
+description: Reviews code changes for style, performance, and best practices. Use when evaluating PRs or running QA.
 ---
 
 # Code Review Skill
 
-When reviewing code, follow these steps:
+When reviewing code, follow these steps...
+```
 
-## Review checklist
+#### Fields Reference:
+- **`name`** *(Optional)*: A unique identifier for the skill (lowercase, hyphens for spaces). Defaults to the folder name.
+- **`description`** *(Required)*: A clear, concise third-person description of what the skill does and when to use it. This is what the agent reads when scanning available capabilities to match the user's intent.
 
-1. **Correctness**: Does the code do what it's supposed to?
-2. **Edge cases**: Are error conditions handled?
-3. **Style**: Does it follow project conventions?
-4. **Performance**: Are there obvious inefficiencies?
+> [!TIP]
+> Always include relevant keywords in the description (e.g. "Python, pytest, CI/CD") to help the agent recognize when the skill is appropriate.
 
-## How to provide feedback
+### Skill Folder Structure
 
-- Be specific about what needs to change
-- Explain why, not just what
-- Suggest alternatives when possible
+While `SKILL.md` is the only required file, you can organize a skill with supporting assets:
+
+```
+.agents/skills/my-custom-skill/
+├─── SKILL.md       # Main agent instructions (required)
+├─── META.yml       # Skill metadata, model routing & budgets (optional)
+├─── scripts/       # Helper scripts and automation tools (optional)
+├─── examples/      # Reference templates and code fixtures (optional)
+└─── resources/     # Additional system assets and guidelines (optional)
+```
+
+### How the Agent Uses Skills
+
+Skills are parsed using a **Progressive Disclosure** pattern to optimize context windows:
+
+1. **Discovery**: When a session starts, the agent scans all skill directories and reads ONLY the names and descriptions from the frontmatter.
+2. **Activation**: If a skill matched the user's query or trigger (e.g., the user types `/hyper-architect`), the agent reads the full `SKILL.md` content.
+3. **Execution**: The agent strictly follows the instructions and constraints defined in the skill file to execute the task.

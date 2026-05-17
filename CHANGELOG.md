@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-05-17
+
+### Added
+- **`hyper-init` skill**: Scaffolds a new project with standard repository documentation from generic templates.
+- **Project Templates**: Added generalized templates for `CHANGELOG.md`, `CITATION.cff`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `DEVELOPMENT.md`, `README.md`, and `SECURITY.md` in `.agents/schemas/project-templates/`.
+- **Standard Repo Files**: Bootstrapped the Hypergraph framework repository itself with the new `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `DEVELOPMENT.md`, and `CITATION.cff` files based on the new templates.
+
+### Changed
+- **`hyper-document` skill**: Updated to include guidelines for maintaining the new standard repository documents in sync with the templates.
+- **`README.md`**: Added `/hyper-init` instruction to the New Project setup guide.
+- **`AGENTS.md`**: Registered `/hyper-init` in the master available skills index.
+- **`GEMINI.md`**: Updated the list of available skills to include all 30 prefixed skills in alphabetical order, resolving stale legacy names.
+
 ## [0.4.2] - 2026-05-14
 
 ### Added

@@ -1,156 +1,41 @@
-# Hypergraph Coding Agent Framework (Coding 4.0)
+<div align="center">
+    <img src="./media/logo.png" alt="Hypergraph Coding Agent Framework Logo" width="200" height="200"/>
+    <h1>Hypergraph Coding Agent Framework (Coding 4.0)</h1>
+    <h3><em>A rigorously structured framework designed to solve the Specification Alignment Problem in AI-assisted coding.</em></h3>
+</div>
+
+<p align="center">
+    <strong>The Hypergraph Coding Agent Framework is the definitive implementation of the Coding 4.0 paradigm, shifting the developer's role from a writer of syntax to an architect of intent. By decoupling probabilistic reasoning from deterministic state management, it prevents context collapse and hallucinations in complex systems.</strong>
+</p>
+
+<p align="center">
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.4.3-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
+</p>
+
+---
+
+## Table of Contents
+
+- [🤔 What is Hypergraph Coding Agent Framework?](#-what-is-hypergraph-coding-agent-framework)
+- [⚡ Get Started](#-get-started)
+- [📚 Core Architecture](#-core-architecture)
+- [📂 Directory Structure](#-directory-structure)
+- [🤖 Supported Integrations & Commands](#-supported-integrations--commands)
+- [📖 Detailed Tutorials & Scripts](#-detailed-tutorials--scripts)
+- [📖 Standard Operating Procedure (SOP)](#-standard-operating-procedure-sop)
+- [🎯 Token Efficiency & Cost Optimization (v0.4.0)](#-token-efficiency--cost-optimization-v040)
+- [❓ Troubleshooting Overview](#-troubleshooting-overview)
+- [🗺️ Roadmap](#-roadmap)
+- [🤝 Support](#-support)
+- [📄 License](#-license)
+
+## 🤔 What is Hypergraph Coding Agent Framework?
 
 A rigorously structured framework designed to solve the **Specification Alignment Problem** in AI-assisted coding. The **Hypergraph Coding Agent Framework** is the definitive implementation of the **Coding 4.0** paradigm, shifting the developer's role from a writer of syntax to an architect of intent. By decoupling probabilistic reasoning from deterministic state management, it prevents context collapse and hallucinations in complex systems.
 
----
-
-## 🏗️ Core Architectural Pillars
-
-The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor of a rigorous, multi-resolution specification pipeline:
-
-1.  **Multi-Agent State Machines**: Specification is broken into discrete conversational phases managed by specialized agents (Architect, Red Team, Resolution, Auditor).
-2.  **The Serialized Hypergraph**: The system's "living memory." Decoupled from LLM context windows, it is serialized into a strict YAML file (`architecture.yml`) that maps files and abstraction layers as nodes and edges.
-3.  **Deterministic Graph Traversal**: Light-weight Python scripts calculate the "Blast Radius" of changes, forbidding LLMs from probabilistic traversal of complex architectures.
-4.  **Aggressive Lifecycle Management**: Active drafts are flushed/archived via scripts to prevent agents from ingesting outdated or conflicting context.
-5.  **Candidate Artifact Protocol**: A strict boundary for testing non-deterministic or novel LLM outputs via Human-in-the-Loop verification.
-6.  **Hybrid Model Orchestration**: Three-tier model routing (Opus for strategic reasoning, Sonnet for tactical tasks, Haiku for deterministic execution) with cost optimization (~50% reduction via intelligent tier selection) and per-skill override capability.
-7.  **Token Enforcement & Budget Management**: Thinking token ceilings per model with per-skill overrides; output token budgets (50k default) with task-splitting guidance; separate tracking of thinking, input, and output tokens.
-
----
-
-## 📁 Directory Structure
-
-### Central Source of Truth
--   `.agents/` — **All skill, rule, schema, and script content lives here.**
-    -   `skills/`: All 29 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
-    -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
-    -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
-    -   `rules/`: Always-on coding standards (Python, security, testing, packages).
-    -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
-
-### IDE Bridge Directories (thin, no duplicated content)
--   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`. Commands use the `hyper-` prefix (e.g. `/hyper-architect`).
--   `.windsurf/rules/` + `.windsurf/workflows/`: Windsurf rule and workflow bridges.
--   `.cursor/rules/`: Cursor `.mdc` rule bridges.
--   `.clinerules/`: Cline rule bridges.
--   `.roo/rules/` + `.roo/rules-code/`: Roo Code rule bridges.
-
-### Universal Standard
--   `AGENTS.md`: Cross-IDE always-on manifest (Windsurf, Cursor, Roo Code, GitHub Copilot, Zed).
--   `CLAUDE.md`: Claude Code-specific tool overrides (references `AGENTS.md`).
--   `GEMINI.md`: Gemini CLI-specific tool overrides (references `AGENTS.md`).
-
-### Spec and Test Directories
--   `spec/`
-    -   `active/`: Working drafts and Red Team reports (untrusted/temporary).
-    -   `compiled/`: Ground truth (SuperPRD, MiniPRDs, `architecture.yml`).
-    -   `archive/`: Historical context (blocked from agents via `.agentignore`).
--   `tests/`
-    -   `candidate_outputs/`: Unverified AI outputs for manual review.
-    -   `fixtures/`: Verified baselines for regression testing.
--   `docs/`: Human-readable guides (SOP, Tutorial, Whitepaper, Troubleshooting).
-
----
-
-## 🛠️ Deterministic Tooling
-
--   **Archival Script (`archive_specs.py`)**: Ensures the `spec/active/` directory is flushed after a loop, preventing context bloat.
--   **Hypergraph Updater (`hypergraph_updater.py`)**: Performs Breadth-First Search (BFS) on the `architecture.yml` to flag dependent nodes whenever the codebase is modified.
--   **Model Router (`model_router.py`)**: Routes skills to optimal Claude model tiers (Opus/Sonnet/Haiku) based on skill metadata, with fallback logic and version compatibility checking.
--   **Heuristic Classifier (`heuristic_classifier.py`)**: YAML-based rule engine for automatic model tier suggestions during skill creation.
--   **Skill Metadata System** (`meta_loader.py`, `override_manager.py`, `ceiling_resolver.py`): Manages per-skill configurations, model assignment overrides (single_run/permanent scope), and thinking token ceiling management.
--   **Token Enforcement** (`thinking_token_monitor.py`, `ceiling_enforcer.py`, `token_budget_checker.py`): Monitors thinking token usage against per-model ceilings, enforces 50k output token budgets, and suggests task-splitting for oversized tasks.
--   **Context Compaction Engine (`compaction_engine.py`, `interrupt_detector.py`)**: Automatically compacts debate transcripts while preserving trade-off reasoning; auto-detects and recovers from interruptions.
-
----
-
-## 📖 Standard Operating Procedure (SOP)
-
-*(For full details, see the [Master SOP](docs/MasterSOP.md))*
-
-The Hypergraph workflow is strictly sequential to prevent race conditions and graph corruption.
-
-### Phase -1: Legacy Onboarding (Existing Projects)
-1.  **Initialize**: Run `/hyper-discover` to scan code and populate `architecture.yml`.
-2.  **Baseline**: Run `/hyper-baseline` to generate the first `SuperPRD.md`.
-
-### Phase 1: The Specification Engine (Conversational)
-1.  **Requirements Extraction (`/hyper-architect`)**: Exhaustive interview asking max 2 questions per turn. Generates `Draft_PRD.md`.
-2.  **Adversarial Analysis (`/hyper-redteam`)**: Run in a **New Context Window**. Hunts for vulnerabilities and NFRs within the Hypergraph's Blast Radius. Generates `RedTeam_Report.md`.
-3.  **Trade-off Resolution (`/hyper-resolve`)**: Run in a **New Context Window**. Present forced trade-offs (Option A vs B). Compiles final `SuperPRD.md` and `MiniPRD` files.
-4.  **Memory Flush**: Run `python .agents/scripts/archive_specs.py [Feature_Name]` to clear active workspace.
-
-### Phase 2: The Execution Engine (Building)
-1.  **The Builder**: Prompt agent with a specific `MiniPRD`. Force execution of `hypergraph_updater.py` after code modification. Router automatically selects Haiku for routine tasks, Sonnet for complex reasoning.
-2.  **Contract Verification (`/hyper-audit`)**: Run in a **New Context Window**. Evaluates code against MiniPRD and reconciles the `architecture.yml` hypergraph.
-3.  **Context Clearing (`/hyper-clear`)**: Automatically triggered by `/hyper-audit` completion. Idempotently flushes conversation history; specs and metrics are preserved.
-
-### Phase 3: Novel Test Protocol (Human-in-the-Loop)
-1.  Outputs to `tests/candidate_outputs/`.
-2.  Manual review to verify correctness.
-3.  Move to `tests/fixtures/` and update MiniPRD test definition.
-
-### Phase 4: Cost Optimization Enforcement (Post-Execution)
-1.  **Token Budget Reconciliation**: Actual vs. estimated output tokens logged. Deviations >20% trigger investigation.
-2.  **Model Routing Feedback**: Haiku parity validated at scale. If audit pass rate stays ≥99%, cost savings realized (~50% reduction).
-3.  **Thinking Token Ceiling Review**: Monitor halt frequency. If >5% of executions halt due to thinking token overflow, escalate for per-skill override consideration.
-
----
-
-## 🎯 Token Efficiency & Cost Optimization (v0.4.0)
-
-The framework now includes a comprehensive cost optimization layer for hybrid model orchestration:
-
-### Model Routing & Tier Selection
-
-The framework automatically routes skills to the optimal Claude model:
-
-- **Haiku** (2k thinking ceiling): Routine, deterministic tasks (code generation, documentation). ~70% cost reduction vs. Opus.
-- **Sonnet** (10k thinking ceiling): Tactical reasoning, trade-off analysis, complex requirements. ~50% cost reduction vs. Opus.
-- **Opus** (20k thinking ceiling): Strategic architectural decisions, adversarial analysis, novel problem-solving.
-
-**How it works**: Each skill stores its assigned model in `.agents/skills/hyper-<name>/META.yml`. The router reads this metadata and invokes the skill on the assigned tier. Manual override capability with explicit scope (`--scope single_run` or `--scope permanent`) allows experimentation without foot-guns.
-
-**Example**:
-```yaml
-# .agents/skills/hyper-execute/META.yml
-assigned_model: haiku
-model_version: "claude-haiku-4-5-20251001"
-max_thinking_tokens: 2000
-```
-
-### Token Budget Enforcement
-
-The framework enforces ceilings to prevent runaway costs:
-
-- **Thinking Token Ceilings**: Per-model defaults (Opus 20k, Sonnet 10k, Haiku 2k) with optional per-skill overrides for legitimately complex tasks.
-- **Output Token Budget**: 50k ceiling per task. If a MiniPRD estimates >50k output tokens, the framework flags it and suggests splitting into atomic subtasks.
-- **Variance Tracking**: Post-execution reconciliation logs actual vs. estimated tokens. Deviations >20% trigger investigation to improve future estimates.
-
-**Token accounting is granular**: Thinking, input, and output tokens are tracked separately. The budget ceiling (50k) applies only to output tokens; thinking and input tokens are monitored for metrics but not constrained.
-
-### Context Compaction & Interruption Recovery
-
-When `/hyper-resolve` completes, the debate transcript is automatically compacted into a "Final Truth" document that preserves:
-
-- Both the Architect's and Red Team's positions
-- The final resolution and rationale
-- Risk mitigations
-- Link to the full archived transcript
-
-If `/hyper-resolve` is interrupted before compaction completes, `/hyper-execute` auto-detects and auto-compacts before proceeding, preventing context bloat.
-
-### Context Clearing
-
-The `/hyper-clear` command idempotently flushes conversation history at the end of `/hyper-audit`, preparing the session for the next feature cycle. Specs, metrics, and performance data are preserved. Calling `/hyper-clear` multiple times is safe (idempotent).
-
-### Persistent Rules in CLAUDE.md
-
-Static framework rules (schema definitions, confidence mandates, hypergraph specs) have been consolidated into `CLAUDE.md` to reduce per-message token overhead by ~10-15%. Migration deadline: 2026-06-17. Old schema files in `.agents/schemas/` are deprecated but remain available during the transition period.
-
----
-
-## 🚀 Setup
+## ⚡ Get Started
 
 ### New Project
 
@@ -163,6 +48,7 @@ Static framework rules (schema definitions, confidence mandates, hypergraph spec
     ```bash
     chmod +x .agents/scripts/*.py
     ```
+4.  **Scaffold Repository Docs**: Run `/hyper-init` to generate standard documentation (`README.md`, `CONTRIBUTING.md`, etc.) from templates.
 
 ### Installing into an Existing Repo
 
@@ -270,9 +156,63 @@ The uninstaller clones the framework to get the authoritative file list, then re
 
 > **Use case:** When the project you scaffolded with the framework is ready for independent development, uninstalling removes the framework's own skill files so they don't interfere with your project-specific agents — while leaving `spec/` and `tests/` intact for continued use.
 
----
+## 📚 Core Architecture
 
-## 🤖 AI Agent Integrations
+### Core Architectural Pillars
+
+The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor of a rigorous, multi-resolution specification pipeline:
+
+1.  **Multi-Agent State Machines**: Specification is broken into discrete conversational phases managed by specialized agents (Architect, Red Team, Resolution, Auditor).
+2.  **The Serialized Hypergraph**: The system's "living memory." Decoupled from LLM context windows, it is serialized into a strict YAML file (`architecture.yml`) that maps files and abstraction layers as nodes and edges.
+3.  **Deterministic Graph Traversal**: Light-weight Python scripts calculate the "Blast Radius" of changes, forbidding LLMs from probabilistic traversal of complex architectures.
+4.  **Aggressive Lifecycle Management**: Active drafts are flushed/archived via scripts to prevent agents from ingesting outdated or conflicting context.
+5.  **Candidate Artifact Protocol**: A strict boundary for testing non-deterministic or novel LLM outputs via Human-in-the-Loop verification.
+6.  **Hybrid Model Orchestration**: Three-tier model routing (Opus for strategic reasoning, Sonnet for tactical tasks, Haiku for deterministic execution) with cost optimization (~50% reduction via intelligent tier selection) and per-skill override capability.
+7.  **Token Enforcement & Budget Management**: Thinking token ceilings per model with per-skill overrides; output token budgets (50k default) with task-splitting guidance; separate tracking of thinking, input, and output tokens.
+
+### Deterministic Tooling
+
+-   **Archival Script (`archive_specs.py`)**: Ensures the `spec/active/` directory is flushed after a loop, preventing context bloat.
+-   **Hypergraph Updater (`hypergraph_updater.py`)**: Performs Breadth-First Search (BFS) on the `architecture.yml` to flag dependent nodes whenever the codebase is modified.
+-   **Model Router (`model_router.py`)**: Routes skills to optimal Claude model tiers (Opus/Sonnet/Haiku) based on skill metadata, with fallback logic and version compatibility checking.
+-   **Heuristic Classifier (`heuristic_classifier.py`)**: YAML-based rule engine for automatic model tier suggestions during skill creation.
+-   **Skill Metadata System** (`meta_loader.py`, `override_manager.py`, `ceiling_resolver.py`): Manages per-skill configurations, model assignment overrides (single_run/permanent scope), and thinking token ceiling management.
+-   **Token Enforcement** (`thinking_token_monitor.py`, `ceiling_enforcer.py`, `token_budget_checker.py`): Monitors thinking token usage against per-model ceilings, enforces 50k output token budgets, and suggests task-splitting for oversized tasks.
+-   **Context Compaction Engine (`compaction_engine.py`, `interrupt_detector.py`)**: Automatically compacts debate transcripts while preserving trade-off reasoning; auto-detects and recovers from interruptions.
+
+## 📂 Directory Structure
+
+### Central Source of Truth
+-   `.agents/` — **All skill, rule, schema, and script content lives here.**
+    -   `skills/`: All 29 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
+    -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
+    -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
+    -   `rules/`: Always-on coding standards (Python, security, testing, packages).
+    -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
+
+### IDE Bridge Directories (thin, no duplicated content)
+-   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`. Commands use the `hyper-` prefix (e.g. `/hyper-architect`).
+-   `.windsurf/rules/` + `.windsurf/workflows/`: Windsurf rule and workflow bridges.
+-   `.cursor/rules/`: Cursor `.mdc` rule bridges.
+-   `.clinerules/`: Cline rule bridges.
+-   `.roo/rules/` + `.roo/rules-code/`: Roo Code rule bridges.
+
+### Universal Standard
+-   `AGENTS.md`: Cross-IDE always-on manifest (Windsurf, Cursor, Roo Code, GitHub Copilot, Zed).
+-   `CLAUDE.md`: Claude Code-specific tool overrides (references `AGENTS.md`).
+-   `GEMINI.md`: Gemini CLI-specific tool overrides (references `AGENTS.md`).
+
+### Spec and Test Directories
+-   `spec/`
+    -   `active/`: Working drafts and Red Team reports (untrusted/temporary).
+    -   `compiled/`: Ground truth (SuperPRD, MiniPRDs, `architecture.yml`).
+    -   `archive/`: Historical context (blocked from agents via `.agentignore`).
+-   `tests/`
+    -   `candidate_outputs/`: Unverified AI outputs for manual review.
+    -   `fixtures/`: Verified baselines for regression testing.
+-   `docs/`: Human-readable guides (SOP, Tutorial, Whitepaper, Troubleshooting).
+
+## 🤖 Supported Integrations & Commands
 
 ### Architecture: No Duplication
 
@@ -309,7 +249,7 @@ Support via `.cursor/rules/*.mdc` with YAML frontmatter for glob-based activatio
 
 ### Cline
 
-Support via `.clinerules/` directory with rule bridges to `.agents/rules/`.
+Support via `.clinerules/` directory with plain markdown rule bridges to `.agents/rules/`.
 
 ### Roo Code
 
@@ -319,7 +259,93 @@ Support via `.roo/rules/` (all modes) and `.roo/rules-code/` (code mode only), w
 
 Support via `AGENTS.md` at the repository root, which is the universal always-on standard read by Copilot Workspace, Zed, and any IDE supporting the `AGENTS.md` protocol.
 
----
+## 📖 Detailed Tutorials & Scripts
+
+> [!NOTE]
+> Want to use this system programmatically in your own scripts, or need a deeper dive into the workflow?  
+> **Check out the comprehensive tutorials and guides in the [`docs/`](docs/) directory.**
+
+## 📖 Standard Operating Procedure (SOP)
+
+*(For full details, see the [Master SOP](docs/MasterSOP.md))*
+
+The Hypergraph workflow is strictly sequential to prevent race conditions and graph corruption.
+
+### Phase -1: Legacy Onboarding (Existing Projects)
+1.  **Initialize**: Run `/hyper-discover` to scan code and populate `architecture.yml`.
+2.  **Baseline**: Run `/hyper-baseline` to generate the first `SuperPRD.md`.
+
+### Phase 1: The Specification Engine (Conversational)
+1.  **Requirements Extraction (`/hyper-architect`)**: Exhaustive interview asking max 2 questions per turn. Generates `Draft_PRD.md`.
+2.  **Adversarial Analysis (`/hyper-redteam`)**: Run in a **New Context Window**. Hunts for vulnerabilities and NFRs within the Hypergraph's Blast Radius. Generates `RedTeam_Report.md`.
+3.  **Trade-off Resolution (`/hyper-resolve`)**: Run in a **New Context Window**. Present forced trade-offs (Option A vs B). Compiles final `SuperPRD.md` and `MiniPRD` files.
+4.  **Memory Flush**: Run `python .agents/scripts/archive_specs.py [Feature_Name]` to clear active workspace.
+
+### Phase 2: The Execution Engine (Building)
+1.  **The Builder**: Prompt agent with a specific `MiniPRD`. Force execution of `hypergraph_updater.py` after code modification. Router automatically selects Haiku for routine tasks, Sonnet for complex reasoning.
+2.  **Contract Verification (`/hyper-audit`)**: Run in a **New Context Window**. Evaluates code against MiniPRD and reconciles the `architecture.yml` hypergraph.
+3.  **Context Clearing (`/hyper-clear`)**: Automatically triggered by `/hyper-audit` completion. Idempotently flushes conversation history; specs and metrics are preserved.
+
+### Phase 3: Novel Test Protocol (Human-in-the-Loop)
+1.  Outputs to `tests/candidate_outputs/`.
+2.  Manual review to verify correctness.
+3.  Move to `tests/fixtures/` and update MiniPRD test definition.
+
+### Phase 4: Cost Optimization Enforcement (Post-Execution)
+1.  **Token Budget Reconciliation**: Actual vs. estimated output tokens logged. Deviations >20% trigger investigation.
+2.  **Model Routing Feedback**: Haiku parity validated at scale. If audit pass rate stays ≥99%, cost savings realized (~50% reduction).
+3.  **Thinking Token Ceiling Review**: Monitor halt frequency. If >5% of executions halt due to thinking token overflow, escalate for per-skill override consideration.
+
+## 🎯 Token Efficiency & Cost Optimization (v0.4.0)
+
+The framework now includes a comprehensive cost optimization layer for hybrid model orchestration:
+
+### Model Routing & Tier Selection
+
+The framework automatically routes skills to the optimal Claude model:
+
+- **Haiku** (2k thinking ceiling): Routine, deterministic tasks (code generation, documentation). ~70% cost reduction vs. Opus.
+- **Sonnet** (10k thinking ceiling): Tactical reasoning, trade-off analysis, complex requirements. ~50% cost reduction vs. Opus.
+- **Opus** (20k thinking ceiling): Strategic architectural decisions, adversarial analysis, novel problem-solving.
+
+**How it works**: Each skill stores its assigned model in `.agents/skills/hyper-<name>/META.yml`. The router reads this metadata and invokes the skill on the assigned tier. Manual override capability with explicit scope (`--scope single_run` or `--scope permanent`) allows experimentation without foot-guns.
+
+**Example**:
+```yaml
+# .agents/skills/hyper-execute/META.yml
+assigned_model: haiku
+model_version: "claude-haiku-4-5-20251001"
+max_thinking_tokens: 2000
+```
+
+### Token Budget Enforcement
+
+The framework enforces ceilings to prevent runaway costs:
+
+- **Thinking Token Ceilings**: Per-model defaults (Opus 20k, Sonnet 10k, Haiku 2k) with optional per-skill overrides for legitimately complex tasks.
+- **Output Token Budget**: 50k ceiling per task. If a MiniPRD estimates >50k output tokens, the framework flags it and suggests splitting into atomic subtasks.
+- **Variance Tracking**: Post-execution reconciliation logs actual vs. estimated tokens. Deviations >20% trigger investigation to improve future estimates.
+
+**Token accounting is granular**: Thinking, input, and output tokens are tracked separately. The budget ceiling (50k) applies only to output tokens; thinking and input tokens are monitored for metrics but not constrained.
+
+### Context Compaction & Interruption Recovery
+
+When `/hyper-resolve` completes, the debate transcript is automatically compacted into a "Final Truth" document that preserves:
+
+- Both the Architect's and Red Team's positions
+- The final resolution and rationale
+- Risk mitigations
+- Link to the full archived transcript
+
+If `/hyper-resolve` is interrupted before compaction completes, `/hyper-execute` auto-detects and auto-compacts before proceeding, preventing context bloat.
+
+### Context Clearing
+
+The `/hyper-clear` command idempotently flushes conversation history at the end of `/hyper-audit`, preparing the session for the next feature cycle. Specs, metrics, and performance data are preserved. Calling `/hyper-clear` multiple times is safe (idempotent).
+
+### Persistent Rules in CLAUDE.md
+
+Static framework rules (schema definitions, confidence mandates, hypergraph specs) have been consolidated into `CLAUDE.md` to reduce per-message token overhead by ~10-15%. Migration deadline: 2026-06-17. Old schema files in `.agents/schemas/` are deprecated but remain available during the transition period.
 
 ## ❓ Troubleshooting Overview
 
@@ -334,9 +360,7 @@ Support via `AGENTS.md` at the repository root, which is the universal always-on
 -   **Output Token Budget Exceeded**: Estimated output >50k tokens. Split MiniPRD into atomic subtasks (e.g., core logic, API endpoints, tests). Or override with `--force-proceed --reason "Large module necessary"` if justified.
 -   **High Cost Unexpectedly**: Check that skills are routing to correct model tier. Run `python .agents/scripts/model_router.py <skill_name>` to verify assignment. Use `/hyper-config set-model [skill] [model] --scope permanent` to adjust permanently.
 
----
-
-## Roadmap
+## 🗺️ Roadmap
 
 - [ ] Agent Compatibility
   - [x] Claude Code
@@ -349,3 +373,11 @@ Support via `AGENTS.md` at the repository root, which is the universal always-on
   - [x] Zed (via AGENTS.md)
   - [ ] Aider
   - [ ] Continue.dev
+
+## 🤝 Support
+
+For support, bug reports, or feature requests, please open a GitHub issue.
+
+## 📄 License
+
+This project is licensed under the terms of the MIT open source license. Please refer to the [LICENSE](./LICENSE) file for the full terms.
