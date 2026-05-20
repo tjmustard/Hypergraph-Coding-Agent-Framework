@@ -6,8 +6,8 @@ spec/active/*
 !spec/active/.gitkeep
 spec/archive/*
 !spec/archive/.gitkeep
-spec/compiled/*.yml
-!spec/compiled/architecture.yml
+spec/compiled/*
+!spec/compiled/.gitkeep
 
 # Tests: Candidate outputs should never be committed to the master template
 tests/candidate_outputs/*
