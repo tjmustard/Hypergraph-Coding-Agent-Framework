@@ -87,3 +87,13 @@ Framework ready for production deployment with hybrid model orchestration and co
 - Updated: `.agents/skills/hyper-document/SKILL.md` (integrated standard repo templates rules)
 - Updated: `skills-info.md` (added available skills index table)
 - Updated: `.agents/memory/activeContext.md` (sprint state tracking)
+**Maintenance & Cleanup** (2026-05-19)
+- [x] Removed `spec/compiled/` files from Git tracking to respect framework standards
+- [x] Deleted legacy integration tests in `tests/integration/`
+- [x] Updated `.gitignore` and `CHANGELOG.md`
+
+## Files Modified
+- Updated: `.gitignore`
+- Updated: `CHANGELOG.md`
+- Updated: `.agents/memory/activeContext.md`
+- Deleted: `tests/integration/test_*.md`

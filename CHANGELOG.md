@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Git Tracking**: Removed `spec/compiled/` files (`architecture.yml`, `SuperPRD.md`) from Git tracking to respect `.gitignore` and framework standards.
+
+### Removed
+- **Integration Tests**: Deleted legacy integration tests in `tests/integration/` as part of codebase cleanup.
+
 ## [0.4.3] - 2026-05-17
 
 ### Added
