@@ -9,5 +9,12 @@
       "Bash(gh *)",
       "Bash(touch *)"
     ]
+  },
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   }
 }

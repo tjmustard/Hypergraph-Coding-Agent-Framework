@@ -10,7 +10,7 @@ This enhanced skill automates the full git commit → push → (optional) PR cre
 
 **Key improvements over basic `git commit && git push`:**
 - AI-proposes commit message from CHANGELOG `[Unreleased]` + git diff (no typing required)
-- Timestamps all file mtimes to post-session time (IP protection)
+- Timestamps all file mtimes to post-session time
 - Displays transparency gate before any changes
 - HITL approval gates before each file modification and git command
 - Optionally creates a GitHub PR with auto-drafted description
@@ -21,7 +21,6 @@ This enhanced skill automates the full git commit → push → (optional) PR cre
 ## When to use this skill
 
 - After a Claude Code session, when you want to commit changes with an AI-suggested message based on your CHANGELOG
-- When you want IP protection (mtime timestamps reflect post-session time, not write time)
 - When you want to commit, push, and optionally create a PR in one unified workflow
 - Whenever you run `/hyper-publish [message]` or `/hyper-publish --dry-run`
 

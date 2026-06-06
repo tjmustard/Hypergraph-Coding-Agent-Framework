@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-06-06
+
+### Changed
+- **`.claude/settings.json`**: Added `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` env var (set to `60`) to trigger auto-compaction at 60% of context capacity rather than the default ~95%, improving token efficiency across long agent sessions.
+- **`.claude/settings.json`**: Added `attribution` block (`commit` and `pr` fields) for commit and PR attribution configuration.
+- **`hyper-publish` skill**: Removed IP protection framing from mtime-touching behavior description.
+
 ## [0.5.1] - 2026-06-06
 
 ### Added
