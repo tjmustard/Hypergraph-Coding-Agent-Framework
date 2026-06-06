@@ -7,11 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-06-06
+
+### Added
+- **`hyper-contextualize` skill**: Audits and fixes HACF agent instruction files (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) in installed projects to ensure HACF is framed as a development toolchain, not the project subject. Three fix modes: Replace with install templates, Inject framing banner only, or Per-file diff. Reports HACF bleed found in `README.md` without modifying it.
+- **`hyper-handoff` skill**: Compacts the current conversation into a structured handoff document saved to the OS temp directory. References existing artifacts (PRDs, commits, specs) by path rather than reproducing them. Includes a "Suggested Skills" section for the next session. Redacts sensitive information. Accepts an optional argument describing what the next session will focus on. Adapted from Matt Pocock's [`mattpocock/skills`](https://github.com/mattpocock/skills) (MIT License).
+- **`hyper-grill-docs` skill**: Relentless domain-sharpening interview that challenges terminology against `CONTEXT.md`, cross-references stated behavior against the codebase, stress-tests domain boundaries with concrete scenarios, and writes ADRs inline when decisions are hard-to-reverse, surprising, and trade-off-driven. Ships with `CONTEXT-FORMAT.md` and `ADR-FORMAT.md` format references. Adapted from Matt Pocock's [`mattpocock/skills`](https://github.com/mattpocock/skills) (MIT License).
+- **`ATTRIBUTION.txt`** files in `.agents/skills/hyper-handoff/` and `.agents/skills/hyper-grill-docs/` acknowledging source adaptation from Matt Pocock's skills repo.
+
+### Changed
+- **`hyper-architect` skill**: Redesigned interview mode — one question per turn (down from two), each question leads with a `Recommended: [X]` answer so the user can accept or redirect without composing answers from scratch. Codebase-first rule added: reads `architecture.yml` and existing code before asking anything derivable from the project state. Decision-tree traversal added: resolves dependencies depth-first before opening sibling branches.
+- **`install.sh`** success banners: Fixed stale command names (`/discover` → `/hyper-discover`, `/baseline` → `/hyper-baseline`); added `/hyper-contextualize` suggestion to both fresh-install and upgrade banners.
+- **`README.md`**: Added `## 🙏 Acknowledgements` section crediting Zevi Arnovitz (core workflow concept) and Matt Pocock (hyper-grill-docs, hyper-handoff, grill-me inspiration).
+
+## [0.5.0] - 2026-06-04
+
+### Added
+- **Dynamic Workflow Engine** — five new scripts enabling fully automated parallel MiniPRD execution:
+  - **`hyper_orchestrator.py`**: Fans each SuperPRD/MiniPRD pair out to an isolated Git branch via `ThreadPoolExecutor` (max 8 workers), spawns one Anthropic API subagent per pair, then runs a sequential rebase pipeline. Enforces global `fcntl` mutex, 6-point startup validation gate, API rate budget, idempotency via `_provenance` checks in `architecture.yml`, `SIGTERM`/`SIGINT` handler, structured JSON-Lines logging to `.agents/logs/`, and 50-entry `FAILED_WORKFLOWS.md` rotation.
+  - **`hyper_daemon.py`**: Execute → Audit → Oracle → Fix loop (max 5 iterations). Supports orchestrated mode (`--orchestrated` flag, called by `hyper_orchestrator`) and standalone mode. Enforces `stop_reason` guard (`TOKEN_OVERRUN` on `max_tokens`), `pytest --collect-only` pre-flight (`NO_TESTS_COLLECTED`), AST-based spec drift detection at 40% threshold (`SPEC_DRIFT`), and hard 5-iteration cap (`ORACLE_FAILURE`).
+  - **`hyper_fix.py`**: Bug-fix agent triangulating SuperPRD + MiniPRD + pytest error trace. Enforces prompt injection hardening via XML delimiters, pre-call token estimation (95% context ceiling guard), spec drift detection, and ORACLE_FAILURE delegation. Parses LLM patches via `# FILE: path` + fenced code blocks.
+  - **`hyper_resolve_conflict.py`**: AI conflict resolver for git rebase conflicts. Enforces file-type whitelist (`{.py, .md, .json, .toml}`), unconditional blocking of `architecture.yml/yaml`, confidence gate ≥ 85, post-resolution syntax validation (`ast.parse` / `yaml.safe_load` / `json.loads`), and write-only-on-pass semantics.
+  - **`semantic_graph_merger.py`**: Deterministic YAML merger for `architecture.yml` conflicts. Never uses AI. Enforces exclusive `fcntl` locks, duplicate-node conflict policy (identical = deduplicate, differing = `REBASE_CONFLICT` abort), extension normalization, 4-point post-merge schema validation, and pre-merge backup with restore on failure.
+- **`.agents/install-templates/`**: New directory containing project-facing versions of `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md`. Install templates add a "HACF as a Toolchain" framing banner (preventing agents in installed projects from conflating the user's project with the HACF framework), remove HACF-internal migration notices and upgrade-maintenance documentation, and preserve all schema definitions, skill references, and system mandates.
+- **`.python-version`**: Pinned Python 3.11+ required for framework scripts.
+- **Integration test suites** (30 tests): `test_dynamic_orchestrator.py` (10 tests covering mutex, startup validation, branch collision, TOKEN_OVERRUN, NO_TESTS_COLLECTED, hung worker timeout, SIGTERM, idempotency), `test_autonomous_resolution.py` (10 tests covering conflict resolver whitelist, binary detection, JSON decode guard, confidence assertion, confidence gate, syntax override, error field), `test_provenance_integration.py` (tests for `semantic_graph_merger` routing guard, duplicate node policies, schema validation, concurrent write protection, and pre-merge backup restore).
+
+### Changed
+- **`hypergraph_updater.py`**: Added provenance staging lifecycle subcommands (`write-provenance`, `merge-provenance`, `cleanup-provenance`) with exclusive `fcntl` locking.
+- **`install.sh`**: Added `FILE_SOURCE_OVERRIDE` associative array. IDE config files (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) are now installed from `.agents/install-templates/` rather than the repo root, ensuring installed projects receive project-framed agent instructions.
+- **`hyper_update_core.py`**: Added `SENSITIVE_FILE_UPSTREAM_SOURCES` dict. Upgrade comparison for `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` now reads from `.agents/install-templates/` in the upstream repo rather than the repo root, so upgrade diffs are computed against the correct install-template versions.
+- **`hyper-architect` skill**: Schema reference updated from `CLAUDE.md` to `AGENTS.md` (aligns with actual schema location in installed projects).
+- **`spec/compiled/architecture.yml`**: Six dirty nodes (`hypergraph_updater`, `hyper_orchestrator`, `hyper_daemon`, `hyper_fix`, `hyper_resolve_conflict`, `semantic_graph_merger`) reconciled to `clean` after Dynamic Workflow Engine audit.
+
 ### Fixed
 - **Git Tracking**: Removed `spec/compiled/` files (`architecture.yml`, `SuperPRD.md`) from Git tracking to respect `.gitignore` and framework standards.
+- **Context bleed in installed projects**: `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` installed into user projects were previously framed for HACF development, causing agents to conflate user projects with the HACF framework. Install templates now provide correct project-facing context.
 
 ### Removed
-- **Integration Tests**: Deleted legacy integration tests in `tests/integration/` as part of codebase cleanup.
+- **Legacy integration tests**: Pre-v0.5.0 integration test stubs in `tests/integration/` removed; replaced by the three new deterministic test suites above.
 
 ## [0.4.3] - 2026-05-17
 

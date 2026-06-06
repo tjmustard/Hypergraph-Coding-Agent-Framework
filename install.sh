@@ -39,6 +39,16 @@ IDE_DEFS=(
   "universal|Universal — AGENTS.md  (GitHub Copilot, Zed, and others)||AGENTS.md"
 )
 
+# Source path overrides: these files are installed from .agents/install-templates/ rather
+# than the repo root, so that the installed versions are framed for user projects rather
+# than for HACF framework development. The repo root versions remain unchanged and continue
+# to govern agents working on the HACF repo itself.
+declare -A FILE_SOURCE_OVERRIDE=(
+  ["CLAUDE.md"]=".agents/install-templates/CLAUDE.md"
+  ["AGENTS.md"]=".agents/install-templates/AGENTS.md"
+  ["GEMINI.md"]=".agents/install-templates/GEMINI.md"
+)
+
 # Always installed regardless of IDE selection
 CORE_DIRS=(".agents" "tests")
 CORE_FILES=(".agentignore")
@@ -318,15 +328,16 @@ fi
 if [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ]; then
   echo "📄  IDE config files:"
   for file in "${IDE_FILES_TO_INSTALL[@]}"; do
+    src="${FILE_SOURCE_OVERRIDE[$file]:-$file}"
     if [ -f "$file" ] && $UPGRADE_MODE; then
       if prompt_yn "Update '$file'?"; then
-        cp "$TMP_DIR/$file" "$file"
+        cp "$TMP_DIR/$src" "$file"
         echo "    ✅  $file updated."
       else
         echo "    ⏭️   $file skipped."
       fi
     else
-      cp "$TMP_DIR/$file" "$file"
+      cp "$TMP_DIR/$src" "$file"
       echo "    ✅  $file installed."
     fi
   done
@@ -421,16 +432,19 @@ if $UPGRADE_MODE; then
   echo "╔══════════════════════════════════════════════════════════╗"
   echo "║  ✅  Upgrade complete!                                   ║"
   echo "║                                                          ║"
-  echo "║  Tip: Run /refresh-memory to rebuild project context    ║"
+  echo "║  Tips:                                                   ║"
+  echo "║    • Run /hyper-refresh-memory to rebuild project context║"
+  echo "║    • Run /hyper-contextualize to verify agent framing   ║"
   echo "╚══════════════════════════════════════════════════════════╝"
 else
   echo "╔══════════════════════════════════════════════════════════╗"
   echo "║  ✅  Installation complete!                              ║"
   echo "║                                                          ║"
   echo "║  Next steps:                                             ║"
-  echo "║    1. Run /discover to scan your codebase               ║"
-  echo "║    2. Run /baseline to generate your first SuperPRD     ║"
+  echo "║    1. Run /hyper-discover to scan your codebase         ║"
+  echo "║    2. Run /hyper-baseline to generate your first PRD    ║"
   echo "║    3. See AGENTS.md for full usage instructions         ║"
+  echo "║    4. Run /hyper-contextualize to verify agent framing  ║"
   echo "╚══════════════════════════════════════════════════════════╝"
 fi
 echo ""

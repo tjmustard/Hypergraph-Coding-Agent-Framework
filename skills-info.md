@@ -32,6 +32,7 @@ The Hypergraph framework leverages a modular skill system to route specialized r
 | **`hyper-execute`** | `/hyper-execute` | Implements changes precisely against a compiled MiniPRD, updates hypergraph status, and triggers updater scripts. |
 | **`hyper-audit`** | `/hyper-audit` | Strictly verifies implementation correctness against its MiniPRD and reconciles the hypergraph state. |
 | **`hyper-clear`** | `/hyper-clear` | Idempotently flushes conversation context between build cycles while preserving specifications and metrics. |
+| **`hyper-contextualize`** | `/hyper-contextualize` | Audits `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` in installed projects to ensure HACF is framed as a development toolchain rather than the project subject. Offers Replace-with-template, Inject-banner, or Per-file-diff fix modes, and reports HACF bleed found in `README.md`. |
 
 ### Phase Any: Developer Productivity & Utilities
 | Skill Name | Slash Trigger | Description |
@@ -44,6 +45,8 @@ The Hypergraph framework leverages a modular skill system to route specialized r
 | **`hyper-create-skill`** | `/hyper-create-skill` | Converts an agent prompt or custom instruction set into a new structured skill for the framework. |
 | **`hyper-new-workflow`** | `/hyper-new-workflow` | Generates a new slash command workflow with accompanying IDE rule bridges. |
 | **`hyper-document`** | `/hyper-document` | Updates README, CHANGELOG, docs/, AGENTS.md, memory, and templates after code or skill changes. |
+| **`hyper-grill-docs`** | `/hyper-grill-docs` | Domain-sharpening interview that maintains `CONTEXT.md` (canonical glossary) and `docs/adr/` (Architecture Decision Records) inline as decisions crystallise. Challenges vague terminology, cross-references code against stated behavior, stress-tests domain boundaries with concrete scenarios, and gates ADR creation on hard-to-reverse + surprising + real-trade-off decisions. |
+| **`hyper-handoff`** | `/hyper-handoff` | Compacts the current conversation into a handoff document saved to the OS temp directory. References existing artifacts (PRDs, commits, specs) by path rather than reproducing them. Includes a "Suggested Skills" section for the next session. Pass an optional argument describing what the next session will focus on. |
 | **`hyper-session-update`** | `/hyper-session-update` | Syncs agent memory files (`activeContext.md`, `systemPatterns.md`, etc.) with the work done in the current session. |
 | **`hyper-update`** | `/hyper-update` | Smart-upgrade CLI to safely fetch upstream framework updates while preserving local rules customizations. |
 | **`hyper-refresh-memory`** | `/hyper-refresh-memory` | Rebuilds the agent's mental model and synchronization state by reading memory, rules, and source files. |

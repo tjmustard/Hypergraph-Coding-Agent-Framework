@@ -1,7 +1,14 @@
 # Hypergraph Coding Agent Framework — Agent Instructions
 
-> **Cross-IDE manifest.** This file is injected as always-on context by Windsurf, Cursor,
-> Roo Code, GitHub Copilot, and Zed. IDE-specific bridge files in `.claude/`, `.cursor/`,
+> **HACF as a Toolchain:** This project uses the Hypergraph Coding Agent Framework
+> (HACF) as its development toolchain. The skills in `.agents/skills/`, the scripts
+> in `.agents/scripts/`, and the schemas in `.agents/schemas/` are development tools —
+> they are **not** subjects of this project's plans, PRDs, or architecture docs.
+> When you create SuperPRDs, MiniPRDs, or architecture nodes, you are documenting
+> **this project**, not the HACF framework itself.
+>
+> Cross-IDE manifest: injected as always-on context by Windsurf, Cursor, Roo Code,
+> GitHub Copilot, and Zed. IDE-specific bridge files in `.claude/`, `.cursor/`,
 > `.windsurf/`, `.clinerules/`, and `.roo/` extend this base with tool-specific overrides.
 > For the human-facing usage guide, see `README.md`.
 
@@ -171,48 +178,6 @@ Temporarily override a skill's model assignment:
 
 ---
 
-## Framework Upgrade & Maintenance
-
-### Update your framework: `/hyper-update`
-
-This command safely upgrades your Hypergraph Framework installation while preserving customizations to CLAUDE.md, AGENTS.md, and IDE rules files. All replaced/merged files are backed up before mutation with timestamped directories in `.agents/.backup/`.
-
-**How it works:**
-1. Fetches the latest upstream framework from GitHub
-2. Verifies upstream commit with GPG signature (security-first)
-3. Auto-updates framework files (.agents/skills/, .agents/scripts/, spec/, tests/)
-4. Guides you through section-by-section merging of sensitive files (CLAUDE.md, AGENTS.md, IDE rules)
-5. Creates timestamped backups before any file mutation
-6. Logs all operations for audit trail
-
-**Example usage:**
-```bash
-/hyper-update
-```
-
-### Restore from backup: `/hyper-recover`
-
-Restore a file from a previous backup without manual file copying.
-
-**List available backups:**
-```bash
-/hyper-recover --list
-```
-
-**Restore a specific file from a specific date:**
-```bash
-/hyper-recover --file=CLAUDE.md --date=2026-05-04
-```
-
-Before restoring, the command creates a meta-backup of your current version, so you can always roll back.
-
-**Backup retention policy:**
-- Backups are retained for 30 days
-- Old backups are automatically removed on the next `/hyper-update` run
-- Check backup ages and expiration dates in the upgrade summary
-
----
-
 ## Framework Workflow (Quick Reference)
 
 ```
@@ -229,8 +194,8 @@ between adversarial agents (Red Team must not see Architect's conversation histo
 
 ## Schema Definitions (Persistent Rules)
 
-**Note:** These schemas are embedded in `AGENTS.md` to reduce per-message token overhead and ensure a single source of truth across all IDE integrations (Claude Code, Gemini CLI, Cursor, etc.).
-For the historical/deprecated versions, see `.agents/schemas/` directory.
+**Note:** These schemas define the document structures for **this project's** specifications.
+Use them when running `/hyper-architect`, `/hyper-resolve`, and `/hyper-execute`.
 
 ### SuperPRD Schema
 
@@ -341,18 +306,3 @@ nodes:
 - `clean` — Implementation verified against specification; ready for use
 - `dirty` — Recently modified; awaiting audit review
 - `needs_review` — Dependent on modified node; blast-radius mark
-
----
-
-## Migration Notice
-
-**Effective:** 2026-05-03  
-**Deadline:** 2026-06-17 (6-week deprecation period)
-
-All `.agents/schemas/` files have been migrated to `AGENTS.md` to reduce per-message context overhead and provide a single source of truth across all IDEs.
-Old files marked with `.deprecated` suffix; will be deleted after 2026-06-17.
-
-**For Developers:**
-- Update custom skills to reference "AGENTS.md: Schema Definitions" instead of `.agents/schemas/` files
-- See `docs/MIGRATION_RULES.md` for detailed migration guide
-- CI lint will enforce AGENTS.md-only references post-deadline

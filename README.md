@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.4.3-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.1-blue" alt="Latest Release"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
 </p>
@@ -173,22 +173,24 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 ### Deterministic Tooling
 
 -   **Archival Script (`archive_specs.py`)**: Ensures the `spec/active/` directory is flushed after a loop, preventing context bloat.
--   **Hypergraph Updater (`hypergraph_updater.py`)**: Performs Breadth-First Search (BFS) on the `architecture.yml` to flag dependent nodes whenever the codebase is modified.
+-   **Hypergraph Updater (`hypergraph_updater.py`)**: Performs Breadth-First Search (BFS) on the `architecture.yml` to flag dependent nodes whenever the codebase is modified. Also manages provenance staging lifecycle (`write-provenance`, `merge-provenance`, `cleanup-provenance` subcommands).
 -   **Model Router (`model_router.py`)**: Routes skills to optimal Claude model tiers (Opus/Sonnet/Haiku) based on skill metadata, with fallback logic and version compatibility checking.
 -   **Heuristic Classifier (`heuristic_classifier.py`)**: YAML-based rule engine for automatic model tier suggestions during skill creation.
 -   **Skill Metadata System** (`meta_loader.py`, `override_manager.py`, `ceiling_resolver.py`): Manages per-skill configurations, model assignment overrides (single_run/permanent scope), and thinking token ceiling management.
 -   **Token Enforcement** (`thinking_token_monitor.py`, `ceiling_enforcer.py`, `token_budget_checker.py`): Monitors thinking token usage against per-model ceilings, enforces 50k output token budgets, and suggests task-splitting for oversized tasks.
 -   **Context Compaction Engine (`compaction_engine.py`, `interrupt_detector.py`)**: Automatically compacts debate transcripts while preserving trade-off reasoning; auto-detects and recovers from interruptions.
+-   **Dynamic Workflow Engine** (`hyper_orchestrator.py`, `hyper_daemon.py`, `hyper_fix.py`, `hyper_resolve_conflict.py`, `semantic_graph_merger.py`): Parallel MiniPRD execution pipeline. The orchestrator fans each SuperPRD/MiniPRD pair out to an isolated Git branch via `ThreadPoolExecutor`, spawns one Anthropic API subagent per pair, then runs a sequential rebase pipeline with AI-assisted conflict resolution and deterministic YAML merging. The daemon drives the Execute → Audit → Oracle → Fix loop (max 5 iterations) with token overrun guards, spec drift detection, and hard iteration caps.
 
 ## 📂 Directory Structure
 
 ### Central Source of Truth
 -   `.agents/` — **All skill, rule, schema, and script content lives here.**
-    -   `skills/`: All 29 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
+    -   `skills/`: All 33 skill definitions (the source of truth for every IDE). Each skill directory uses the `hyper-` prefix (e.g. `hyper-architect/`, `hyper-redteam/`) to avoid collisions with project-specific skills in consumer repos.
     -   `schemas/`: Immutable templates for PRDs and the Hypergraph.
-    -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`).
+    -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`, and the Dynamic Workflow Engine).
     -   `rules/`: Always-on coding standards (Python, security, testing, packages).
     -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
+    -   `install-templates/`: Project-facing versions of `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md`. These are what `install.sh` copies into user projects — framed for building *with* the framework rather than describing the framework itself.
 
 ### IDE Bridge Directories (thin, no duplicated content)
 -   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`. Commands use the `hyper-` prefix (e.g. `/hyper-architect`).
@@ -231,7 +233,7 @@ All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads
 
 Native support via `CLAUDE.md` and `.claude/commands/`. Each command is a one-line bridge to `.agents/skills/`. See **[CLAUDE.md](./CLAUDE.md)** for Claude Code-specific tool overrides.
 
-Available slash commands: `/hyper-architect`, `/hyper-redteam`, `/hyper-resolve`, `/hyper-audit`, `/hyper-execute`, `/hyper-discover`, `/hyper-baseline`, `/hyper-clear`, `/hyper-document`, `/hyper-sop`, `/hyper-status`, `/hyper-consult-cto`, `/hyper-co-research`, `/hyper-deepdive`, `/hyper-publish`, and more — see `.claude/commands/` for the full list.
+Available slash commands: `/hyper-architect`, `/hyper-redteam`, `/hyper-resolve`, `/hyper-audit`, `/hyper-execute`, `/hyper-discover`, `/hyper-baseline`, `/hyper-clear`, `/hyper-document`, `/hyper-sop`, `/hyper-status`, `/hyper-consult-cto`, `/hyper-co-research`, `/hyper-deepdive`, `/hyper-publish`, `/hyper-grill-docs`, `/hyper-handoff`, `/hyper-contextualize`, and more — see `.claude/commands/` for the full list.
 
 > **Cost Optimization**: As of v0.4.0, the framework implements hybrid model orchestration. Skills automatically route to Haiku (routine tasks, ~70% cost savings), Sonnet (tactical reasoning), or Opus (complex architectural analysis) based on metadata and heuristic rules. Thinking token ceilings and output token budgets prevent runaway costs. See the Token Efficiency feature below.
 
@@ -276,7 +278,7 @@ The Hypergraph workflow is strictly sequential to prevent race conditions and gr
 2.  **Baseline**: Run `/hyper-baseline` to generate the first `SuperPRD.md`.
 
 ### Phase 1: The Specification Engine (Conversational)
-1.  **Requirements Extraction (`/hyper-architect`)**: Exhaustive interview asking max 2 questions per turn. Generates `Draft_PRD.md`.
+1.  **Requirements Extraction (`/hyper-architect`)**: One-question-at-a-time interview with recommended answers. Explores the codebase before asking anything derivable from existing code. Resolves design decisions depth-first. Generates `Draft_PRD.md`.
 2.  **Adversarial Analysis (`/hyper-redteam`)**: Run in a **New Context Window**. Hunts for vulnerabilities and NFRs within the Hypergraph's Blast Radius. Generates `RedTeam_Report.md`.
 3.  **Trade-off Resolution (`/hyper-resolve`)**: Run in a **New Context Window**. Present forced trade-offs (Option A vs B). Compiles final `SuperPRD.md` and `MiniPRD` files.
 4.  **Memory Flush**: Run `python .agents/scripts/archive_specs.py [Feature_Name]` to clear active workspace.
@@ -343,9 +345,11 @@ If `/hyper-resolve` is interrupted before compaction completes, `/hyper-execute`
 
 The `/hyper-clear` command idempotently flushes conversation history at the end of `/hyper-audit`, preparing the session for the next feature cycle. Specs, metrics, and performance data are preserved. Calling `/hyper-clear` multiple times is safe (idempotent).
 
-### Persistent Rules in CLAUDE.md
+### Schemas in AGENTS.md
 
-Static framework rules (schema definitions, confidence mandates, hypergraph specs) have been consolidated into `CLAUDE.md` to reduce per-message token overhead by ~10-15%. Migration deadline: 2026-06-17. Old schema files in `.agents/schemas/` are deprecated but remain available during the transition period.
+Schema definitions (SuperPRD, MiniPRD, architecture.yml) are embedded in `AGENTS.md` to reduce per-message token overhead. `CLAUDE.md` and `GEMINI.md` reference `AGENTS.md` as the canonical schema source.
+
+When installing into a project, `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` are copied from `.agents/install-templates/` rather than the HACF repo root. The install templates add a "HACF as a Toolchain" framing banner so agents in user projects understand these are development tools — not subjects of the user's own plans and architecture docs.
 
 ## ❓ Troubleshooting Overview
 
@@ -377,6 +381,11 @@ Static framework rules (schema definitions, confidence mandates, hypergraph spec
 ## 🤝 Support
 
 For support, bug reports, or feature requests, please open a GitHub issue.
+
+## 🙏 Acknowledgements
+
+- **[Zevi Arnovitz](https://zeviarnovitz.com/)** — the core Architect → Red Team → Resolve → Execute → Audit workflow that forms the backbone of this framework was shaped by his thinking and collaboration.
+- **[Matt Pocock](https://github.com/mattpocock)** — the `/hyper-grill-docs` and `/hyper-handoff` skills are adapted from his [`mattpocock/skills`](https://github.com/mattpocock/skills) repository (MIT License). The grill-me interview approach in `/hyper-architect` was also inspired by his work. His originals are excellent — go check them out.
 
 ## 📄 License
 
