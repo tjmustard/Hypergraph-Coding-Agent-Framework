@@ -97,3 +97,63 @@ Framework ready for production deployment with hybrid model orchestration and co
 - Updated: `CHANGELOG.md`
 - Updated: `.agents/memory/activeContext.md`
 - Deleted: `tests/integration/test_*.md`
+
+---
+
+**v0.5.0: Dynamic Workflow & Parallel Execution Engine** ✅ COMPLETE
+- [x] MiniPRD_Dynamic_Orchestrator.md → audited & archived (2026-06-03)
+- [x] MiniPRD_Autonomous_Resolution.md → implemented & tested
+- [x] MiniPRD_Provenance_Integration.md → implemented & tested
+- [x] Install templates separation → `.agents/install-templates/` created
+- [x] architecture.yml reconciled — all 6 dirty nodes → clean
+- [x] CHANGELOG.md & README.md updated, v0.5.0 documented
+
+## Files Modified (v0.5.0 sprint)
+- Created: `.agents/scripts/hyper_orchestrator.py` — parallel fan-out + rebase pipeline + FAILED_WORKFLOWS
+- Created: `.agents/scripts/hyper_daemon.py` — orchestrated/standalone loop, stop_reason guard, spec drift
+- Created: `.agents/scripts/hyper_fix.py` — triangulated fix prompt, spec drift detector, ORACLE_FAILURE cap
+- Created: `.agents/scripts/hyper_resolve_conflict.py` — confidence gate ≥85, whitelist, syntax check
+- Created: `.agents/scripts/semantic_graph_merger.py` — deterministic YAML merge, schema validation, locking
+- Patched: `.agents/scripts/hypergraph_updater.py` — provenance staging write/merge/cleanup subcommands
+- Patched: `.agents/scripts/hyper_update_core.py` — SENSITIVE_FILE_UPSTREAM_SOURCES for install templates
+- Created: `.agents/install-templates/CLAUDE.md`, `AGENTS.md`, `GEMINI.md` — project-framed install versions
+- Updated: `install.sh` — FILE_SOURCE_OVERRIDE map routes IDE files to install-templates/
+- Updated: `.agents/skills/hyper-architect/SKILL.md` — schema reference CLAUDE.md → AGENTS.md
+- Updated: `spec/compiled/architecture.yml` — 6 dirty nodes reconciled to clean
+- Created: `tests/integration/test_dynamic_orchestrator.py` (10 tests, all passing)
+- Created: `tests/integration/test_autonomous_resolution.py` (10 tests, all passing)
+- Created: `tests/integration/test_provenance_integration.py`
+- Created: `spec/active/FAILED_WORKFLOWS.md` — initial empty report file
+- Created: `.provenance_staging/.gitkeep` — staging directory
+- Updated: `README.md`, `CHANGELOG.md` — v0.5.0 documentation
+
+## Post-v0.5.0 Skill Additions (Unreleased)
+- [x] `hyper-contextualize` skill — audits/fixes HACF framing in installed projects
+- [x] `hyper-handoff` skill — compacts conversation into OS-temp handoff document
+- [x] `hyper-grill-docs` skill — domain sharpening with CONTEXT.md + ADR inline updates
+- [x] `hyper-architect` — redesigned to grill-me mode (1 question/turn, recommended answers, codebase-first, depth-first)
+- [x] `install.sh` banners — fixed stale command names, added /hyper-contextualize suggestion
+- [x] CHANGELOG.md [Unreleased] section updated with all above
+- [x] README.md — skill count updated (29→33), slash command list updated, architect SOP description updated
+
+## Files Modified (post-v0.5.0)
+- Created: `.agents/skills/hyper-contextualize/` (SKILL.md, META.yml)
+- Created: `.agents/skills/hyper-handoff/` (SKILL.md, META.yml)
+- Created: `.agents/skills/hyper-grill-docs/` (SKILL.md, META.yml, CONTEXT-FORMAT.md, ADR-FORMAT.md)
+- Created: `.claude/commands/hyper-contextualize.md`, `hyper-handoff.md`, `hyper-grill-docs.md`
+- Updated: `.agents/skills/hyper-architect/SKILL.md` — grill-me interview mode
+- Updated: `AGENTS.md`, `.agents/install-templates/AGENTS.md`, `skills-info.md` — new skill rows
+
+**v0.5.1 Release: Domain Sharpening & Handoff Skills** ✅ COMPLETE (2026-06-06)
+- [x] `hyper-contextualize` — audits/fixes HACF framing in installed projects
+- [x] `hyper-handoff` — compacts conversation into OS-temp handoff document (adapted from mattpocock/skills)
+- [x] `hyper-grill-docs` — domain sharpening with CONTEXT.md + ADR inline updates (adapted from mattpocock/skills)
+- [x] `hyper-architect` — grill-me redesign (1 question/turn, recommended answers, codebase-first, depth-first)
+- [x] `install.sh` banners — fixed stale command names, added /hyper-contextualize suggestion
+- [x] ATTRIBUTION.txt files in hyper-handoff/ and hyper-grill-docs/
+- [x] README.md Acknowledgements section (Zevi Arnovitz, Matt Pocock)
+- [x] CHANGELOG.md v0.5.1 promoted from [Unreleased]
+- [x] README.md badge updated to v0.5.1
+
+## Next Steps
+- Consider adding `hyper_orchestrator.py` invocation documentation to `docs/`
