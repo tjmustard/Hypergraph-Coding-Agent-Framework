@@ -4,19 +4,23 @@ set -euo pipefail
 # Hypergraph Coding Agent Framework — Installer / Upgrader
 #
 # Fresh install (interactive):
-#   curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh && bash install.sh
+#   curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/HACF-install.sh -o HACF-install.sh && bash HACF-install.sh
 #
 # Fresh install (non-interactive, all IDEs):
-#   curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash -s -- -y
+#   curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/HACF-install.sh | bash -s -- -y
 #
 # Install specific IDEs only:
-#   bash install.sh --ides="claude,windsurf"
+#   bash HACF-install.sh --ides="claude,windsurf"
 #
 # Upgrade (interactive prompts):
-#   bash install.sh
+#   bash HACF-install.sh
 #
 # Upgrade (accept all):
-#   bash install.sh -y
+#   bash HACF-install.sh -y
+#
+# Upgrade, preserving CLAUDE.md / GEMINI.md / AGENTS.md customizations:
+#   bash HACF-install.sh --preserve-custom
+#   bash HACF-install.sh -y --preserve-custom
 
 REPO_URL="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework.git"
 BRANCH="main"
@@ -58,11 +62,16 @@ CORE_FILES=(".agentignore")
 # ---------------------------------------------------------------------------
 AUTO_YES=false
 PRESELECTED_IDES=""   # empty = show menu; comma-separated IDs or "all"
+PRESERVE_CUSTOM=false
+
+# Agent instruction files users customize — protected by --preserve-custom
+CUSTOM_PROTECTED_FILES=("CLAUDE.md" "GEMINI.md" "AGENTS.md")
 
 for arg in "$@"; do
   case "$arg" in
-    -y|--yes)       AUTO_YES=true ;;
-    --ides=*)       PRESELECTED_IDES="${arg#--ides=}" ;;
+    -y|--yes)            AUTO_YES=true ;;
+    --ides=*)            PRESELECTED_IDES="${arg#--ides=}" ;;
+    --preserve-custom)   PRESERVE_CUSTOM=true ;;
   esac
 done
 
@@ -329,6 +338,10 @@ if [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ]; then
   echo "📄  IDE config files:"
   for file in "${IDE_FILES_TO_INSTALL[@]}"; do
     src="${FILE_SOURCE_OVERRIDE[$file]:-$file}"
+    if $PRESERVE_CUSTOM && [[ " ${CUSTOM_PROTECTED_FILES[*]} " == *" $file "* ]]; then
+      echo "    ⏭️   $file skipped (--preserve-custom)."
+      continue
+    fi
     if [ -f "$file" ] && $UPGRADE_MODE; then
       if prompt_yn "Update '$file'?"; then
         cp "$TMP_DIR/$src" "$file"

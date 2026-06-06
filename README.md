@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.1-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.3-blue" alt="Latest Release"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
 </p>
@@ -55,7 +55,7 @@ A rigorously structured framework designed to solve the **Specification Alignmen
 Download and run the installer from your project root:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh -o install.sh && bash install.sh
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/HACF-install.sh -o HACF-install.sh && bash HACF-install.sh
 ```
 
 The interactive installer will:
@@ -67,16 +67,16 @@ The interactive installer will:
 
 ```bash
 # Interactive menu — choose which IDEs to install
-bash install.sh
+bash HACF-install.sh
 
 # Install specific IDEs only (comma-separated IDs)
-bash install.sh --ides="claude,windsurf"
+bash HACF-install.sh --ides="claude,windsurf"
 
 # Install all IDEs, accept all prompts automatically
-bash install.sh -y
+bash HACF-install.sh -y
 
 # Non-interactive (e.g. curl | bash) — installs all IDEs, skips .gitignore prompt
-curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/install.sh | bash -s -- -y
+curl -sSL https://raw.githubusercontent.com/tjmustard/Hypergraph-Coding-Agent-Framework/main/HACF-install.sh | bash -s -- -y
 ```
 
 Available IDE IDs: `claude`, `antigravity`, `windsurf`, `cursor`, `cline`, `roo`, `universal`
@@ -87,10 +87,13 @@ Re-running the script against a repo that already has `.agents/` installed switc
 
 ```bash
 # Interactive — prompts yes/no per directory and file
-bash install.sh
+bash HACF-install.sh
 
 # Non-interactive — accepts all updates automatically
-bash install.sh -y
+bash HACF-install.sh -y
+
+# Non-interactive — update framework internals only; preserve CLAUDE.md, GEMINI.md, AGENTS.md
+bash HACF-install.sh -y --preserve-custom
 ```
 
 **What gets installed:**
@@ -144,15 +147,15 @@ See [AGENTS.md](AGENTS.md) for full upgrade documentation.
 To remove the framework from a project without affecting your work:
 
 ```bash
-bash uninstall.sh        # interactive — confirms before removing
-bash uninstall.sh -y     # non-interactive — removes without prompting
+bash HACF-uninstall.sh        # interactive — confirms before removing
+bash HACF-uninstall.sh -y     # non-interactive — removes without prompting
 ```
 
 The uninstaller clones the framework to get the authoritative file list, then removes every file it installed. Key behaviours:
 
 - **`spec/` and `tests/` are never touched** — your compiled specs, active drafts, candidate outputs, and fixtures are preserved.
 - **Non-empty directories are kept** — if you added custom skills or files inside a framework directory (e.g. `.agents/skills/hyper-myskill/`), that directory stays.
-- **Re-install at any time** — run `install.sh` again to restore the full framework.
+- **Re-install at any time** — run `HACF-install.sh` again to restore the full framework.
 
 > **Use case:** When the project you scaffolded with the framework is ready for independent development, uninstalling removes the framework's own skill files so they don't interfere with your project-specific agents — while leaving `spec/` and `tests/` intact for continued use.
 
@@ -190,7 +193,7 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
     -   `scripts/`: Deterministic state management tools (`hypergraph_updater.py`, `archive_specs.py`, and the Dynamic Workflow Engine).
     -   `rules/`: Always-on coding standards (Python, security, testing, packages).
     -   `memory/`: Project context files (`activeContext`, `productContext`, `systemPatterns`).
-    -   `install-templates/`: Project-facing versions of `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md`. These are what `install.sh` copies into user projects — framed for building *with* the framework rather than describing the framework itself.
+    -   `install-templates/`: Project-facing versions of `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md`. These are what `HACF-install.sh` copies into user projects — framed for building *with* the framework rather than describing the framework itself.
 
 ### IDE Bridge Directories (thin, no duplicated content)
 -   `.claude/commands/`: Claude Code slash commands — each is a one-line bridge to `.agents/skills/`. Commands use the `hyper-` prefix (e.g. `/hyper-architect`).

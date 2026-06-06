@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-06-06
+
+### Changed
+- **`install.sh`**: Renamed to `HACF-install.sh` for clearer project identity and to avoid collisions with other tools' install scripts.
+- **`uninstall.sh`**: Renamed to `HACF-uninstall.sh` for consistency with the above rename.
+- **`HACF-install.sh`**: Added `--preserve-custom` flag. When set, skips overwriting `CLAUDE.md`, `GEMINI.md`, and `AGENTS.md` during upgrades — preserving per-project agent instruction customizations while still updating `.agents/`, `.claude/commands/`, and other bridge directories. Compatible with `-y` for non-interactive upgrades.
+- **`README.md`**: Updated all installer references from `install.sh`/`uninstall.sh` to `HACF-install.sh`/`HACF-uninstall.sh`; added `--preserve-custom` usage to the Upgrading section.
+
 ## [0.5.2] - 2026-06-06
 
 ### Changed

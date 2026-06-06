@@ -11,8 +11,8 @@ set -euo pipefail
 #   tests/  — your candidate outputs and fixtures
 #
 # Usage:
-#   bash uninstall.sh           # interactive
-#   bash uninstall.sh -y        # remove all without prompting
+#   bash HACF-uninstall.sh           # interactive
+#   bash HACF-uninstall.sh -y        # remove all without prompting
 
 REPO_URL="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework.git"
 BRANCH="main"
@@ -22,7 +22,7 @@ TMP_DIR="$(mktemp -d)"
 PROTECTED_DIRS=("spec" "tests")
 
 # These files at the repo root are never removed by uninstall
-PROTECTED_FILES=("install.sh" "uninstall.sh" "README.md" "CHANGELOG.md")
+PROTECTED_FILES=("HACF-install.sh" "HACF-uninstall.sh" "README.md" "CHANGELOG.md")
 
 # ---------------------------------------------------------------------------
 # Flags
@@ -168,6 +168,6 @@ echo "╔═══════════════════════�
 echo "║  ✅  Uninstall complete!                                 ║"
 echo "║                                                          ║"
 echo "║  spec/ and tests/ were not touched.                      ║"
-echo "║  Re-run install.sh to restore the framework at any time. ║"
+echo "║  Re-run HACF-install.sh to restore the framework.        ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""

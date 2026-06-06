@@ -165,7 +165,7 @@ Sensitive files are:
 - User runs `/hyper-update` to upgrade the framework.
 - The local installation is already complete (`.agents/` exists).
 - The user wants to pull upstream improvements while keeping customizations.
-- After running `install.sh` upgrade mode fails to merge safely.
+- After running `HACF-install.sh` upgrade mode fails to merge safely.
 
 ---
 
