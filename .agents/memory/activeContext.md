@@ -155,5 +155,25 @@ Framework ready for production deployment with hybrid model orchestration and co
 - [x] CHANGELOG.md v0.5.1 promoted from [Unreleased]
 - [x] README.md badge updated to v0.5.1
 
+**Post-v0.5.3 Maintenance (2026-06-16)** ✅ COMPLETE
+- [x] Added `hyper-process-document` skill — retrospective session process documentation saved to `spec/process/`
+- [x] Renamed `hyper-tutorial` → `hyper-tutorial-run` (trigger `/hyper-tutorial-run`)
+- [x] Added `tests/fixtures/*` to `.gitignore` (matching existing `tests/candidate_outputs/` pattern)
+- [x] Created `spec/process/` directory with `.gitkeep`
+- [x] Updated CHANGELOG.md [Unreleased], skills-info.md, README.md (skill count 33→34), AGENTS.md, install-templates/AGENTS.md
+
+## Files Modified (2026-06-16 session)
+- Created: `.agents/skills/hyper-process-document/SKILL.md`
+- Created: `.claude/commands/hyper-process-document.md`
+- Created: `spec/process/.gitkeep`
+- Renamed: `.agents/skills/hyper-tutorial/` → `.agents/skills/hyper-tutorial-run/`
+- Renamed: `.claude/commands/hyper-tutorial.md` → `.claude/commands/hyper-tutorial-run.md`
+- Updated: `.gitignore` — added tests/fixtures/ protection
+- Updated: `AGENTS.md` — added hyper-process-document row
+- Updated: `.agents/install-templates/AGENTS.md` — hyper-tutorial→hyper-tutorial-run, added hyper-process-document
+- Updated: `skills-info.md` — same changes
+- Updated: `README.md` — skill count 33→34
+- Updated: `CHANGELOG.md` — [Unreleased] entries
+
 ## Next Steps
 - Consider adding `hyper_orchestrator.py` invocation documentation to `docs/`

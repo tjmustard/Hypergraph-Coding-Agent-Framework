@@ -9,9 +9,11 @@ spec/archive/*
 spec/compiled/*
 !spec/compiled/.gitkeep
 
-# Tests: Candidate outputs should never be committed to the master template
+# Tests: Candidate outputs and fixtures should never be committed to the master template
 tests/candidate_outputs/*
 !tests/candidate_outputs/.gitkeep
+tests/fixtures/*
+!tests/fixtures/.gitkeep
 
 # Python: Standard environment and cache ignores
 __pycache__/
