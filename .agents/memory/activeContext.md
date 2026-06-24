@@ -175,5 +175,30 @@ Framework ready for production deployment with hybrid model orchestration and co
 - Updated: `README.md` — skill count 33→34
 - Updated: `CHANGELOG.md` — [Unreleased] entries
 
+**v0.5.4: Ruff Standards, pyproject.toml Template & Installer Improvements** ✅ COMPLETE (2026-06-23)
+- [x] Added `ruff` lint + Google docstring convention to all rule files (python.md, testing.md, package-management.md)
+- [x] Created `.agents/schemas/project-templates/pyproject.toml` (ruff config template with placeholder substitution)
+- [x] Created `pyproject.toml` in HACF root with ruff config
+- [x] Updated `/hyper-init` to scaffold `pyproject.toml` (Step 2b) and run `uv add --dev ruff/pytest`
+- [x] Created `.agents/scripts/pre-commit` hook (ruff lint + format check)
+- [x] HACF-install.sh: diff display before upgrade prompt for IDE files
+- [x] HACF-install.sh: offer `git init` on fresh install when no .git detected
+- [x] HACF-install.sh: install pre-commit hook into .git/hooks/pre-commit
+- [x] HACF-install.sh: added spec/process/ to scaffold loop
+- [x] README.md, CHANGELOG.md updated for v0.5.4
+
+## Files Modified (v0.5.4 session)
+- Modified: `.agents/rules/python.md` — added linting configuration section
+- Modified: `.agents/rules/testing.md` — added lint as mandatory step
+- Modified: `.agents/rules/package-management.md` — added required dev dependencies
+- Modified: `.agents/skills/hyper-init/SKILL.md` — added Step 2b for pyproject.toml
+- Created: `.agents/schemas/project-templates/pyproject.toml`
+- Created: `.agents/scripts/pre-commit`
+- Created: `pyproject.toml` (HACF root)
+- Created: `uv.lock`
+- Modified: `HACF-install.sh` — four changes (diff+prompt, git init, pre-commit hook, spec/process/)
+- Updated: `README.md`, `CHANGELOG.md`, `.agents/memory/activeContext.md`
+
 ## Next Steps
 - Consider adding `hyper_orchestrator.py` invocation documentation to `docs/`
+- 607 pre-existing ruff errors in `.agents/scripts/` — 261 auto-fixable with `uv run ruff check --fix .`; remaining (D103 missing docstrings, E501 line-too-long) need manual attention

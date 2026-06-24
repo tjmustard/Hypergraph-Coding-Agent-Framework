@@ -1,0 +1,26 @@
+[project]
+name = "hypergraph-coding-agent-framework"
+version = "0.5.3"
+description = "A multi-agent AI coding framework using hypergraph state management."
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "D"]
+ignore = ["D100", "D104"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["agents"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.19",
+]

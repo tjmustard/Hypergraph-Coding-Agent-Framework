@@ -19,6 +19,16 @@
 - **Criteria**:
   - 100% Success Rate.
 
+### 4. Lint (Mandatory)
+Run before every PR — both must exit 0:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+```
+
+Lint failures block PR the same way test failures do.
+
 ## Rules
 - **No Regression**: Every bug fix requires a test case.
 - **CI/CD**: Tests must pass in the `uv` environment.

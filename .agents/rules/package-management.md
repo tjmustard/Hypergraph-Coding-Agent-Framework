@@ -16,6 +16,14 @@ description: Standard for Package Management using uv
   - *Bad*: Manually editing `pyproject.toml` (unless necessary for config).
 - **Dev Dependencies**: Use `uv add --dev <package>` for testing/linting tools.
 
+### Required Dev Dependencies
+Every project must include:
+
+```bash
+uv add --dev ruff    # linter + formatter (Google docstyle via pyproject.toml config)
+uv add --dev pytest  # test runner
+```
+
 ## 3. Environment
 - **Virtual Environment**: `uv` manages the venv specifically for this project.
 - **Execution**: Run scripts via `uv run <script>` or ensure the venv is activated.

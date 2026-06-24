@@ -148,11 +148,18 @@ for cmd in git pip; do
   fi
 done
 
-if [ ! -d ".git" ] && ! $UPGRADE_MODE; then
+if [ ! -d ".git" ]; then
   echo "⚠️  Warning: No git repository detected in the current directory."
-  if ! prompt_yn "Install anyway?"; then
-    echo "Aborted."
-    exit 0
+  if is_tty && ! $AUTO_YES; then
+    if prompt_yn "Initialize a git repository here (git init)?"; then
+      git init
+      echo "    ✅  git repository initialized."
+    else
+      if ! prompt_yn "Continue install without git?"; then
+        echo "Aborted."
+        exit 0
+      fi
+    fi
   fi
 fi
 
@@ -281,7 +288,7 @@ echo ""
 # Scaffold spec/ directory structure (never copy framework content)
 # ---------------------------------------------------------------------------
 echo "📁  Spec directory scaffold:"
-for spec_dir in spec/active spec/archive spec/compiled; do
+for spec_dir in spec/active spec/archive spec/compiled spec/process; do
   if [ -d "$spec_dir" ]; then
     echo "    ✓  $spec_dir/ already exists."
   else
@@ -343,11 +350,18 @@ if [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ]; then
       continue
     fi
     if [ -f "$file" ] && $UPGRADE_MODE; then
-      if prompt_yn "Update '$file'?"; then
-        cp "$TMP_DIR/$src" "$file"
-        echo "    ✅  $file updated."
+      if diff -q "$TMP_DIR/$src" "$file" > /dev/null 2>&1; then
+        echo "    ✓  $file already up to date."
       else
-        echo "    ⏭️   $file skipped."
+        echo "    📋  Changes in $file:"
+        diff --unified=3 "$file" "$TMP_DIR/$src" || true
+        echo ""
+        if prompt_yn "Update '$file'?"; then
+          cp "$TMP_DIR/$src" "$file"
+          echo "    ✅  $file updated."
+        else
+          echo "    ⏭️   $file skipped."
+        fi
       fi
     else
       cp "$TMP_DIR/$src" "$file"
@@ -363,6 +377,8 @@ fi
 echo "🔧  Setting script permissions..."
 chmod +x .agents/scripts/*.py
 echo "    ✅  .agents/scripts/*.py"
+chmod +x .agents/scripts/pre-commit 2>/dev/null || true
+echo "    ✅  .agents/scripts/pre-commit"
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -434,6 +450,36 @@ if [ ${#GITIGNORE_CANDIDATES[@]} -gt 0 ]; then
     else
       echo "    ℹ️   All entries were already present in .gitignore."
     fi
+  fi
+  echo ""
+fi
+
+# ---------------------------------------------------------------------------
+# Git pre-commit hook
+# ---------------------------------------------------------------------------
+if [ -d ".git" ]; then
+  echo "🔧  Git pre-commit hook:"
+  HOOK_SRC=".agents/scripts/pre-commit"
+  HOOK_DST=".git/hooks/pre-commit"
+
+  if [ ! -f "$HOOK_SRC" ]; then
+    echo "    ⚠️  $HOOK_SRC not found — skipping."
+  elif [ -f "$HOOK_DST" ] && $UPGRADE_MODE; then
+    if diff -q "$HOOK_SRC" "$HOOK_DST" > /dev/null 2>&1; then
+      echo "    ✓  pre-commit hook already up to date."
+    else
+      if prompt_yn "Update pre-commit hook?"; then
+        cp "$HOOK_SRC" "$HOOK_DST"
+        chmod +x "$HOOK_DST"
+        echo "    ✅  .git/hooks/pre-commit updated."
+      else
+        echo "    ⏭️   pre-commit hook skipped."
+      fi
+    fi
+  else
+    cp "$HOOK_SRC" "$HOOK_DST"
+    chmod +x "$HOOK_DST"
+    echo "    ✅  .git/hooks/pre-commit installed."
   fi
   echo ""
 fi

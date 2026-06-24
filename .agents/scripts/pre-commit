@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# HACF pre-commit hook — lint check (installed by HACF-install.sh)
+set -euo pipefail
+
+if ! command -v uv &>/dev/null; then
+  echo "⚠️  uv not found — skipping lint check."
+  exit 0
+fi
+
+echo "🔍  ruff lint..."
+uv run ruff check . || { echo "❌  Lint failed. Run: uv run ruff check ."; exit 1; }
+uv run ruff format --check . || { echo "❌  Format check failed. Run: uv run ruff format ."; exit 1; }
+echo "✅  Lint passed."
