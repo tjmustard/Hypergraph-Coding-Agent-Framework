@@ -199,6 +199,18 @@ Framework ready for production deployment with hybrid model orchestration and co
 - Modified: `HACF-install.sh` — four changes (diff+prompt, git init, pre-commit hook, spec/process/)
 - Updated: `README.md`, `CHANGELOG.md`, `.agents/memory/activeContext.md`
 
+**v0.5.5: Tutorial Audit Skill** ✅ COMPLETE (2026-06-24)
+- [x] Created `hyper-tutorial-audit` skill — post-run audit that interviews the user and generates a constraint-aware goal prompt for a fix session
+- [x] Registered in AGENTS.md, install-templates/AGENTS.md, skills-info.md, README.md (skill count 35)
+- [x] CHANGELOG.md and README.md badge updated to v0.5.5
+
+## Files Modified (v0.5.5 session)
+- Created: `.agents/skills/hyper-tutorial-audit/SKILL.md`
+- Created: `.claude/commands/hyper-tutorial-audit.md`
+- Updated: `AGENTS.md`, `.agents/install-templates/AGENTS.md`, `skills-info.md` — new skill row
+- Updated: `README.md` — skill count 34→35, badge v0.5.4→v0.5.5
+- Updated: `CHANGELOG.md` — v0.5.5 block
+
 ## Next Steps
 - Consider adding `hyper_orchestrator.py` invocation documentation to `docs/`
 - 607 pre-existing ruff errors in `.agents/scripts/` — 261 auto-fixable with `uv run ruff check --fix .`; remaining (D103 missing docstrings, E501 line-too-long) need manual attention

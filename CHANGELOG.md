@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-06-24
+
+### Added
+- **`hyper-tutorial-audit` skill**: Run after `/hyper-tutorial-run` to turn tutorial failures into a structured, constraint-aware goal prompt. Interviews the user (max 2 questions per round) about their goal and what the fix agent may/may not change, reviews failures already visible in the conversation context, and generates a paste-ready prompt for a new Claude Code fix session. Never re-runs tutorial commands; read-only during the audit phase. Optionally saves the goal prompt to `tutorials/<name>/audit_<YYYY-MM-DD>.md`.
+
 ## [0.5.4] - 2026-06-23
 
 ### Added
