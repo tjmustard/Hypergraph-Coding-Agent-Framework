@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-07-03
+
+### Added
+- **`HACF-install.sh` — mode selection menu**: Interactive upgrade mode now presents a numbered menu (full / skills-only / system-only / IDE-only / repair / dry-run) before proceeding. Fresh installs skip the menu and run the full install automatically.
+- **`HACF-install.sh` — `--mode=` flag**: All six modes are accessible non-interactively via `--mode=<full|skills|system|ide|repair|dry-run>` for CI and scripted use.
+- **`HACF-install.sh` — dry-run mode**: Prints every action that would be taken (`[DRY-RUN] would copy …`) without modifying any files.
+- **`HACF-install.sh` — skills-only mode**: Updates `.agents/skills/` and the IDE skill bridge directories (`.claude/commands/`, `.windsurf/workflows/`) without touching system dirs, static IDE rules, or config files.
+- **`HACF-install.sh` — system-only mode**: Updates `.agents/scripts/`, `.agents/schemas/`, `.agents/config/`, `.agents/rules/`, `.agents/install-templates/`, `tests/`, `.agentignore`, and the git pre-commit hook — without touching `.agents/skills/` or skill bridges.
+- **`HACF-install.sh` — IDE-only mode**: Updates IDE directories and config files (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) without touching `.agents/`.
+- **`HACF-install.sh` — repair mode**: Installs only missing pieces; skips any file or directory already present. Safe to run on a partial install without overwriting customizations.
+- **`HACF-install.sh` — `SKILL_BRIDGE_DIRS`**: New array (`".claude/commands"`, `".windsurf/workflows"`) listing IDE directories that contain per-skill bridge files. Skills mode auto-detects which of these are installed and syncs only those.
+- **`HACF-install.sh` — `AGENT_SYSTEM_SUBDIRS`**: New array enumerating system subdirectories within `.agents/` (`scripts`, `schemas`, `config`, `rules`, `install-templates`). Excludes `memory/` (user-generated content) and `skills/` (managed separately).
+
+### Changed
+- **`HACF-install.sh`**: Refactored linear install body into named functions (`install_system_dirs`, `install_skills_dir`, `install_skill_bridges`, `install_core_dirs`, `install_core_files`, `install_ide_dirs`, `install_ide_files`, `set_permissions`, `install_python_deps`, `install_hook`) routed by `case "$MODE"`.
+- **`HACF-install.sh`**: IDE selection menu is skipped for `skills` and `system` modes, which do not require IDE context.
+- **`HACF-install.sh`**: `.gitignore` update prompt is shown only for modes that install IDE files (`install`, `full`, `ide`, `repair`, `dry-run`).
+- **`HACF-install.sh`**: Done banner adapts to the active mode (e.g. "Skills update complete!", "System update complete!").
+
 ## [0.5.5] - 2026-06-24
 
 ### Added

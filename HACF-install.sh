@@ -12,15 +12,23 @@ set -euo pipefail
 # Install specific IDEs only:
 #   bash HACF-install.sh --ides="claude,windsurf"
 #
-# Upgrade (interactive prompts):
+# Upgrade (interactive — shows mode selection menu):
 #   bash HACF-install.sh
 #
-# Upgrade (accept all):
+# Upgrade (accept all, full update):
 #   bash HACF-install.sh -y
 #
 # Upgrade, preserving CLAUDE.md / GEMINI.md / AGENTS.md customizations:
 #   bash HACF-install.sh --preserve-custom
 #   bash HACF-install.sh -y --preserve-custom
+#
+# Targeted update modes (non-interactive):
+#   bash HACF-install.sh --mode=full      # system + skills (default upgrade)
+#   bash HACF-install.sh --mode=skills    # .agents/skills/ + IDE skill bridges only
+#   bash HACF-install.sh --mode=system    # scripts, schemas, hooks, rules (not skills)
+#   bash HACF-install.sh --mode=ide       # IDE dirs/files only
+#   bash HACF-install.sh --mode=repair    # install only missing pieces
+#   bash HACF-install.sh --mode=dry-run   # preview what would change, touch nothing
 
 REPO_URL="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework.git"
 BRANCH="main"
@@ -30,7 +38,7 @@ TMP_DIR="$(mktemp -d)"
 # IDE Definitions
 # Format: "id|Display Name|directories (space-sep)|files (space-sep)"
 #
-# .agents/ and core dirs (spec/, tests/, docs/) are ALWAYS installed.
+# .agents/ and core dirs (spec/, tests/) are handled separately.
 # These entries define only the IDE-specific additions.
 # ---------------------------------------------------------------------------
 IDE_DEFS=(
@@ -43,35 +51,46 @@ IDE_DEFS=(
   "universal|Universal — AGENTS.md  (GitHub Copilot, Zed, and others)||AGENTS.md"
 )
 
+# IDE subdirectories that contain per-skill bridge files.
+# These are synced alongside .agents/skills/ in skills-only mode.
+SKILL_BRIDGE_DIRS=(".claude/commands" ".windsurf/workflows")
+
 # Source path overrides: these files are installed from .agents/install-templates/ rather
 # than the repo root, so that the installed versions are framed for user projects rather
-# than for HACF framework development. The repo root versions remain unchanged and continue
-# to govern agents working on the HACF repo itself.
+# than for HACF framework development.
 declare -A FILE_SOURCE_OVERRIDE=(
   ["CLAUDE.md"]=".agents/install-templates/CLAUDE.md"
   ["AGENTS.md"]=".agents/install-templates/AGENTS.md"
   ["GEMINI.md"]=".agents/install-templates/GEMINI.md"
 )
 
-# Always installed regardless of IDE selection
-CORE_DIRS=(".agents" "tests")
+# Core dirs/files installed in addition to .agents/ (always, regardless of IDE selection)
+CORE_DIRS=("tests")
 CORE_FILES=(".agentignore")
+
+# System subdirectories within .agents/ (everything except skills/).
+# .agents/memory/ is intentionally excluded — it contains user-generated content.
+AGENT_SYSTEM_SUBDIRS=("scripts" "schemas" "config" "rules" "install-templates")
+
+# Agent instruction files users customize — protected by --preserve-custom
+CUSTOM_PROTECTED_FILES=("CLAUDE.md" "GEMINI.md" "AGENTS.md")
 
 # ---------------------------------------------------------------------------
 # Flags
 # ---------------------------------------------------------------------------
 AUTO_YES=false
-PRESELECTED_IDES=""   # empty = show menu; comma-separated IDs or "all"
+PRESELECTED_IDES=""
 PRESERVE_CUSTOM=false
-
-# Agent instruction files users customize — protected by --preserve-custom
-CUSTOM_PROTECTED_FILES=("CLAUDE.md" "GEMINI.md" "AGENTS.md")
+DRY_RUN=false
+REPAIR_MODE=false
+MODE=""
 
 for arg in "$@"; do
   case "$arg" in
     -y|--yes)            AUTO_YES=true ;;
     --ides=*)            PRESELECTED_IDES="${arg#--ides=}" ;;
     --preserve-custom)   PRESERVE_CUSTOM=true ;;
+    --mode=*)            MODE="${arg#--mode=}" ;;
   esac
 done
 
@@ -98,22 +117,50 @@ prompt_yn() {
   [[ "$reply" =~ ^[Yy]$ ]]
 }
 
-ide_id()          { echo "${1%%|*}"; }
-ide_display()     { echo "${1}" | cut -d'|' -f2; }
-ide_dirs()        { echo "${1}" | cut -d'|' -f3; }
-ide_files()       { echo "${1}" | cut -d'|' -f4; }
+ide_id()      { echo "${1%%|*}"; }
+ide_display() { echo "${1}" | cut -d'|' -f2; }
+ide_dirs()    { echo "${1}" | cut -d'|' -f3; }
+ide_files()   { echo "${1}" | cut -d'|' -f4; }
 
-# Parse a comma-separated IDE string into an array of IDs
 parse_ide_list() {
   local input="$1"
   echo "${input//,/ }"
 }
 
-# Check if an ID is in a space-separated list
 contains_id() {
   local id="$1"; shift
   local list="$*"
   [[ " $list " == *" $id "* ]]
+}
+
+# Dry-run aware copy helpers
+do_copy_dir() {
+  local src="$1" dst="$2"
+  if $DRY_RUN; then
+    echo "    [DRY-RUN] would copy dir: $src → $dst"
+  elif [ -d "$dst" ]; then
+    cp -r "$src/." "$dst/"
+  else
+    cp -r "$src" "$dst"
+  fi
+}
+
+do_copy_file() {
+  local src="$1" dst="$2"
+  if $DRY_RUN; then
+    echo "    [DRY-RUN] would copy file: $src → $dst"
+  else
+    cp "$src" "$dst"
+  fi
+}
+
+do_mkdir() {
+  local dir="$1"
+  if $DRY_RUN; then
+    echo "    [DRY-RUN] would mkdir -p: $dir"
+  else
+    mkdir -p "$dir"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -137,6 +184,55 @@ else
   echo "🆕  No existing installation found — running fresh install."
 fi
 echo ""
+
+# Fresh install always runs the full install — skip mode selection entirely
+if ! $UPGRADE_MODE; then
+  MODE="install"
+fi
+
+# ---------------------------------------------------------------------------
+# Mode Selection (upgrade only)
+# ---------------------------------------------------------------------------
+if $UPGRADE_MODE && [[ -z "$MODE" ]]; then
+  if $AUTO_YES || ! is_tty; then
+    MODE="full"
+    echo "🤖  Update mode: full (auto/non-interactive)"
+    echo ""
+  else
+    echo "📋  Select update mode:"
+    echo ""
+    echo "    1) Full update            — system + skills  (recommended)"
+    echo "    2) Skills only            — .agents/skills/ + IDE skill bridges"
+    echo "    3) System only            — scripts, schemas, hooks, rules (not skills)"
+    echo "    4) IDE files only         — .claude/, .windsurf/, CLAUDE.md, etc."
+    echo "    5) Repair / verify        — install only missing pieces"
+    echo "    6) Dry-run preview        — show what would change, touch nothing"
+    echo ""
+    read -r -p "    Selection [1]: " raw_mode
+    echo ""
+    case "${raw_mode:-1}" in
+      1) MODE="full" ;;
+      2) MODE="skills" ;;
+      3) MODE="system" ;;
+      4) MODE="ide" ;;
+      5) MODE="repair" ;;
+      6) MODE="dry-run" ;;
+      *) echo "    ⚠️  Invalid selection, defaulting to full."; MODE="full" ;;
+    esac
+    echo "    ✅  Mode: $MODE"
+    echo ""
+  fi
+fi
+
+if [[ "$MODE" == "dry-run" ]]; then
+  DRY_RUN=true
+  echo "🔍  DRY-RUN mode — no files will be modified."
+  echo ""
+fi
+
+if [[ "$MODE" == "repair" ]]; then
+  REPAIR_MODE=true
+fi
 
 # ---------------------------------------------------------------------------
 # Preflight checks
@@ -165,87 +261,92 @@ fi
 
 # ---------------------------------------------------------------------------
 # IDE Selection
+# Skills-only and system-only modes don't need IDE selection — they either
+# auto-detect installed bridge dirs or don't touch IDE files at all.
 # ---------------------------------------------------------------------------
 SELECTED_IDE_IDS=""
+NEEDS_IDE_SELECTION=true
+[[ "$MODE" == "skills" || "$MODE" == "system" ]] && NEEDS_IDE_SELECTION=false
 
-if $AUTO_YES || ! is_tty; then
-  # Non-interactive / auto: install all IDEs
-  for def in "${IDE_DEFS[@]}"; do
-    id=$(ide_id "$def")
-    SELECTED_IDE_IDS="$SELECTED_IDE_IDS $id"
-  done
-  echo "🤖  IDE selection: all (auto/non-interactive)"
-  echo ""
-elif [[ -n "$PRESELECTED_IDES" ]]; then
-  # --ides flag provided
-  if [[ "$PRESELECTED_IDES" == "all" ]]; then
+if $NEEDS_IDE_SELECTION; then
+  if $AUTO_YES || ! is_tty; then
     for def in "${IDE_DEFS[@]}"; do
-      SELECTED_IDE_IDS="$SELECTED_IDE_IDS $(ide_id "$def")"
+      id=$(ide_id "$def")
+      SELECTED_IDE_IDS="$SELECTED_IDE_IDS $id"
     done
-    echo "🤖  IDE selection: all (--ides=all)"
+    echo "🤖  IDE selection: all (auto/non-interactive)"
+    echo ""
+  elif [[ -n "$PRESELECTED_IDES" ]]; then
+    if [[ "$PRESELECTED_IDES" == "all" ]]; then
+      for def in "${IDE_DEFS[@]}"; do
+        SELECTED_IDE_IDS="$SELECTED_IDE_IDS $(ide_id "$def")"
+      done
+      echo "🤖  IDE selection: all (--ides=all)"
+    else
+      SELECTED_IDE_IDS=$(parse_ide_list "$PRESELECTED_IDES")
+      echo "🤖  IDE selection: $SELECTED_IDE_IDS (from --ides flag)"
+    fi
+    echo ""
   else
-    SELECTED_IDE_IDS=$(parse_ide_list "$PRESELECTED_IDES")
-    echo "🤖  IDE selection: $SELECTED_IDE_IDS (from --ides flag)"
-  fi
-  echo ""
-else
-  # Interactive: show menu
-  echo "🖥️   Select the Agentic Coding IDE(s) to install support for."
-  echo "    Enter the numbers separated by spaces, or type 'a' for all."
-  echo ""
-  i=1
-  for def in "${IDE_DEFS[@]}"; do
-    display=$(ide_display "$def")
-    dirs=$(ide_dirs "$def")
-    files=$(ide_files "$def")
-    artifacts=""
-    [[ -n "$dirs" ]]  && artifacts="$dirs/"
-    [[ -n "$files" ]] && artifacts="$artifacts  $files"
-    printf "    %d) %-38s  %s\n" "$i" "$display" "$artifacts"
-    ((i++))
-  done
-  echo ""
-  read -r -p "    Selection [a = all]: " raw_selection
-  echo ""
-
-  if [[ "$raw_selection" == "a" || "$raw_selection" == "A" || "$raw_selection" == "all" ]]; then
+    echo "🖥️   Select the Agentic Coding IDE(s) to install support for."
+    echo "    Enter the numbers separated by spaces, or type 'a' for all."
+    echo ""
+    i=1
     for def in "${IDE_DEFS[@]}"; do
-      SELECTED_IDE_IDS="$SELECTED_IDE_IDS $(ide_id "$def")"
+      display=$(ide_display "$def")
+      dirs=$(ide_dirs "$def")
+      files=$(ide_files "$def")
+      artifacts=""
+      [[ -n "$dirs" ]]  && artifacts="$dirs/"
+      [[ -n "$files" ]] && artifacts="$artifacts  $files"
+      printf "    %d) %-38s  %s\n" "$i" "$display" "$artifacts"
+      ((i++))
     done
-  else
-    for num in $raw_selection; do
-      if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le "${#IDE_DEFS[@]}" ]; then
-        idx=$(( num - 1 ))
-        id=$(ide_id "${IDE_DEFS[$idx]}")
-        SELECTED_IDE_IDS="$SELECTED_IDE_IDS $id"
-      else
-        echo "    ⚠️  Ignoring invalid selection: $num"
-      fi
-    done
-  fi
+    echo ""
+    read -r -p "    Selection [a = all]: " raw_selection
+    echo ""
 
-  if [[ -z "${SELECTED_IDE_IDS// /}" ]]; then
-    echo "❌  No valid IDEs selected. Aborting."
-    exit 1
-  fi
+    if [[ "$raw_selection" == "a" || "$raw_selection" == "A" || "$raw_selection" == "all" ]]; then
+      for def in "${IDE_DEFS[@]}"; do
+        SELECTED_IDE_IDS="$SELECTED_IDE_IDS $(ide_id "$def")"
+      done
+    else
+      for num in $raw_selection; do
+        if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le "${#IDE_DEFS[@]}" ]; then
+          idx=$(( num - 1 ))
+          id=$(ide_id "${IDE_DEFS[$idx]}")
+          SELECTED_IDE_IDS="$SELECTED_IDE_IDS $id"
+        else
+          echo "    ⚠️  Ignoring invalid selection: $num"
+        fi
+      done
+    fi
 
-  echo "    ✅  Selected: $SELECTED_IDE_IDS"
-  echo ""
+    if [[ -z "${SELECTED_IDE_IDS// /}" ]]; then
+      echo "❌  No valid IDEs selected. Aborting."
+      exit 1
+    fi
+
+    echo "    ✅  Selected: $SELECTED_IDE_IDS"
+    echo ""
+  fi
 fi
 
-# Collect all IDE-specific dirs and files to install
+# Collect IDE-specific dirs and files to install
 IDE_DIRS_TO_INSTALL=()
 IDE_FILES_TO_INSTALL=()
 
-for def in "${IDE_DEFS[@]}"; do
-  id=$(ide_id "$def")
-  if contains_id "$id" $SELECTED_IDE_IDS; then
-    dirs=$(ide_dirs "$def")
-    files=$(ide_files "$def")
-    [[ -n "$dirs" ]]  && IDE_DIRS_TO_INSTALL+=("$dirs")
-    [[ -n "$files" ]] && IDE_FILES_TO_INSTALL+=("$files")
-  fi
-done
+if $NEEDS_IDE_SELECTION; then
+  for def in "${IDE_DEFS[@]}"; do
+    id=$(ide_id "$def")
+    if contains_id "$id" $SELECTED_IDE_IDS; then
+      dirs=$(ide_dirs "$def")
+      files=$(ide_files "$def")
+      [[ -n "$dirs" ]]  && IDE_DIRS_TO_INSTALL+=("$dirs")
+      [[ -n "$files" ]] && IDE_FILES_TO_INSTALL+=("$files")
+    fi
+  done
+fi
 
 # ---------------------------------------------------------------------------
 # Clone framework
@@ -265,91 +366,202 @@ if [ -d ".agents/workflows" ] && $UPGRADE_MODE; then
   echo ""
 fi
 
-# ---------------------------------------------------------------------------
-# Install core directories (always)
-# ---------------------------------------------------------------------------
-echo "📁  Core framework directories:"
-for dir in "${CORE_DIRS[@]}"; do
-  if [ -d "$dir" ] && $UPGRADE_MODE; then
-    if prompt_yn "Update '$dir/'?"; then
-      cp -r "$TMP_DIR/$dir/." "$dir/"
-      echo "    ✅  $dir/ updated."
+# ===========================================================================
+# Installation functions
+# ===========================================================================
+
+install_spec_scaffold() {
+  echo "📁  Spec directory scaffold:"
+  for spec_dir in spec/active spec/archive spec/compiled spec/process; do
+    if [ -d "$spec_dir" ]; then
+      echo "    ✓  $spec_dir/ already exists."
     else
-      echo "    ⏭️   $dir/ skipped."
+      do_mkdir "$spec_dir"
+      $DRY_RUN || echo "    ✅  $spec_dir/ created."
     fi
-  else
-    cp -r "$TMP_DIR/$dir" "$dir"
-    echo "    ✅  $dir/ installed."
-  fi
-done
-echo ""
+  done
+  echo ""
+}
 
-# ---------------------------------------------------------------------------
-# Scaffold spec/ directory structure (never copy framework content)
-# ---------------------------------------------------------------------------
-echo "📁  Spec directory scaffold:"
-for spec_dir in spec/active spec/archive spec/compiled spec/process; do
-  if [ -d "$spec_dir" ]; then
-    echo "    ✓  $spec_dir/ already exists."
-  else
-    mkdir -p "$spec_dir"
-    echo "    ✅  $spec_dir/ created."
-  fi
-done
-echo ""
-
-# ---------------------------------------------------------------------------
-# Install core files (always)
-# ---------------------------------------------------------------------------
-echo "📄  Core config files:"
-for file in "${CORE_FILES[@]}"; do
-  if [ -f "$file" ] && $UPGRADE_MODE; then
-    if prompt_yn "Update '$file'?"; then
-      cp "$TMP_DIR/$file" "$file"
-      echo "    ✅  $file updated."
-    else
-      echo "    ⏭️   $file skipped."
-    fi
-  else
-    cp "$TMP_DIR/$file" "$file"
-    echo "    ✅  $file installed."
-  fi
-done
-echo ""
-
-# ---------------------------------------------------------------------------
-# Install IDE-specific directories
-# ---------------------------------------------------------------------------
-if [ ${#IDE_DIRS_TO_INSTALL[@]} -gt 0 ]; then
-  echo "🖥️   IDE directories:"
-  for dir in "${IDE_DIRS_TO_INSTALL[@]}"; do
-    if [ -d "$dir" ] && $UPGRADE_MODE; then
+install_core_dirs() {
+  echo "📁  Core framework directories:"
+  for dir in "${CORE_DIRS[@]}"; do
+    if $REPAIR_MODE; then
+      if [ -d "$dir" ]; then
+        echo "    ✓  $dir/ already present."
+        continue
+      fi
+      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      $DRY_RUN || echo "    ✅  $dir/ installed (was missing)."
+    elif [ -d "$dir" ] && $UPGRADE_MODE; then
       if prompt_yn "Update '$dir/'?"; then
-        cp -r "$TMP_DIR/$dir/." "$dir/"
-        echo "    ✅  $dir/ updated."
+        do_copy_dir "$TMP_DIR/$dir" "$dir"
+        $DRY_RUN || echo "    ✅  $dir/ updated."
       else
         echo "    ⏭️   $dir/ skipped."
       fi
     else
-      cp -r "$TMP_DIR/$dir" "$dir"
-      echo "    ✅  $dir/ installed."
+      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      $DRY_RUN || echo "    ✅  $dir/ installed."
     fi
   done
   echo ""
-fi
+}
 
-# ---------------------------------------------------------------------------
-# Install IDE-specific files
-# ---------------------------------------------------------------------------
-if [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ]; then
+install_system_dirs() {
+  echo "⚙️   System directories (.agents/ — excluding skills):"
+  do_mkdir ".agents"
+  for subdir in "${AGENT_SYSTEM_SUBDIRS[@]}"; do
+    local src="$TMP_DIR/.agents/$subdir"
+    local dst=".agents/$subdir"
+    [ -d "$src" ] || continue
+    if $REPAIR_MODE; then
+      if [ -d "$dst" ]; then
+        echo "    ✓  .agents/$subdir/ already present."
+        continue
+      fi
+      do_copy_dir "$src" "$dst"
+      $DRY_RUN || echo "    ✅  .agents/$subdir/ installed (was missing)."
+    elif [ -d "$dst" ] && $UPGRADE_MODE; then
+      if prompt_yn "Update '.agents/$subdir/'?"; then
+        do_copy_dir "$src" "$dst"
+        $DRY_RUN || echo "    ✅  .agents/$subdir/ updated."
+      else
+        echo "    ⏭️   .agents/$subdir/ skipped."
+      fi
+    else
+      do_copy_dir "$src" "$dst"
+      $DRY_RUN || echo "    ✅  .agents/$subdir/ installed."
+    fi
+  done
+  echo ""
+}
+
+install_skills_dir() {
+  echo "🧠  Skills (.agents/skills/):"
+  do_mkdir ".agents"
+  local src="$TMP_DIR/.agents/skills"
+  local dst=".agents/skills"
+  if $REPAIR_MODE; then
+    if [ -d "$dst" ]; then
+      echo "    ✓  .agents/skills/ already present."
+    else
+      do_copy_dir "$src" "$dst"
+      $DRY_RUN || echo "    ✅  .agents/skills/ installed (was missing)."
+    fi
+  elif [ -d "$dst" ] && $UPGRADE_MODE; then
+    if prompt_yn "Update '.agents/skills/'?"; then
+      do_copy_dir "$src" "$dst"
+      $DRY_RUN || echo "    ✅  .agents/skills/ updated."
+    else
+      echo "    ⏭️   .agents/skills/ skipped."
+    fi
+  else
+    do_copy_dir "$src" "$dst"
+    $DRY_RUN || echo "    ✅  .agents/skills/ installed."
+  fi
+  echo ""
+}
+
+install_skill_bridges() {
+  echo "🔗  IDE skill bridges:"
+  local found=false
+  for bridge_dir in "${SKILL_BRIDGE_DIRS[@]}"; do
+    local src="$TMP_DIR/$bridge_dir"
+    [ -d "$src" ] || continue
+    if [ -d "$bridge_dir" ]; then
+      found=true
+      if $REPAIR_MODE; then
+        echo "    ✓  $bridge_dir/ already present."
+      elif $UPGRADE_MODE; then
+        if prompt_yn "Update '$bridge_dir/'?"; then
+          do_copy_dir "$src" "$bridge_dir"
+          $DRY_RUN || echo "    ✅  $bridge_dir/ updated."
+        else
+          echo "    ⏭️   $bridge_dir/ skipped."
+        fi
+      else
+        do_copy_dir "$src" "$bridge_dir"
+        $DRY_RUN || echo "    ✅  $bridge_dir/ installed."
+      fi
+    else
+      echo "    ⏭️   $bridge_dir/ not installed in this project — skipping."
+    fi
+  done
+  if ! $found; then
+    echo "    ℹ️   No skill bridge directories found in this project."
+  fi
+  echo ""
+}
+
+install_core_files() {
+  echo "📄  Core config files:"
+  for file in "${CORE_FILES[@]}"; do
+    if $REPAIR_MODE; then
+      if [ -f "$file" ]; then
+        echo "    ✓  $file already present."
+        continue
+      fi
+      do_copy_file "$TMP_DIR/$file" "$file"
+      $DRY_RUN || echo "    ✅  $file installed (was missing)."
+    elif [ -f "$file" ] && $UPGRADE_MODE; then
+      if prompt_yn "Update '$file'?"; then
+        do_copy_file "$TMP_DIR/$file" "$file"
+        $DRY_RUN || echo "    ✅  $file updated."
+      else
+        echo "    ⏭️   $file skipped."
+      fi
+    else
+      do_copy_file "$TMP_DIR/$file" "$file"
+      $DRY_RUN || echo "    ✅  $file installed."
+    fi
+  done
+  echo ""
+}
+
+install_ide_dirs() {
+  [ ${#IDE_DIRS_TO_INSTALL[@]} -gt 0 ] || return
+  echo "🖥️   IDE directories:"
+  for dir in "${IDE_DIRS_TO_INSTALL[@]}"; do
+    if $REPAIR_MODE; then
+      if [ -d "$dir" ]; then
+        echo "    ✓  $dir/ already present."
+        continue
+      fi
+      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      $DRY_RUN || echo "    ✅  $dir/ installed (was missing)."
+    elif [ -d "$dir" ] && $UPGRADE_MODE; then
+      if prompt_yn "Update '$dir/'?"; then
+        do_copy_dir "$TMP_DIR/$dir" "$dir"
+        $DRY_RUN || echo "    ✅  $dir/ updated."
+      else
+        echo "    ⏭️   $dir/ skipped."
+      fi
+    else
+      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      $DRY_RUN || echo "    ✅  $dir/ installed."
+    fi
+  done
+  echo ""
+}
+
+install_ide_files() {
+  [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ] || return
   echo "📄  IDE config files:"
   for file in "${IDE_FILES_TO_INSTALL[@]}"; do
-    src="${FILE_SOURCE_OVERRIDE[$file]:-$file}"
+    local src="${FILE_SOURCE_OVERRIDE[$file]:-$file}"
     if $PRESERVE_CUSTOM && [[ " ${CUSTOM_PROTECTED_FILES[*]} " == *" $file "* ]]; then
       echo "    ⏭️   $file skipped (--preserve-custom)."
       continue
     fi
-    if [ -f "$file" ] && $UPGRADE_MODE; then
+    if $REPAIR_MODE; then
+      if [ -f "$file" ]; then
+        echo "    ✓  $file already present."
+        continue
+      fi
+      do_copy_file "$TMP_DIR/$src" "$file"
+      $DRY_RUN || echo "    ✅  $file installed (was missing)."
+    elif [ -f "$file" ] && $UPGRADE_MODE; then
       if diff -q "$TMP_DIR/$src" "$file" > /dev/null 2>&1; then
         echo "    ✓  $file already up to date."
       else
@@ -357,145 +569,227 @@ if [ ${#IDE_FILES_TO_INSTALL[@]} -gt 0 ]; then
         diff --unified=3 "$file" "$TMP_DIR/$src" || true
         echo ""
         if prompt_yn "Update '$file'?"; then
-          cp "$TMP_DIR/$src" "$file"
-          echo "    ✅  $file updated."
+          do_copy_file "$TMP_DIR/$src" "$file"
+          $DRY_RUN || echo "    ✅  $file updated."
         else
           echo "    ⏭️   $file skipped."
         fi
       fi
     else
-      cp "$TMP_DIR/$src" "$file"
-      echo "    ✅  $file installed."
+      do_copy_file "$TMP_DIR/$src" "$file"
+      $DRY_RUN || echo "    ✅  $file installed."
     fi
   done
   echo ""
-fi
+}
 
-# ---------------------------------------------------------------------------
-# Set permissions
-# ---------------------------------------------------------------------------
-echo "🔧  Setting script permissions..."
-chmod +x .agents/scripts/*.py
-echo "    ✅  .agents/scripts/*.py"
-chmod +x .agents/scripts/pre-commit 2>/dev/null || true
-echo "    ✅  .agents/scripts/pre-commit"
-echo ""
-
-# ---------------------------------------------------------------------------
-# Install Python dependencies
-# ---------------------------------------------------------------------------
-echo "🐍  Installing Python dependencies..."
-pip install pyyaml --quiet
-echo "    ✅  pyyaml"
-echo ""
-
-# ---------------------------------------------------------------------------
-# .gitignore option
-# ---------------------------------------------------------------------------
-# Build the list of installed paths that the user might want to gitignore
-GITIGNORE_CANDIDATES=()
-for def in "${IDE_DEFS[@]}"; do
-  id=$(ide_id "$def")
-  if contains_id "$id" $SELECTED_IDE_IDS; then
-    dirs=$(ide_dirs "$def")
-    files=$(ide_files "$def")
-    [[ -n "$dirs" ]]  && GITIGNORE_CANDIDATES+=("$dirs/")
-    [[ -n "$files" ]] && GITIGNORE_CANDIDATES+=("$files")
-  fi
-done
-
-if [ ${#GITIGNORE_CANDIDATES[@]} -gt 0 ]; then
-  echo "📝  .gitignore"
-  echo "    The following IDE-specific paths were installed:"
-  for entry in "${GITIGNORE_CANDIDATES[@]}"; do
-    echo "      - $entry"
-  done
-  echo ""
-
-  add_to_gitignore=false
-  if $AUTO_YES; then
-    echo "    Skipping .gitignore update (use interactive mode to choose)."
-  elif ! is_tty; then
-    echo "    Skipping .gitignore update (non-interactive mode)."
+set_permissions() {
+  echo "🔧  Setting script permissions..."
+  if $DRY_RUN; then
+    echo "    [DRY-RUN] would chmod +x .agents/scripts/*.py"
+    echo "    [DRY-RUN] would chmod +x .agents/scripts/pre-commit"
   else
-    if prompt_yn "Add these paths to .gitignore?"; then
-      add_to_gitignore=true
-    fi
-  fi
-
-  if $add_to_gitignore; then
-    GITIGNORE_FILE=".gitignore"
-    touch "$GITIGNORE_FILE"
-
-    added=0
-    # Add a section header if any entries are new
-    needs_header=true
-    for entry in "${GITIGNORE_CANDIDATES[@]}"; do
-      if ! grep -qxF "$entry" "$GITIGNORE_FILE" 2>/dev/null; then
-        if $needs_header; then
-          echo "" >> "$GITIGNORE_FILE"
-          echo "# Hypergraph Coding Agent Framework — IDE config" >> "$GITIGNORE_FILE"
-          needs_header=false
-        fi
-        echo "$entry" >> "$GITIGNORE_FILE"
-        echo "    ✅  Added: $entry"
-        ((added++)) || true
-      else
-        echo "    ⏭️   Already in .gitignore: $entry"
-      fi
-    done
-
-    if [ "$added" -gt 0 ]; then
-      echo "    ✅  .gitignore updated ($added entries added)."
-    else
-      echo "    ℹ️   All entries were already present in .gitignore."
-    fi
+    chmod +x .agents/scripts/*.py
+    echo "    ✅  .agents/scripts/*.py"
+    chmod +x .agents/scripts/pre-commit 2>/dev/null || true
+    echo "    ✅  .agents/scripts/pre-commit"
   fi
   echo ""
-fi
+}
 
-# ---------------------------------------------------------------------------
-# Git pre-commit hook
-# ---------------------------------------------------------------------------
-if [ -d ".git" ]; then
+install_python_deps() {
+  echo "🐍  Installing Python dependencies..."
+  if $DRY_RUN; then
+    echo "    [DRY-RUN] would pip install pyyaml"
+  else
+    pip install pyyaml --quiet
+    echo "    ✅  pyyaml"
+  fi
+  echo ""
+}
+
+install_hook() {
+  [ -d ".git" ] || return
   echo "🔧  Git pre-commit hook:"
-  HOOK_SRC=".agents/scripts/pre-commit"
-  HOOK_DST=".git/hooks/pre-commit"
+  local HOOK_SRC=".agents/scripts/pre-commit"
+  local HOOK_DST=".git/hooks/pre-commit"
 
   if [ ! -f "$HOOK_SRC" ]; then
     echo "    ⚠️  $HOOK_SRC not found — skipping."
+  elif $REPAIR_MODE; then
+    if [ -f "$HOOK_DST" ]; then
+      echo "    ✓  pre-commit hook already present."
+    else
+      do_copy_file "$HOOK_SRC" "$HOOK_DST"
+      if ! $DRY_RUN; then
+        chmod +x "$HOOK_DST"
+        echo "    ✅  .git/hooks/pre-commit installed (was missing)."
+      fi
+    fi
   elif [ -f "$HOOK_DST" ] && $UPGRADE_MODE; then
     if diff -q "$HOOK_SRC" "$HOOK_DST" > /dev/null 2>&1; then
       echo "    ✓  pre-commit hook already up to date."
     else
       if prompt_yn "Update pre-commit hook?"; then
-        cp "$HOOK_SRC" "$HOOK_DST"
-        chmod +x "$HOOK_DST"
-        echo "    ✅  .git/hooks/pre-commit updated."
+        do_copy_file "$HOOK_SRC" "$HOOK_DST"
+        if ! $DRY_RUN; then
+          chmod +x "$HOOK_DST"
+          echo "    ✅  .git/hooks/pre-commit updated."
+        fi
       else
         echo "    ⏭️   pre-commit hook skipped."
       fi
     fi
   else
-    cp "$HOOK_SRC" "$HOOK_DST"
-    chmod +x "$HOOK_DST"
-    echo "    ✅  .git/hooks/pre-commit installed."
+    do_copy_file "$HOOK_SRC" "$HOOK_DST"
+    if ! $DRY_RUN; then
+      chmod +x "$HOOK_DST"
+      echo "    ✅  .git/hooks/pre-commit installed."
+    fi
   fi
   echo ""
+}
+
+# ---------------------------------------------------------------------------
+# Spec scaffold always runs (idempotent mkdir -p calls)
+# ---------------------------------------------------------------------------
+install_spec_scaffold
+
+# ---------------------------------------------------------------------------
+# Mode routing
+# ---------------------------------------------------------------------------
+case "$MODE" in
+  install|full|dry-run)
+    install_system_dirs
+    install_skills_dir
+    install_skill_bridges
+    install_core_dirs
+    install_core_files
+    install_ide_dirs
+    install_ide_files
+    set_permissions
+    install_python_deps
+    install_hook
+    ;;
+  skills)
+    install_skills_dir
+    install_skill_bridges
+    set_permissions
+    ;;
+  system)
+    install_system_dirs
+    install_core_dirs
+    install_core_files
+    set_permissions
+    install_python_deps
+    install_hook
+    ;;
+  ide)
+    install_ide_dirs
+    install_ide_files
+    ;;
+  repair)
+    install_system_dirs
+    install_skills_dir
+    install_skill_bridges
+    install_core_dirs
+    install_core_files
+    install_ide_dirs
+    install_ide_files
+    set_permissions
+    install_python_deps
+    install_hook
+    ;;
+esac
+
+# ---------------------------------------------------------------------------
+# .gitignore option (only for modes that touch IDE files)
+# ---------------------------------------------------------------------------
+if [[ "$MODE" == "install" || "$MODE" == "full" || "$MODE" == "ide" || "$MODE" == "repair" || "$MODE" == "dry-run" ]]; then
+  GITIGNORE_CANDIDATES=()
+  for def in "${IDE_DEFS[@]}"; do
+    id=$(ide_id "$def")
+    if contains_id "$id" $SELECTED_IDE_IDS; then
+      dirs=$(ide_dirs "$def")
+      files=$(ide_files "$def")
+      [[ -n "$dirs" ]]  && GITIGNORE_CANDIDATES+=("$dirs/")
+      [[ -n "$files" ]] && GITIGNORE_CANDIDATES+=("$files")
+    fi
+  done
+
+  if [ ${#GITIGNORE_CANDIDATES[@]} -gt 0 ]; then
+    echo "📝  .gitignore"
+    echo "    The following IDE-specific paths were installed:"
+    for entry in "${GITIGNORE_CANDIDATES[@]}"; do
+      echo "      - $entry"
+    done
+    echo ""
+
+    add_to_gitignore=false
+    if $AUTO_YES; then
+      echo "    Skipping .gitignore update (use interactive mode to choose)."
+    elif ! is_tty; then
+      echo "    Skipping .gitignore update (non-interactive mode)."
+    elif $DRY_RUN; then
+      echo "    [DRY-RUN] would prompt to add entries to .gitignore."
+    else
+      if prompt_yn "Add these paths to .gitignore?"; then
+        add_to_gitignore=true
+      fi
+    fi
+
+    if $add_to_gitignore; then
+      GITIGNORE_FILE=".gitignore"
+      touch "$GITIGNORE_FILE"
+
+      added=0
+      needs_header=true
+      for entry in "${GITIGNORE_CANDIDATES[@]}"; do
+        if ! grep -qxF "$entry" "$GITIGNORE_FILE" 2>/dev/null; then
+          if $needs_header; then
+            echo "" >> "$GITIGNORE_FILE"
+            echo "# Hypergraph Coding Agent Framework — IDE config" >> "$GITIGNORE_FILE"
+            needs_header=false
+          fi
+          echo "$entry" >> "$GITIGNORE_FILE"
+          echo "    ✅  Added: $entry"
+          ((added++)) || true
+        else
+          echo "    ⏭️   Already in .gitignore: $entry"
+        fi
+      done
+
+      if [ "$added" -gt 0 ]; then
+        echo "    ✅  .gitignore updated ($added entries added)."
+      else
+        echo "    ℹ️   All entries were already present in .gitignore."
+      fi
+    fi
+    echo ""
+  fi
 fi
 
 # ---------------------------------------------------------------------------
 # Done
 # ---------------------------------------------------------------------------
-if $UPGRADE_MODE; then
+MODE_LABEL=""
+case "$MODE" in
+  install)  MODE_LABEL="Installation" ;;
+  full)     MODE_LABEL="Upgrade" ;;
+  skills)   MODE_LABEL="Skills update" ;;
+  system)   MODE_LABEL="System update" ;;
+  ide)      MODE_LABEL="IDE update" ;;
+  repair)   MODE_LABEL="Repair" ;;
+  dry-run)  MODE_LABEL="Dry-run preview" ;;
+esac
+
+if $DRY_RUN; then
   echo "╔══════════════════════════════════════════════════════════╗"
-  echo "║  ✅  Upgrade complete!                                   ║"
+  echo "║  ✅  Dry-run complete — no files were modified.         ║"
   echo "║                                                          ║"
-  echo "║  Tips:                                                   ║"
-  echo "║    • Run /hyper-refresh-memory to rebuild project context║"
-  echo "║    • Run /hyper-contextualize to verify agent framing   ║"
+  echo "║  Re-run and select a different mode to apply changes.   ║"
   echo "╚══════════════════════════════════════════════════════════╝"
-else
+elif [[ "$MODE" == "install" ]]; then
   echo "╔══════════════════════════════════════════════════════════╗"
   echo "║  ✅  Installation complete!                              ║"
   echo "║                                                          ║"
@@ -504,6 +798,14 @@ else
   echo "║    2. Run /hyper-baseline to generate your first PRD    ║"
   echo "║    3. See AGENTS.md for full usage instructions         ║"
   echo "║    4. Run /hyper-contextualize to verify agent framing  ║"
+  echo "╚══════════════════════════════════════════════════════════╝"
+else
+  echo "╔══════════════════════════════════════════════════════════╗"
+  printf "║  ✅  %-51s║\n" "$MODE_LABEL complete!"
+  echo "║                                                          ║"
+  echo "║  Tips:                                                   ║"
+  echo "║    • Run /hyper-refresh-memory to rebuild project context║"
+  echo "║    • Run /hyper-contextualize to verify agent framing   ║"
   echo "╚══════════════════════════════════════════════════════════╝"
 fi
 echo ""

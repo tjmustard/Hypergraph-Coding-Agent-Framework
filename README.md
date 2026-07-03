@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.5-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.6-blue" alt="Latest Release"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
 </p>
@@ -85,20 +85,42 @@ Available IDE IDs: `claude`, `antigravity`, `windsurf`, `cursor`, `cline`, `roo`
 
 ### Upgrading an Existing Installation
 
-Re-running the script against a repo that already has `.agents/` installed switches automatically to **upgrade mode**, prompting you to confirm each component:
+Re-running the script against a repo that already has `.agents/` installed switches automatically to **upgrade mode**. An interactive **mode selection menu** lets you choose exactly what to update:
+
+```
+1) Full update            — system + skills  (recommended)
+2) Skills only            — .agents/skills/ + IDE skill bridges
+3) System only            — scripts, schemas, hooks, rules (not skills)
+4) IDE files only         — .claude/, .windsurf/, CLAUDE.md, etc.
+5) Repair / verify        — install only missing pieces
+6) Dry-run preview        — show what would change, touch nothing
+```
 
 ```bash
-# Interactive — shows diff then prompts yes/no per directory and file
+# Interactive — shows mode menu, then prompts yes/no per component
 bash HACF-install.sh
 
-# Non-interactive — accepts all updates automatically
+# Non-interactive — full update, accept all
 bash HACF-install.sh -y
 
-# Non-interactive — update framework internals only; preserve CLAUDE.md, GEMINI.md, AGENTS.md
+# Non-interactive — preserve CLAUDE.md, GEMINI.md, AGENTS.md customizations
 bash HACF-install.sh -y --preserve-custom
 ```
 
+For scripted / CI use, pass `--mode=` directly to skip the interactive menu:
+
+```bash
+bash HACF-install.sh --mode=skills    # skills + IDE bridges only
+bash HACF-install.sh --mode=system    # scripts, schemas, hooks (not skills)
+bash HACF-install.sh --mode=ide       # IDE dirs/files only
+bash HACF-install.sh --mode=repair    # install only missing pieces
+bash HACF-install.sh --mode=dry-run   # preview what would change
+bash HACF-install.sh --mode=full -y   # full update, non-interactive
+```
+
 For IDE config files (CLAUDE.md, AGENTS.md, GEMINI.md), the installer shows a unified diff before asking whether to overwrite. Files that are already up to date are silently skipped.
+
+> **Skill bridges:** When using `--mode=skills`, the installer also syncs `.claude/commands/` and `.windsurf/workflows/` — the thin bridge files that point to skill definitions. Other IDE dirs (`.cursor/`, `.clinerules/`, `.roo/`) contain only static rules and are untouched in skills mode.
 
 **What gets installed:**
 
