@@ -24,7 +24,7 @@ Every project must have a `pyproject.toml` with the following ruff configuration
 
 ```toml
 [tool.ruff]
-line-length = 88
+line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "D"]

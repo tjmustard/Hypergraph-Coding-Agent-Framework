@@ -5,7 +5,7 @@ description = "A multi-agent AI coding framework using hypergraph state manageme
 requires-python = ">=3.11"
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "D"]
