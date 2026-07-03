@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.6-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.7-blue" alt="Latest Release"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
 </p>
@@ -121,6 +121,30 @@ bash HACF-install.sh --mode=full -y   # full update, non-interactive
 For IDE config files (CLAUDE.md, AGENTS.md, GEMINI.md), the installer shows a unified diff before asking whether to overwrite. Files that are already up to date are silently skipped.
 
 > **Skill bridges:** When using `--mode=skills`, the installer also syncs `.claude/commands/` and `.windsurf/workflows/` — the thin bridge files that point to skill definitions. Other IDE dirs (`.cursor/`, `.clinerules/`, `.roo/`) contain only static rules and are untouched in skills mode.
+
+#### Surgical File Install
+
+To add individual files to an existing project without touching anything else and without overwriting existing files, use `--files=`:
+
+```bash
+bash HACF-install.sh --files=pre-commit                     # git pre-commit hook only
+bash HACF-install.sh --files=pyproject-template             # ruff pyproject.toml template
+bash HACF-install.sh --files=python-rules                   # .agents/rules/python.md
+bash HACF-install.sh --files=pre-commit,pyproject-template  # multiple targets
+```
+
+Available named targets:
+
+| Target | Installs |
+|---|---|
+| `pre-commit` | `.agents/scripts/pre-commit` → `.git/hooks/pre-commit` (chmod +x) |
+| `pyproject-template` | ruff config template → `.agents/schemas/project-templates/pyproject.toml` |
+| `python-rules` | Python standards → `.agents/rules/python.md` |
+| `testing-rules` | Testing strategy → `.agents/rules/testing.md` |
+| `security-rules` | Security standards → `.agents/rules/security.md` |
+| `package-rules` | Package management rules → `.agents/rules/package-management.md` |
+
+`--files=` always skips existing files — it never overwrites. To update an existing file, delete it first or use `--mode=full`.
 
 **What gets installed:**
 

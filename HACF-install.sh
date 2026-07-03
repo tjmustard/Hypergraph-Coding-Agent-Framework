@@ -29,6 +29,12 @@ set -euo pipefail
 #   bash HACF-install.sh --mode=ide       # IDE dirs/files only
 #   bash HACF-install.sh --mode=repair    # install only missing pieces
 #   bash HACF-install.sh --mode=dry-run   # preview what would change, touch nothing
+#
+# Surgical file installs — skip existing files, never overwrite:
+#   bash HACF-install.sh --files=pre-commit              # git pre-commit hook only
+#   bash HACF-install.sh --files=pyproject-template      # ruff pyproject.toml template
+#   bash HACF-install.sh --files=python-rules            # .agents/rules/python.md
+#   bash HACF-install.sh --files=pre-commit,pyproject-template  # multiple targets
 
 REPO_URL="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework.git"
 BRANCH="main"
@@ -64,6 +70,18 @@ declare -A FILE_SOURCE_OVERRIDE=(
   ["GEMINI.md"]=".agents/install-templates/GEMINI.md"
 )
 
+# Named file targets for --files= flag.
+# Format: "src_in_clone|dst_in_project|chmod_x"
+# All targets skip existing files (repair semantics — never overwrite).
+declare -A FILE_TARGETS=(
+  ["pre-commit"]=".agents/scripts/pre-commit|.git/hooks/pre-commit|yes"
+  ["pyproject-template"]=".agents/schemas/project-templates/pyproject.toml|.agents/schemas/project-templates/pyproject.toml|no"
+  ["python-rules"]=".agents/rules/python.md|.agents/rules/python.md|no"
+  ["testing-rules"]=".agents/rules/testing.md|.agents/rules/testing.md|no"
+  ["security-rules"]=".agents/rules/security.md|.agents/rules/security.md|no"
+  ["package-rules"]=".agents/rules/package-management.md|.agents/rules/package-management.md|no"
+)
+
 # Core dirs/files installed in addition to .agents/ (always, regardless of IDE selection)
 CORE_DIRS=("tests")
 CORE_FILES=(".agentignore")
@@ -84,6 +102,7 @@ PRESERVE_CUSTOM=false
 DRY_RUN=false
 REPAIR_MODE=false
 MODE=""
+FILES_TARGET=""
 
 for arg in "$@"; do
   case "$arg" in
@@ -91,6 +110,7 @@ for arg in "$@"; do
     --ides=*)            PRESELECTED_IDES="${arg#--ides=}" ;;
     --preserve-custom)   PRESERVE_CUSTOM=true ;;
     --mode=*)            MODE="${arg#--mode=}" ;;
+    --files=*)           FILES_TARGET="${arg#--files=}" ;;
   esac
 done
 
@@ -186,14 +206,14 @@ fi
 echo ""
 
 # Fresh install always runs the full install — skip mode selection entirely
-if ! $UPGRADE_MODE; then
+if ! $UPGRADE_MODE && [[ -z "$FILES_TARGET" ]]; then
   MODE="install"
 fi
 
 # ---------------------------------------------------------------------------
-# Mode Selection (upgrade only)
+# Mode Selection (upgrade only, skipped when --files= is given)
 # ---------------------------------------------------------------------------
-if $UPGRADE_MODE && [[ -z "$MODE" ]]; then
+if $UPGRADE_MODE && [[ -z "$MODE" ]] && [[ -z "$FILES_TARGET" ]]; then
   if $AUTO_YES || ! is_tty; then
     MODE="full"
     echo "🤖  Update mode: full (auto/non-interactive)"
@@ -266,7 +286,7 @@ fi
 # ---------------------------------------------------------------------------
 SELECTED_IDE_IDS=""
 NEEDS_IDE_SELECTION=true
-[[ "$MODE" == "skills" || "$MODE" == "system" ]] && NEEDS_IDE_SELECTION=false
+[[ "$MODE" == "skills" || "$MODE" == "system" || -n "$FILES_TARGET" ]] && NEEDS_IDE_SELECTION=false
 
 if $NEEDS_IDE_SELECTION; then
   if $AUTO_YES || ! is_tty; then
@@ -650,6 +670,36 @@ install_hook() {
   echo ""
 }
 
+install_files() {
+  local targets="${FILES_TARGET//,/ }"
+  echo "📄  Targeted file install (skips existing files):"
+  local available
+  available="$(printf '%s ' "${!FILE_TARGETS[@]}")"
+  for name in $targets; do
+    local spec="${FILE_TARGETS[$name]:-}"
+    if [[ -z "$spec" ]]; then
+      echo "    ⚠️  Unknown target: '$name' — skipping."
+      echo "       Available: $available"
+      continue
+    fi
+    local src dst do_chmod
+    IFS='|' read -r src dst do_chmod <<< "$spec"
+    if [[ -f "$dst" ]]; then
+      echo "    ✓  $dst already present — skipping."
+      continue
+    fi
+    local parent
+    parent="$(dirname "$dst")"
+    do_mkdir "$parent"
+    do_copy_file "$TMP_DIR/$src" "$dst"
+    if ! $DRY_RUN; then
+      [[ "$do_chmod" == "yes" ]] && chmod +x "$dst"
+      echo "    ✅  $dst installed."
+    fi
+  done
+  echo ""
+}
+
 # ---------------------------------------------------------------------------
 # Spec scaffold always runs (idempotent mkdir -p calls)
 # ---------------------------------------------------------------------------
@@ -658,6 +708,9 @@ install_spec_scaffold
 # ---------------------------------------------------------------------------
 # Mode routing
 # ---------------------------------------------------------------------------
+if [[ -n "$FILES_TARGET" ]]; then
+  install_files
+else
 case "$MODE" in
   install|full|dry-run)
     install_system_dirs
@@ -701,11 +754,12 @@ case "$MODE" in
     install_hook
     ;;
 esac
+fi  # end --files= branch
 
 # ---------------------------------------------------------------------------
 # .gitignore option (only for modes that touch IDE files)
 # ---------------------------------------------------------------------------
-if [[ "$MODE" == "install" || "$MODE" == "full" || "$MODE" == "ide" || "$MODE" == "repair" || "$MODE" == "dry-run" ]]; then
+if [[ -z "$FILES_TARGET" ]] && [[ "$MODE" == "install" || "$MODE" == "full" || "$MODE" == "ide" || "$MODE" == "repair" || "$MODE" == "dry-run" ]]; then
   GITIGNORE_CANDIDATES=()
   for def in "${IDE_DEFS[@]}"; do
     id=$(ide_id "$def")
@@ -773,15 +827,19 @@ fi
 # Done
 # ---------------------------------------------------------------------------
 MODE_LABEL=""
-case "$MODE" in
-  install)  MODE_LABEL="Installation" ;;
-  full)     MODE_LABEL="Upgrade" ;;
-  skills)   MODE_LABEL="Skills update" ;;
-  system)   MODE_LABEL="System update" ;;
-  ide)      MODE_LABEL="IDE update" ;;
-  repair)   MODE_LABEL="Repair" ;;
-  dry-run)  MODE_LABEL="Dry-run preview" ;;
-esac
+if [[ -n "$FILES_TARGET" ]]; then
+  MODE_LABEL="File install (${FILES_TARGET})"
+else
+  case "$MODE" in
+    install)  MODE_LABEL="Installation" ;;
+    full)     MODE_LABEL="Upgrade" ;;
+    skills)   MODE_LABEL="Skills update" ;;
+    system)   MODE_LABEL="System update" ;;
+    ide)      MODE_LABEL="IDE update" ;;
+    repair)   MODE_LABEL="Repair" ;;
+    dry-run)  MODE_LABEL="Dry-run preview" ;;
+  esac
+fi
 
 if $DRY_RUN; then
   echo "╔══════════════════════════════════════════════════════════╗"

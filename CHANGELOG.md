@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-07-03
+
+### Added
+- **`HACF-install.sh` — `--files=` flag**: Surgical file install targeting individual named files without overwriting existing files. Skips the mode menu and IDE selection; clones the repo, copies only the specified targets, and exits. Always uses repair semantics — skips any destination that already exists.
+- **`HACF-install.sh` — `FILE_TARGETS` map**: Six named targets for `--files=`: `pre-commit` (git hook → `.git/hooks/pre-commit`, chmod+x), `pyproject-template` (ruff config template → `.agents/schemas/project-templates/pyproject.toml`), `python-rules`, `testing-rules`, `security-rules`, `package-rules` (each to its `.agents/rules/` path).
+
 ## [0.5.6] - 2026-07-03
 
 ### Added
