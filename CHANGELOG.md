@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.8] - 2026-07-21
+
+### Added
+- **AI-agent repository safeguards**: Two new git hooks distributed by `HACF-install.sh` — `commit-msg` (`.agents/scripts/commit-msg`) sanitizes agent tracking trailers (`Claude-Session:` → `Agentic Coding Assisted: Claude Code`), and `pre-push` (`.agents/scripts/pre-push`) blocks pushing experimental `research/*` and `swimlane/*` branches.
+- **`.agents/rules/git-workflow.md`**: New always-on rule documenting protected branches, protected paths, and how to handle hook rejections. Referenced from the "Always-On Coding Rules" table in `AGENTS.md` and its `.agents/install-templates/` counterpart.
+- **Safe Sandboxing & Automation guidance**: Added to `CLAUDE.md`, `GEMINI.md`, and `AGENTS.md` (and their `.agents/install-templates/` counterparts) instructing agents to use `research/`/`swimlane/` branch prefixes for experimental work.
+- **`HACF-install.sh` — new `--files=` targets**: `commit-msg`, `pre-push` (git hooks, chmod+x), and `git-workflow-rules` (→ `.agents/rules/git-workflow.md`).
+
+### Changed
+- **`.agents/scripts/pre-commit`**: Now blocks committing forbidden internal paths (`spec/process/`, `spec/handoffs/`) before running its existing ruff lint/format checks.
+- **`HACF-install.sh` — `install_hook()`**: Generalized to install all three git hooks (`pre-commit`, `commit-msg`, `pre-push`) instead of only `pre-commit`.
+
 ## [0.5.7] - 2026-07-03
 
 ### Added

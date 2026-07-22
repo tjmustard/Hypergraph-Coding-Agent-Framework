@@ -92,6 +92,12 @@ Apply the rules in `.agents/rules/` to all code generation:
 | `security.md` | Input validation, secrets management, file system constraints |
 | `testing.md` | Testing standards and patterns |
 | `package-management.md` | Dependency management with `uv` |
+| `git-workflow.md` | Protected branches (`research/*`, `swimlane/*`) and protected paths (`spec/process/`, `spec/handoffs/`) enforced by git hooks |
+
+### Safe Sandboxing & Automation
+When instructed to write experimental code, test tools, or execute destructive scripts, you must **always checkout a branch prefixed with `research/` or `swimlane/`**.
+
+These prefixes act as an automatic local sandbox. They are intercepted by a repository `pre-push` hook, physically preventing you from accidentally pushing unstable code or broken logic to the remote server. Never execute large automated changes directly on `main` or a feature branch.
 
 ---
 

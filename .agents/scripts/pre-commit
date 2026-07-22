@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
-# HACF pre-commit hook — lint check (installed by HACF-install.sh)
+# HACF pre-commit hook — block forbidden internal paths, then lint (installed by HACF-install.sh)
 set -euo pipefail
 
+# --- Block internal/forbidden files (agent_safeguards_setup PRD) ---
+staged_files=$(git diff --cached --name-only)
+for file in $staged_files; do
+    # Define directories you want strictly blocked from version control
+    if [[ $file == spec/process/* ]] || [[ $file == spec/handoffs/* ]]; then
+        echo "❌ COMMIT BLOCKED!"
+        echo "Error: You are trying to commit a forbidden internal file:"
+        echo "  -> $file"
+        echo "Please unstage this file by running: git restore --staged $file"
+        exit 1
+    fi
+done
+
+# --- Lint check ---
 if ! command -v uv &>/dev/null; then
   echo "⚠️  uv not found — skipping lint check."
   exit 0

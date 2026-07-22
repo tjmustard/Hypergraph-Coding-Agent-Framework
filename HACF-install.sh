@@ -75,11 +75,14 @@ declare -A FILE_SOURCE_OVERRIDE=(
 # All targets skip existing files (repair semantics — never overwrite).
 declare -A FILE_TARGETS=(
   ["pre-commit"]=".agents/scripts/pre-commit|.git/hooks/pre-commit|yes"
+  ["commit-msg"]=".agents/scripts/commit-msg|.git/hooks/commit-msg|yes"
+  ["pre-push"]=".agents/scripts/pre-push|.git/hooks/pre-push|yes"
   ["pyproject-template"]=".agents/schemas/project-templates/pyproject.toml|.agents/schemas/project-templates/pyproject.toml|no"
   ["python-rules"]=".agents/rules/python.md|.agents/rules/python.md|no"
   ["testing-rules"]=".agents/rules/testing.md|.agents/rules/testing.md|no"
   ["security-rules"]=".agents/rules/security.md|.agents/rules/security.md|no"
   ["package-rules"]=".agents/rules/package-management.md|.agents/rules/package-management.md|no"
+  ["git-workflow-rules"]=".agents/rules/git-workflow.md|.agents/rules/git-workflow.md|no"
 )
 
 # Core dirs/files installed in addition to .agents/ (always, regardless of IDE selection)
@@ -607,12 +610,14 @@ set_permissions() {
   echo "🔧  Setting script permissions..."
   if $DRY_RUN; then
     echo "    [DRY-RUN] would chmod +x .agents/scripts/*.py"
-    echo "    [DRY-RUN] would chmod +x .agents/scripts/pre-commit"
+    echo "    [DRY-RUN] would chmod +x .agents/scripts/{pre-commit,commit-msg,pre-push}"
   else
     chmod +x .agents/scripts/*.py
     echo "    ✅  .agents/scripts/*.py"
-    chmod +x .agents/scripts/pre-commit 2>/dev/null || true
-    echo "    ✅  .agents/scripts/pre-commit"
+    for hook in pre-commit commit-msg pre-push; do
+      chmod +x ".agents/scripts/$hook" 2>/dev/null || true
+      echo "    ✅  .agents/scripts/$hook"
+    done
   fi
   echo ""
 }
@@ -628,45 +633,52 @@ install_python_deps() {
   echo ""
 }
 
-install_hook() {
-  [ -d ".git" ] || return
-  echo "🔧  Git pre-commit hook:"
-  local HOOK_SRC=".agents/scripts/pre-commit"
-  local HOOK_DST=".git/hooks/pre-commit"
+install_single_hook() {
+  local hook="$1"
+  local HOOK_SRC=".agents/scripts/$hook"
+  local HOOK_DST=".git/hooks/$hook"
 
   if [ ! -f "$HOOK_SRC" ]; then
     echo "    ⚠️  $HOOK_SRC not found — skipping."
   elif $REPAIR_MODE; then
     if [ -f "$HOOK_DST" ]; then
-      echo "    ✓  pre-commit hook already present."
+      echo "    ✓  $hook hook already present."
     else
       do_copy_file "$HOOK_SRC" "$HOOK_DST"
       if ! $DRY_RUN; then
         chmod +x "$HOOK_DST"
-        echo "    ✅  .git/hooks/pre-commit installed (was missing)."
+        echo "    ✅  .git/hooks/$hook installed (was missing)."
       fi
     fi
   elif [ -f "$HOOK_DST" ] && $UPGRADE_MODE; then
     if diff -q "$HOOK_SRC" "$HOOK_DST" > /dev/null 2>&1; then
-      echo "    ✓  pre-commit hook already up to date."
+      echo "    ✓  $hook hook already up to date."
     else
-      if prompt_yn "Update pre-commit hook?"; then
+      if prompt_yn "Update $hook hook?"; then
         do_copy_file "$HOOK_SRC" "$HOOK_DST"
         if ! $DRY_RUN; then
           chmod +x "$HOOK_DST"
-          echo "    ✅  .git/hooks/pre-commit updated."
+          echo "    ✅  .git/hooks/$hook updated."
         fi
       else
-        echo "    ⏭️   pre-commit hook skipped."
+        echo "    ⏭️   $hook hook skipped."
       fi
     fi
   else
     do_copy_file "$HOOK_SRC" "$HOOK_DST"
     if ! $DRY_RUN; then
       chmod +x "$HOOK_DST"
-      echo "    ✅  .git/hooks/pre-commit installed."
+      echo "    ✅  .git/hooks/$hook installed."
     fi
   fi
+}
+
+install_hook() {
+  [ -d ".git" ] || return
+  echo "🔧  Git hooks:"
+  for hook in pre-commit commit-msg pre-push; do
+    install_single_hook "$hook"
+  done
   echo ""
 }
 

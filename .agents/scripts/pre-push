@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# HACF pre-push hook — block experimental branch pushes (installed by HACF-install.sh)
+while read local_ref local_sha remote_ref remote_sha
+do
+    # Check if the branch being pushed is restricted
+    if [[ $local_ref == refs/heads/research/* ]] || [[ $local_ref == refs/heads/swimlane/* ]]; then
+        echo "❌ PUSH BLOCKED!"
+        echo "Error: Pushing branches with the 'research/' or 'swimlane/' prefix is strictly forbidden."
+        echo "These prefixes are designated for isolated local AI agent work only."
+        exit 1
+    fi
+done
+exit 0

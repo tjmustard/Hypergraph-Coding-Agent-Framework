@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.7-blue" alt="Latest Release"/></a>
+    <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/releases/latest"><img src="https://img.shields.io/badge/release-v0.5.8-blue" alt="Latest Release"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/stargazers"><img src="https://img.shields.io/github/stars/tjmustard/Hypergraph-Coding-Agent-Framework?style=social" alt="GitHub stars"/></a>
     <a href="https://github.com/tjmustard/Hypergraph-Coding-Agent-Framework/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tjmustard/Hypergraph-Coding-Agent-Framework" alt="License"/></a>
 </p>
@@ -62,7 +62,7 @@ The interactive installer will:
 1. **Offer to run `git init`** if no git repository is detected
 2. **Ask which IDE(s) to install support for** — pick from a numbered menu or type `a` for all
 3. **Ask whether to add installed paths to `.gitignore`**
-4. **Install a git pre-commit hook** that runs `ruff` lint and format checks before every commit
+4. **Install git hooks** — a `pre-commit` hook that blocks forbidden internal paths (`spec/process/`, `spec/handoffs/`) and runs `ruff` lint/format checks, a `commit-msg` hook that sanitizes agent tracking trailers, and a `pre-push` hook that blocks pushing experimental `research/*` and `swimlane/*` branches
 5. Clone the framework, copy selected files, set permissions, and install `pyyaml`
 
 #### IDE Selection Options
@@ -128,6 +128,7 @@ To add individual files to an existing project without touching anything else an
 
 ```bash
 bash HACF-install.sh --files=pre-commit                     # git pre-commit hook only
+bash HACF-install.sh --files=pre-push                       # experimental-branch push guard
 bash HACF-install.sh --files=pyproject-template             # ruff pyproject.toml template
 bash HACF-install.sh --files=python-rules                   # .agents/rules/python.md
 bash HACF-install.sh --files=pre-commit,pyproject-template  # multiple targets
@@ -138,11 +139,14 @@ Available named targets:
 | Target | Installs |
 |---|---|
 | `pre-commit` | `.agents/scripts/pre-commit` → `.git/hooks/pre-commit` (chmod +x) |
+| `commit-msg` | `.agents/scripts/commit-msg` → `.git/hooks/commit-msg` (chmod +x) |
+| `pre-push` | `.agents/scripts/pre-push` → `.git/hooks/pre-push` (chmod +x) |
 | `pyproject-template` | ruff config template → `.agents/schemas/project-templates/pyproject.toml` |
 | `python-rules` | Python standards → `.agents/rules/python.md` |
 | `testing-rules` | Testing strategy → `.agents/rules/testing.md` |
 | `security-rules` | Security standards → `.agents/rules/security.md` |
 | `package-rules` | Package management rules → `.agents/rules/package-management.md` |
+| `git-workflow-rules` | Git & workflow standards → `.agents/rules/git-workflow.md` |
 
 `--files=` always skips existing files — it never overwrites. To update an existing file, delete it first or use `--mode=full`.
 

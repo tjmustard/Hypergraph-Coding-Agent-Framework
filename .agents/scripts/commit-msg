@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# HACF commit-msg hook — sanitize agent tracking trailers (installed by HACF-install.sh)
+COMMIT_MSG_FILE=$1
+
+# Replace Claude-Session tracking links with standardized label
+if grep -q "^Claude-Session: " "$COMMIT_MSG_FILE"; then
+    sed -i -e 's|^Claude-Session: .*|Agentic Coding Assisted: Claude Code|' "$COMMIT_MSG_FILE"
+fi
+
+# Add additional agent signatures here as needed (e.g., Cursor, Antigravity)
+
+exit 0

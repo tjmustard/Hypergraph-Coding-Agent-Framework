@@ -41,6 +41,11 @@ then inform the user to start a new conversation thread for the next phase. This
 cross-contamination between adversarial agents (the Red Team must not see the Architect's
 conversation history).
 
+### Safe Sandboxing & Automation
+When instructed to write experimental code, test tools, or execute destructive scripts, you must **always checkout a branch prefixed with `research/` or `swimlane/`**.
+
+These prefixes act as an automatic local sandbox. They are intercepted by a repository `pre-push` hook, physically preventing you from accidentally pushing unstable code or broken logic to the remote server. Never execute large automated changes directly on `main` or a feature branch.
+
 ---
 
 ## Schema Definitions & Migration Notice
