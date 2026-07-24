@@ -1,6 +1,6 @@
 [project]
 name = "hypergraph-coding-agent-framework"
-version = "0.5.3"
+version = "0.5.9"
 description = "A multi-agent AI coding framework using hypergraph state management."
 requires-python = ">=3.11"
 

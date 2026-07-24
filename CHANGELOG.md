@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.9] - 2026-07-23
+
+### Changed
+- **`hyper-process-document` and `hyper-handoff` skills**: Output filenames now use a date-only stamp (`process_<YYYYMMDD>_<slug>.md`, `handoff_<YYYYMMDD>.md`) instead of a full `<YYYYMMDD_HHMMSS>` timestamp, with a `_v2`/`_v3` suffix appended to disambiguate multiple documents written on the same date. Agents now run workflows autonomously, so a wall-clock time-of-day in the filename no longer reflects when the underlying work was actually done.
+
 ## [0.5.8] - 2026-07-21
 
 ### Added
