@@ -1,5 +1,5 @@
 ---
-name: handoff
+name: hyper-handoff
 description: Compacts the current conversation into a handoff document so a fresh agent can continue the work. Saves to the OS temp directory, not the workspace. Pass an optional argument describing what the next session will focus on.
 trigger: /hyper-handoff
 argument-hint: "What will the next session be used for?"
@@ -104,7 +104,7 @@ with a one-line reason for each. Choose from:>
 ## Exact Next Action
 
 <One sentence: the single most important thing the next agent should do first.
-Example: "Run /hyper-redteam on spec/active/Draft_PRD.md in a new context window.">
+Example: "Run /hyper-redteam on spec/active/Draft_PRD.md in a **new-session**.">
 ```
 
 ---

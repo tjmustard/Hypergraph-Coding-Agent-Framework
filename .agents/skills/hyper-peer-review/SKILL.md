@@ -1,5 +1,5 @@
 ---
-name: peer-review
+name: hyper-peer-review
 description: Evaluates external peer review findings against the actual codebase, separating valid issues from misunderstandings, and produces a prioritized action plan. Use when another model or reviewer has provided feedback on the current implementation.
 ---
 
@@ -16,7 +16,7 @@ This skill critically evaluates external peer review findings as the team lead â
 ## How to use it
 
 1. **Receive the Findings**
-   If feedback was not provided with the command, use **AskUserQuestion**:
+   If feedback was not provided with the command, use **ask-user**:
 
    ```
    How would you like to provide the peer review feedback?

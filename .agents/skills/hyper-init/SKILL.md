@@ -19,7 +19,7 @@ This skill initializes a standard repository structure for a new project within 
 
 ## Step 1 — Interview the User
 
-Use the `AskUserQuestion` tool to collect the following metadata variables. Ask the questions sequentially or in one batch, but do not proceed until you have all of them:
+Use **ask-user** to collect the following metadata variables. Ask the questions sequentially or in one batch, but do not proceed until you have all of them:
 
 - `{{PROJECT_NAME}}`: The human-readable name of the project (e.g., "Google Docs Annotator").
 - `{{REPO_NAME}}`: The machine-readable repository name (e.g., "mcp-gdoc-annotated").
@@ -70,7 +70,7 @@ This installs the required dev tooling and generates `uv.lock`.
 
 For each of the 7 documentation files (not `pyproject.toml` — already handled above):
 1. Replace all placeholder variables (e.g., `{{PROJECT_NAME}}`) with the user's provided answers.
-2. Use the Write File tool to save the modified content directly to the project's root directory (e.g., `/README.md`, `/SECURITY.md`).
+2. Write the modified content with your harness's file-write tool directly to the project's root directory (e.g., `/README.md`, `/SECURITY.md`).
 
 ---
 

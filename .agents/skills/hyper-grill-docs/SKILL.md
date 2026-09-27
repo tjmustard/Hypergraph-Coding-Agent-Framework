@@ -1,5 +1,5 @@
 ---
-name: grill-docs
+name: hyper-grill-docs
 description: Relentless domain-sharpening session that challenges your plan against the existing domain model, enforces precise terminology, and updates CONTEXT.md and ADRs inline as decisions crystallise. Use when stress-testing a plan against the project's language and documented decisions.
 trigger: /hyper-grill-docs
 ---

@@ -25,9 +25,12 @@ Read `.agents/memory/activeContext.md`:
 
 ### Step 2: Flush Conversation History
 
-Clear conversation history by **starting a new conversation** in Claude Code:
+Clear conversation history by starting a **new-session**:
 1. Inform the user: "Context cleared. Starting fresh session for next feature cycle."
-2. The user manually starts a new conversation thread (or you can suggest: "You may now `/hyper-clear` by opening a new chat window").
+2. The user manually starts the new session. Tell them how for their harness:
+   - Claude Code: start a new conversation (or run `/clear`).
+   - Pi: run `/new` (or `/compact` to keep a summary instead of a clean slate).
+   - Other harnesses: open a new chat window.
 
 **Specification Retained:**
 - `spec/compiled/architecture.yml` — preserved

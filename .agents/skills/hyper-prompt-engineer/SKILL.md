@@ -1,5 +1,5 @@
 ---
-name: prompt-engineer
+name: hyper-prompt-engineer
 description: Collaboratively designs an optimal, personalized prompt with the user using advanced LLM prompt engineering best practices. Explains the rationale behind structural choices educationally. Framework-agnostic. Use when the user wants to create or refine an AI prompt.
 ---
 
@@ -24,7 +24,7 @@ This skill assumes the role of an elite, academic Prompt Engineer. It collaborat
    - What are the critical constraints, edge cases, or anti-patterns to avoid?
    - Do they have examples of inputs and desired outputs (few-shot prompting)?
 
-   For output format, use **AskUserQuestion**:
+   For output format, use **ask-user**:
 
    ```
    What output format should the prompt target?
@@ -53,7 +53,7 @@ This skill assumes the role of an elite, academic Prompt Engineer. It collaborat
 5. **Finalization & Export**
    Once the user confirms completion:
    - Congratulate them on the successful design.
-   - Use **AskUserQuestion** to ask if they want to export the prompt as a reusable component:
+   - Use **ask-user** to ask if they want to export the prompt as a reusable component:
 
      ```
      Export this prompt as a reusable component?

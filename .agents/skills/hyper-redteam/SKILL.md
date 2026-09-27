@@ -1,5 +1,5 @@
 ---
-name: redteam
+name: hyper-redteam
 description: Performs an adversarial Blast Radius and vulnerability analysis on the Draft PRD.
 trigger: /hyper-redteam
 ---

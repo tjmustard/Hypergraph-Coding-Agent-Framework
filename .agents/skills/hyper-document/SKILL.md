@@ -91,7 +91,7 @@ Work through each target below. Skip targets that are clearly unaffected by the 
 
 **Find the current version:** Check the most recent `## [X.Y.Z]` header in `CHANGELOG.md`. That is the current released version. `## [Unreleased]` entries are pending release.
 
-**CRITICAL:** Before modifying, use **AskUserQuestion**:
+**CRITICAL:** Before modifying, use **ask-user**:
 
 ```
 Are we releasing a new version with this change?
@@ -146,7 +146,7 @@ Then:
 
 ### `AGENTS.md`
 
-**Purpose:** Universal cross-IDE always-on manifest. Read by Windsurf, Cursor, Roo Code, GitHub Copilot, Zed.
+**Purpose:** Universal cross-IDE always-on manifest. Read by Pi, Windsurf, Cursor, Roo Code, GitHub Copilot, Zed. Pi has no separate bridge file, so its harness rules (Harness Capability Map, Pi section) live here.
 
 **Update when:** Skills are added/renamed/removed, system mandates change, or the directory structure changes.
 

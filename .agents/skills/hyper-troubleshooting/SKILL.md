@@ -1,5 +1,5 @@
 ---
-name: troubleshooting
+name: hyper-troubleshooting
 description: Guides the user through diagnosing and recovering from common failure states in the Hypergraph Coding Agent Framework. Use when the user reports bugs, hallucinations, desynchronization, or errors with the framework agents.
 ---
 
@@ -20,7 +20,7 @@ This skill helps diagnose and recover from common failure states in the Hypergra
 
 ### Step 1: Identify the Symptom
 
-Use **AskUserQuestion** to identify the symptom:
+Use **ask-user** to identify the symptom:
 
 ```
 What symptom are you seeing?
@@ -41,7 +41,7 @@ If the user selects Option C, ask a brief follow-up to confirm whether it is the
 1. Halt the Builder Agent.
 2. Ensure `.agentignore` contains `spec/archive/`.
 3. Run `python .agents/scripts/archive_specs.py cleanup`.
-4. Open a completely new agent chat and restart the Builder prompt pointing strictly to the compiled MiniPRD.
+4. Start a **new-session** (fresh context window) and restart the Builder prompt pointing strictly to the compiled MiniPRD.
 
 #### Issue 2: Hypergraph Desynchronization
 **Cause:** The Builder forgot or failed to execute `hypergraph_updater.py`, so `architecture.yml` is unaware of codebase changes.
@@ -55,7 +55,7 @@ If the user selects Option C, ask a brief follow-up to confirm whether it is the
 **Fix:**
 1. Do not pass this report to the Resolution Agent.
 2. Delete `spec/active/RedTeam_Report.md`.
-3. Open a new chat and re-run `/hyper-redteam` with a strict override: `/hyper-redteam Analyze the Draft PRD. CRITICAL: Identify technical vulnerabilities ONLY. Reject any product feature suggestions.`
+3. Start a **new-session** and re-run `/hyper-redteam` with a strict override: `/hyper-redteam Analyze the Draft PRD. CRITICAL: Identify technical vulnerabilities ONLY. Reject any product feature suggestions.`
 
 #### Issue 4: YAML File Corruption
 **Cause:** A concurrent write occurred (multiple agents running) or the Auditor output malformed YAML.
@@ -73,7 +73,7 @@ If the user selects Option C, ask a brief follow-up to confirm whether it is the
 
 ### Step 3: Follow-Up
 
-Use **AskUserQuestion** for follow-up:
+Use **ask-user** for follow-up:
 
 ```
 Did that fix the problem?

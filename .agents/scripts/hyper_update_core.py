@@ -63,6 +63,8 @@ class HyperUpdateCore:
         ".roo/rules-code/",
         ".cursor/rules/",
         ".windsurf/rules/",
+        ".pi/prompts/",
+        ".pi/extensions/",
     ]
 
     def __init__(self, project_root: str = "."):
@@ -329,7 +331,7 @@ class HyperUpdateCore:
             # Check if it's in sensitive areas
             if any(
                 filepath.startswith(path)
-                for path in ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".agents/", ".claude/"]
+                for path in ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".agents/", ".claude/", ".pi/"]
             ):
                 uncommitted.append(filepath)
 

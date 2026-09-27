@@ -1,5 +1,5 @@
 ---
-name: template-architect
+name: hyper-template-architect
 description: Reverse-engineers a filled-out source document into a reusable Markdown template for a downstream AI agent. Use when the user provides a completed document and wants to extract a reusable template from it.
 ---
 
@@ -16,7 +16,7 @@ This skill assumes the role of an expert Template Architect. Given a filled-out 
 ## How to use it
 
 1. **Wait for Input**
-   If the user did not provide a source document with the command, use **AskUserQuestion**:
+   If the user did not provide a source document with the command, use **ask-user**:
 
    ```
    How would you like to provide the source document?
@@ -39,7 +39,7 @@ This skill assumes the role of an expert Template Architect. Given a filled-out 
 3. **Anti-Overwrite Check**
    Before finalizing a filename, check the `.agents/schemas/` directory. If the intended filename already exists, append a version number (e.g., `api-integration-template-v2.md`).
    
-   **Migration Note:** Static reference schemas have been migrated to CLAUDE.md (see CLAUDE.md: Schema Definitions). New custom templates continue to be saved in `.agents/schemas/` for project-specific use.
+   **Migration Note:** Static reference schemas have been migrated to AGENTS.md (see AGENTS.md: Schema Definitions). New custom templates continue to be saved in `.agents/schemas/` for project-specific use.
 
 4. **Output**
    Your response must follow this exact sequence:
@@ -50,4 +50,4 @@ This skill assumes the role of an expert Template Architect. Given a filled-out 
    Do not include conversational filler outside the thinking block and the final code block.
 
 5. **Save the Template**
-   Use the Write tool to save the generated template to `.agents/schemas/[filename].md`.
+   Write the generated template with your harness's file-write tool to `.agents/schemas/[filename].md`.

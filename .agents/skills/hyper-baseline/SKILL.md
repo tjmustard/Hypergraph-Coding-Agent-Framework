@@ -1,5 +1,5 @@
 ---
-name: baseline
+name: hyper-baseline
 description: Reverse-engineers the existing codebase to generate a "Current State" SuperPRD.
 trigger: /hyper-baseline
 ---

@@ -1,5 +1,5 @@
 ---
-name: learning-opportunity
+name: hyper-learning-opportunity
 description: Pauses development mode to teach a technical concept at three increasing levels of complexity, tailored to a technical PM audience. Use when the user wants to understand something they encountered while building.
 ---
 
@@ -25,7 +25,7 @@ Technical PM with mid-level engineering knowledge. Understands architecture, can
 
 ### Deliver Three Levels
 
-Begin by using **AskUserQuestion** to check how deep the user wants to go:
+Begin by using **ask-user** to check how deep the user wants to go:
 
 ```
 What depth of explanation do you want?
@@ -35,7 +35,7 @@ What depth of explanation do you want?
 - Option C: Full deep dive (all 3 levels) — including implementation details and senior-engineer perspective
 ```
 
-After delivering each level, use **AskUserQuestion** before advancing:
+After delivering each level, use **ask-user** before advancing:
 
 ```
 Ready to continue to the next level?

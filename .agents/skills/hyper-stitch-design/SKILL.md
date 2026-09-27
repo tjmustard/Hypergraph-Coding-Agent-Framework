@@ -1,5 +1,5 @@
 ---
-name: stitch-design
+name: hyper-stitch-design
 description: Translates rough UI/UX ideas and visual references into a concrete Design System specification with tokens, component specs, and layout rules. Use when starting UI work or defining visual standards for a feature.
 ---
 
@@ -24,7 +24,7 @@ This skill activates a UI/UX Designer and Frontend Specialist persona. It transl
 ### Step 1: Analyze the Aesthetic
 - Identify the desired visual style (e.g., Modern, Brutalist, Corporate, Minimalist).
 - If a reference image is provided, extract: color palette, typography, spacing rhythm, and shadow usage.
-- If no reference is provided, use **AskUserQuestion**:
+- If no reference is provided, use **ask-user**:
 
   ```
   What design style or reference are we targeting?

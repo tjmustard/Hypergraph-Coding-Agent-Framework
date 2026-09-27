@@ -1,12 +1,12 @@
 ---
 name: hyper-tutorial-audit
-description: Run this after /hyper-tutorial-run to turn tutorial failures into a structured, constraint-aware goal prompt. Interviews the user about their goal and what may/may not be changed, then generates a paste-ready prompt for a new Claude Code fix session. Does NOT re-run tutorial commands.
+description: Run this after /hyper-tutorial-run to turn tutorial failures into a structured, constraint-aware goal prompt. Interviews the user about their goal and what may/may not be changed, then generates a paste-ready prompt for a new agent fix session. Does NOT re-run tutorial commands.
 trigger: /hyper-tutorial-audit
 ---
 
 # Tutorial Audit
 
-This skill is designed to run **after** `/hyper-tutorial-run` in the same conversation. It reads the tutorial, reviews what failed during the walk-through, interviews the user about their goal and constraints, and generates a structured goal prompt that can be pasted at the start of a fresh Claude Code session to drive an automated fix loop.
+This skill is designed to run **after** `/hyper-tutorial-run` in the same conversation. It reads the tutorial, reviews what failed during the walk-through, interviews the user about their goal and constraints, and generates a structured goal prompt that can be pasted at the start of a **new-session** (any harness: Claude Code, Pi, etc.) to drive an automated fix loop.
 
 > **Do not re-run tutorial commands.** This skill is read-only and interview-driven. The fix work happens in the new session the goal prompt creates.
 
@@ -16,7 +16,7 @@ This skill is designed to run **after** `/hyper-tutorial-run` in the same conver
 
 - If an argument was passed (tutorial name or path), resolve `tutorials/<name>/tutorial.md`.
 - Otherwise, scan the current conversation for mentions of a tutorial name or path from a recent `/hyper-tutorial-run` session and use that.
-- If still ambiguous, list all `tutorials/*/tutorial.md` files found in the project. Use **AskUserQuestion** to let the user select one.
+- If still ambiguous, list all `tutorials/*/tutorial.md` files found in the project. Use **ask-user** to let the user select one.
 
 ---
 
@@ -43,7 +43,7 @@ Build an internal summary of failures — **do not ask the user to re-describe o
 
 ## Step 4 — Interview: Goal (HITL Gate #1)
 
-Use **AskUserQuestion** with at most 2 questions:
+Use **ask-user** with at most 2 questions:
 
 **Question 1 — What are you trying to accomplish?** (multi-select)
 - Learn the concept the tutorial teaches
@@ -59,7 +59,7 @@ Show a checklist of all section headings from the tutorial. Pre-select any secti
 
 ## Step 5 — Interview: Constraints (HITL Gate #2)
 
-Use **AskUserQuestion** with at most 2 questions:
+Use **ask-user** with at most 2 questions:
 
 **Question 1 — What is the fix agent allowed to modify?** (multi-select)
 - Tutorial text (fix outdated instructions, wrong version numbers, renamed APIs)
@@ -79,7 +79,7 @@ Use **AskUserQuestion** with at most 2 questions:
 
 Only ask this gate if no environment details are visible in the conversation from Step 3. If the environment and errors are already captured, skip this gate entirely.
 
-Use **AskUserQuestion**:
+Use **ask-user**:
 
 **Question 1 — What Python / tool version are you running?** (freeform)
 
@@ -146,9 +146,9 @@ Display the generated goal prompt in a fenced code block so the user can copy th
 
 Then print below the code block:
 
-> **Next step:** Start a new Claude Code session and paste the goal prompt above as your opening message. The agent will work through the tutorial failures iteratively, respecting the constraints you've set.
+> **Next step:** Start a **new-session** (Claude Code: new conversation; Pi: `/new`) and paste the goal prompt above as your opening message. The agent will work through the tutorial failures iteratively, respecting the constraints you've set.
 
-Then use **AskUserQuestion** to offer a save option:
+Then use **ask-user** to offer a save option:
 - **Option A** — Save to `tutorials/<name>/audit_<YYYY-MM-DD>.md` (use today's date)
 - **Option B** — Display only — I'll copy it myself
 
@@ -160,6 +160,6 @@ If Option A is chosen, write the goal prompt (without the surrounding fenced cod
 
 - **Never run tutorial commands** — this skill is read-only and produces a goal prompt only.
 - **Never modify tutorial files, source code, or any project file** during the audit (Steps 1–7 are read + interview only). Only Step 8 Option A writes a file.
-- **Max 2 questions per AskUserQuestion call** — keep the interview conversational.
+- **Max 2 questions per ask-user call** — keep the interview conversational.
 - **Pre-fill from context** — if conversation context from Step 3 already answers a question, pre-select or skip that question rather than asking twice.
-- **Use multi-select** for all AskUserQuestion calls where choices are not mutually exclusive.
+- **Use multi-select** for all **ask-user** calls where choices are not mutually exclusive.

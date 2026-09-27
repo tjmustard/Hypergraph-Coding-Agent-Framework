@@ -1,5 +1,5 @@
 ---
-name: <skill-name>
+name: <skill-name>  # must exactly match the skill directory name (e.g. hyper-foo)
 description: <concise, third-person description>
 ---
 

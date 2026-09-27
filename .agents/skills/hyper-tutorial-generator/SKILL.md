@@ -1,5 +1,5 @@
 ---
-name: tutorial-generator
+name: hyper-tutorial-generator
 description: Generates a markdown tutorial from an integration test or user-provided files through iterative LLM + human collaboration. Tutorials are saved to tutorials/<name>/ with organized supporting files.
 trigger: /hyper-tutorial-generator
 ---
@@ -23,7 +23,7 @@ This skill converts an existing integration test or a set of user-provided files
 
 ### Step 0 — Choose Your Source (HITL Gate #1)
 
-Use **AskUserQuestion** to ask the user which source to use:
+Use **ask-user** to ask the user which source to use:
 
 **Option A: Existing Integration Test**
 - Tutorial will be based on a test file from `tests/integration/`
@@ -42,14 +42,14 @@ Wait for the user's selection before proceeding.
 #### If Integration Test Mode:
 
 1. List all files in `tests/integration/` (numbered).
-2. Use **AskUserQuestion** to let the user select which test file to use.
+2. Use **ask-user** to let the user select which test file to use.
 3. Read the selected test file **in full**.
-4. Then ask via **AskUserQuestion**: "What aspects of this test should the tutorial focus on? (e.g., the core workflow, specific edge cases, debugging tips)"
+4. Then ask via **ask-user**: "What aspects of this test should the tutorial focus on? (e.g., the core workflow, specific edge cases, debugging tips)"
 5. Wait for the response.
 
 #### If User Files Mode:
 
-1. Use **AskUserQuestion** (two parts):
+1. Use **ask-user** (two parts):
    - "What is this tutorial about? (1-2 sentences)"
    - "Do you have any input files, code samples, examples, or screenshots to include? If yes, list their file paths or paste their content directly."
 2. For any listed files, read them in full (or accept pasted content).
@@ -65,7 +65,7 @@ Based on the source material, propose:
 - **Tutorial title**: A human-readable title (e.g., "Context Clearing Workflow", "How to Use Hyper-Publish for Releases")
 - **Section outline**: A proposed outline based on the source (e.g., Overview → Prerequisites → Step-by-step → Expected Output → Troubleshooting)
 
-Present the proposal via **AskUserQuestion**:
+Present the proposal via **ask-user**:
 
 **Option A: Accept name and outline**
 - Proceed with the proposal as-is
@@ -87,7 +87,7 @@ Based on what the source material contains, propose which subdirectories are nee
 - `screenshots/` — if visual steps are described (placeholder for user to add images)
 - `architecture_evolution/` — for version tour or architecture-overview tutorials (version summary tables, state model diagrams, before/after comparisons)
 
-Ask via **AskUserQuestion**:
+Ask via **ask-user**:
 
 1. "Which supporting subdirectories do you want to include?"
 2. "Do you have any additional files to add? (list paths or paste content)"
@@ -107,7 +107,7 @@ Work through the outline section by section:
    - The user's stated focus and preferences
    - The template structure in `resources/TUTORIAL_TEMPLATE.md`
 
-2. **Present** the draft to the user using **AskUserQuestion**:
+2. **Present** the draft to the user using **ask-user**:
    ```
    Section: <Section Title>
    
@@ -168,7 +168,7 @@ Display:
   3. Consider adding this tutorial to docs/index or a README
 ```
 
-Then ask via **AskUserQuestion**:
+Then ask via **ask-user**:
 - "Would you like to add a summary of this tutorial to `docs/README.md`, create a follow-up tutorial, or finalize?"
 
 ---

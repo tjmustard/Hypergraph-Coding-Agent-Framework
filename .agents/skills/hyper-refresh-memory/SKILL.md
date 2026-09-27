@@ -1,5 +1,5 @@
 ---
-name: refresh-memory
+name: hyper-refresh-memory
 description: Reads all memory, rules, docs, and the codebase to rebuild a fresh mental model of the project, then updates the memory files to reflect actual current state. Use when starting a new session or when memory feels stale.
 ---
 

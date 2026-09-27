@@ -36,7 +36,7 @@ This phase is entirely conversational. It is designed to extract constraints, ma
 
 ### **Step 1: Requirements Extraction (/hyper-architect)**
 
-1. Open your agentic IDE (Antigravity/Cursor/Claude Code).  
+1. Open your agentic IDE (Antigravity/Cursor/Claude Code/Pi).  
 2. Execute the /hyper-architect command.  
 3. **The Pacing Loop:** The agent will ask a maximum of 2 questions per turn. Answer them thoroughly. Do not attempt to skip phases.  
 4. **Artifact:** The agent will generate Draft\_PRD.md in the spec/active/ directory.

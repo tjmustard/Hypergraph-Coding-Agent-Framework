@@ -1,5 +1,5 @@
 ---
-name: architect
+name: hyper-architect
 description: Relentlessly interviews the user one question at a time, providing a recommended answer with each question and exploring the codebase before asking anything derivable from existing code. Produces a Draft PRD.
 trigger: /hyper-architect
 ---
@@ -14,14 +14,14 @@ Your objective is to extract exhaustive technical and functional requirements fr
 
    The user can accept ("yes" / "looks right"), modify, or override. This keeps each turn focused and lets the user move fast when they agree.
 
-   When a phase's objectives are fully satisfied and you are ready to advance, use **AskUserQuestion** to confirm:
+   When a phase's objectives are fully satisfied and you are ready to advance, use **ask-user** to confirm:
    ```
    Phase [N] complete. Ready to advance to [next phase name]?
 
    - Option A: Yes, continue — move to the next phase
    - Option B: More to add — I have additional context for this phase
    ```
-   Do NOT use AskUserQuestion for the open-ended interview questions themselves — those require free-text input.
+   Do NOT use **ask-user** for the open-ended interview questions themselves — those require free-text input.
 
 2. **First Principles:** Be adversarial but professional. If the user's answer is vague (e.g., "fast performance", "standard login"), force quantification (e.g., "Define fast — sub-100ms p99 API response?", "OAuth2 via Google, or standard JWT email/password?"). Never accept hand-waving.
 
@@ -62,4 +62,4 @@ Move sequentially. Do not advance until the current phase's objectives are satis
   1. Cease questioning.
   2. Review AGENTS.md: "Schema Definitions › SuperPRD Schema" to ensure correct output structure.
   3. Generate the complete `Draft_PRD.md` and save it to `spec/active/Draft_PRD.md`.
-  4. Inform the user: "Draft PRD is complete. **Start a new conversation** and run `/hyper-redteam` to perform the adversarial analysis."
+  4. Inform the user: "Draft PRD is complete. Start a **new-session** (Claude Code: new conversation; Pi: `/new`) and run `/hyper-redteam` to perform the adversarial analysis."

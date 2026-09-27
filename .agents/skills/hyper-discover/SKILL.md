@@ -1,5 +1,5 @@
 ---
-name: discover
+name: hyper-discover
 description: Scans the existing codebase to initialize or update the architecture.yml hypergraph.
 trigger: /hyper-discover
 ---

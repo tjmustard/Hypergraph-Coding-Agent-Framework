@@ -1,5 +1,5 @@
 ---
-name: contextualize
+name: hyper-contextualize
 description: Audits and fixes HACF agent instruction files (CLAUDE.md, AGENTS.md, GEMINI.md) in an installed project to ensure HACF is framed as a development toolchain, not the project subject. Use when HACF content bleeds into project plans, PRDs, or architecture docs.
 ---
 
@@ -56,7 +56,7 @@ If all installed agent files pass all checks: output `[CONTEXTUALIZED: OK]` and 
 
 ## Step 4 — Ask How to Fix
 
-If any issues were found, use **AskUserQuestion** with these options:
+If any issues were found, use **ask-user** with these options:
 
 - **Replace with install templates (Recommended)** — copies `.agents/install-templates/<file>`
   over each affected file. Canonical framing, no stale notices. Project-specific
@@ -104,7 +104,7 @@ Before injecting, verify the banner is not already present (idempotency check). 
 
 For each affected file:
 1. Show a brief summary: current first 10 lines vs. install template first 10 lines.
-2. Use **AskUserQuestion** (Replace / Inject / Skip) for that specific file.
+2. Use **ask-user** (Replace / Inject / Skip) for that specific file.
 3. Apply the chosen action before moving to the next file.
 
 ---
@@ -149,8 +149,9 @@ README.md: 2 potential bleed sections found — see findings above
 
 ## Negative Space
 
-- **DO NOT** modify `spec/`, `tests/`, `.agents/`, `.claude/commands/`, or any IDE bridge directories (`.cursor/`, `.windsurf/`, `.clinerules/`, `.roo/`).
+- **DO NOT** modify `spec/`, `tests/`, `.agents/`, `.claude/commands/`, or any IDE bridge directories (`.cursor/`, `.windsurf/`, `.clinerules/`, `.roo/`, `.pi/`).
 - **DO NOT** modify `README.md` — report findings only.
-- **DO NOT** apply any changes silently — always confirm the fix mode with AskUserQuestion before writing.
+- **DO NOT** apply any changes silently — always confirm the fix mode with **ask-user** before writing.
 - **DO NOT** treat absence of `GEMINI.md` or `CLAUDE.md` as an error — those IDEs may not be installed.
+- **DO NOT** treat `AGENTS.md` as optional when `.pi/` exists: Pi reads `AGENTS.md` (not `CLAUDE.md`) as its always-on context file, so a missing or unframed `AGENTS.md` breaks Pi projects.
 - **DO NOT** inject the framing banner twice — check for existing `HACF as a Toolchain` string before injecting.

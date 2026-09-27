@@ -2,6 +2,7 @@
 name: hyper-publish
 description: "Enhanced commit-push-PR automation: AI-suggests commit messages from CHANGELOG, uses HITL approval gates at each step, optionally creates PRs with auto-drafted descriptions. No system-level git/gh approval prompts required."
 trigger: /hyper-publish [--dry-run] [--skip-pr] [commit message]
+disable-model-invocation: true
 ---
 
 # Hyper-Publish: Commit, Push, and PR Creation
@@ -14,13 +15,13 @@ This enhanced skill automates the full git commit → push → (optional) PR cre
 - Displays transparency gate before any changes
 - HITL approval gates before each file modification and git command
 - Optionally creates a GitHub PR with auto-drafted description
-- No system-level approval prompts for git/gh commands (pre-approved via settings.json)
+- No system-level approval prompts for git/gh commands (Claude Code: pre-approved via `.claude/settings.json`; Pi has no approval prompts)
 
 ---
 
 ## When to use this skill
 
-- After a Claude Code session, when you want to commit changes with an AI-suggested message based on your CHANGELOG
+- After an agent session, when you want to commit changes with an AI-suggested message based on your CHANGELOG
 - When you want to commit, push, and optionally create a PR in one unified workflow
 - Whenever you run `/hyper-publish [message]` or `/hyper-publish --dry-run`
 
@@ -28,11 +29,11 @@ This enhanced skill automates the full git commit → push → (optional) PR cre
 
 ## How to use it
 
-### Step 0 — Initialize Permissions (automatic)
+### Step 0 — Initialize Permissions (automatic, Claude Code only)
 
-Run `python .agents/skills/hyper-publish/scripts/setup_permissions.py` to patch `.claude/settings.json` with pre-approved patterns for `Bash(git *)` and `Bash(gh *)`. This prevents Claude Code from prompting for shell command approval on every invocation.
+**Claude Code:** Run `python .agents/skills/hyper-publish/scripts/setup_permissions.py` to patch `.claude/settings.json` with pre-approved patterns for `Bash(git *)` and `Bash(gh *)`. This prevents Claude Code from prompting for shell command approval on every invocation. If settings.json is already configured, this step skips silently.
 
-If settings.json is already configured, this step skips silently.
+**Other harnesses (Pi, Gemini CLI, IDE agents):** Skip this step and do not create `.claude/settings.json`. Pi runs `git` and `gh` through its `bash` tool without approval prompts, so the **ask-user** gates below are the only approval checkpoints and must never be skipped.
 
 ---
 
@@ -86,7 +87,7 @@ The script reads:
 - `git diff --name-only HEAD` → infers scope from changed file paths
 - Outputs JSON: `{"subject": "...", "body": "...", "style": "...", "source_bullets": [...]}`
 
-Parse the JSON and use **AskUserQuestion** to present options:
+Parse the JSON and use **ask-user** to present options:
 
 ```
 Proposed commit message:
@@ -137,7 +138,7 @@ If `DRY_RUN=true`, append:
 DRY-RUN MODE — no files will be touched, no commit or push will be made.
 ```
 
-Then use **AskUserQuestion** to request explicit approval:
+Then use **ask-user** to request explicit approval:
 
 ```
 Review the changes above. Proceed?
@@ -160,7 +161,7 @@ If `DRY_RUN=false`, display the exact touch command that will be executed:
   | xargs -d '\n' touch -m
 ```
 
-Then use **AskUserQuestion**:
+Then use **ask-user**:
 
 ```
 Touch N files to update mtime?
@@ -183,7 +184,7 @@ If `DRY_RUN=true`, print the command without running it.
 
 Check whether `CHANGELOG.md` has a non-empty `## [Unreleased]` block.
 
-- If yes: use **AskUserQuestion**:
+- If yes: use **ask-user**:
   ```
   Promote [Unreleased] to a versioned release?
 
@@ -207,7 +208,7 @@ git commit -m "<COMMIT_MESSAGE>"
 git push origin <current-branch>
 ```
 
-Then use **AskUserQuestion**:
+Then use **ask-user**:
 
 ```
 Ready to stage, commit, and push?
@@ -226,7 +227,7 @@ If `DRY_RUN=true`, print each command without running it.
 
 ### Step 8 — NEW: Offer PR Creation + HITL Approval Gate #5
 
-After successful push, unless `--skip-pr` was set, use **AskUserQuestion**:
+After successful push, unless `--skip-pr` was set, use **ask-user**:
 
 ```
 Create a GitHub pull request?
@@ -267,7 +268,7 @@ Parse the output as `PR_BODY`.
 
 **HITL Gate #6 — Description Approval:**
 
-Use **AskUserQuestion** to present the drafted description:
+Use **ask-user** to present the drafted description:
 
 ```
 Proposed PR description:
@@ -289,7 +290,7 @@ Display the exact `gh pr create` command that will run:
 gh pr create --title "<COMMIT_MESSAGE>" --body "<PR_BODY>"
 ```
 
-Then use **AskUserQuestion**:
+Then use **ask-user**:
 
 ```
 Create the pull request?
@@ -331,7 +332,7 @@ On push rejection (non-fast-forward), suggest:
 ## Constraints
 
 - **Never force-push.** Use `git push origin <branch>` only.
-- **Never skip HITL gates.** Each step touching files or running git commands requires explicit user approval via AskUserQuestion.
+- **Never skip HITL gates.** Each step touching files or running git commands requires explicit user approval via **ask-user**.
 - **Never modify files** other than CHANGELOG.md (and only when user explicitly approves Step 6).
 - **Respect `.gitignore`** — only touch files git already tracks or has staged as untracked.
 - **No system-level approval prompts** — all git/gh commands are pre-approved in settings.json, but skill-level HITL gates ensure user control.
@@ -362,6 +363,6 @@ Refer to:
 - Ensure you're authenticated: `gh auth login`
 - Ensure your branch is pushed and visible on GitHub
 
-**Permissions still prompting:**
+**Permissions still prompting (Claude Code):**
 - Run `/hyper-publish` once to auto-patch `.claude/settings.json`
 - Or run manually: `python .agents/skills/hyper-publish/scripts/setup_permissions.py`

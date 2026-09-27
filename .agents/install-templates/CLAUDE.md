@@ -19,7 +19,8 @@ Read `AGENTS.md` for the full framework system mandates that apply to all IDEs.
 **Claude Code-specific overrides and additions:**
 
 ### Tool Names
-When skills say "read/write/run/edit a file," use these Claude Code tools:
+When skills say "read/write/run/edit a file," or name a **capability** in bold (see
+`AGENTS.md` → Harness Capability Map), use these Claude Code tools:
 
 | Action | Tool |
 |---|---|
@@ -27,7 +28,9 @@ When skills say "read/write/run/edit a file," use these Claude Code tools:
 | Write a file | **Write** tool |
 | Edit a file | **Edit** tool |
 | Run a shell command | **Bash** tool |
-| Ask the user a question | **AskUserQuestion** tool |
+| Ask the user a question (**ask-user**) | **AskUserQuestion** tool |
+| Delegate to a **sub-agent** | **Agent** tool, with the model the skill names |
+| Start a **new-session** | Finish the turn; tell the user to start a new conversation (or `/clear`) |
 | Search file patterns | **Glob** tool |
 | Search file contents | **Grep** tool |
 
@@ -43,7 +46,7 @@ For any task involving 3 or more steps, use the built-in task tools **before** s
 - **TaskList** — check overall progress
 
 ### Context Window Management
-When a skill instructs you to "open a new context window": **complete the current agent turn**,
+When a skill calls for a **new-session** (a new context window): **complete the current agent turn**,
 then inform the user to start a new conversation thread for the next phase. This prevents
 cross-contamination between adversarial agents (the Red Team must not see the Architect's
 conversation history).

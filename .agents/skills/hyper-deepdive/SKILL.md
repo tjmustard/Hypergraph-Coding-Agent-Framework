@@ -1,5 +1,5 @@
 ---
-name: deepdive
+name: hyper-deepdive
 description: Temporarily pauses the main development plan to exhaustively explore, research, or brainstorm a specific topic using First Principles thinking and strict epistemic humility. Use when the user needs to deeply understand a concept before making a decision.
 ---
 
@@ -38,7 +38,7 @@ This skill temporarily pauses the broader development plan and exhaustively rese
    - **Relevance**: How this applies to the current project/decision
 
 5. **Integrate Findings**
-   - Once the deep dive is complete, use **AskUserQuestion**:
+   - Once the deep dive is complete, use **ask-user**:
 
      ```
      Would you like to integrate any of these findings into the Living Master Plan or the current specification?

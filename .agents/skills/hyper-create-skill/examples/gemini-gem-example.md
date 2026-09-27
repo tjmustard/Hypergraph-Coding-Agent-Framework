@@ -5,7 +5,7 @@ Make sure to include a sample regex for extracting scopes in `scripts/extract_sc
 
 # Example Output `SKILL.md` (in `.agents/skills/hyper-commit-formatter/SKILL.md`):
 ---
-name: commit-formatter
+name: hyper-commit-formatter
 description: Generates a structured semantic commit message based on a provided git diff using Conventional Commits. Use whenever asked to write or format a commit message.
 ---
 

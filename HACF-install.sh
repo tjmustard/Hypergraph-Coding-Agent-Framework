@@ -54,12 +54,17 @@ IDE_DEFS=(
   "cursor|Cursor|.cursor|"
   "cline|Cline|.clinerules|"
   "roo|Roo Code|.roo|"
+  "pi|Pi  (reads AGENTS.md; .pi/ prompts, settings, ask_user extension)|.pi|AGENTS.md"
   "universal|Universal — AGENTS.md  (GitHub Copilot, Zed, and others)||AGENTS.md"
 )
 
 # IDE subdirectories that contain per-skill bridge files.
 # These are synced alongside .agents/skills/ in skills-only mode.
-SKILL_BRIDGE_DIRS=(".claude/commands" ".windsurf/workflows")
+SKILL_BRIDGE_DIRS=(".claude/commands" ".windsurf/workflows" ".pi/prompts")
+
+# Files inside IDE directories that hold user preferences. They are installed when missing
+# but never overwritten by an IDE-directory copy.
+NO_CLOBBER_FILES=(".pi/settings.json")
 
 # Source path overrides: these files are installed from .agents/install-templates/ rather
 # than the repo root, so that the installed versions are framed for user projects rather
@@ -227,7 +232,7 @@ if $UPGRADE_MODE && [[ -z "$MODE" ]] && [[ -z "$FILES_TARGET" ]]; then
     echo "    1) Full update            — system + skills  (recommended)"
     echo "    2) Skills only            — .agents/skills/ + IDE skill bridges"
     echo "    3) System only            — scripts, schemas, hooks, rules (not skills)"
-    echo "    4) IDE files only         — .claude/, .windsurf/, CLAUDE.md, etc."
+    echo "    4) IDE files only         — .claude/, .windsurf/, .pi/, CLAUDE.md, etc."
     echo "    5) Repair / verify        — install only missing pieces"
     echo "    6) Dry-run preview        — show what would change, touch nothing"
     echo ""
@@ -366,7 +371,10 @@ if $NEEDS_IDE_SELECTION; then
       dirs=$(ide_dirs "$def")
       files=$(ide_files "$def")
       [[ -n "$dirs" ]]  && IDE_DIRS_TO_INSTALL+=("$dirs")
-      [[ -n "$files" ]] && IDE_FILES_TO_INSTALL+=("$files")
+      # Several harnesses share a file (e.g. AGENTS.md for Pi and Universal): add it once.
+      if [[ -n "$files" ]] && ! contains_id "$files" ${IDE_FILES_TO_INSTALL[@]+"${IDE_FILES_TO_INSTALL[@]}"}; then
+        IDE_FILES_TO_INSTALL+=("$files")
+      fi
     fi
   done
 fi
@@ -542,6 +550,24 @@ install_core_files() {
   echo ""
 }
 
+# Copy an IDE directory while keeping any existing NO_CLOBBER_FILES inside it untouched.
+copy_ide_dir() {
+  local src="$1" dst="$2" f stash
+  stash="$(mktemp -d)"
+  for f in "${NO_CLOBBER_FILES[@]}"; do
+    [[ "$f" == "$dst/"* && -f "$f" ]] || continue
+    mkdir -p "$stash/$(dirname "$f")"
+    cp -p "$f" "$stash/$f"
+  done
+  do_copy_dir "$src" "$dst"
+  for f in "${NO_CLOBBER_FILES[@]}"; do
+    [ -f "$stash/$f" ] || continue
+    $DRY_RUN || cp -p "$stash/$f" "$f"
+    echo "    ⏭️   $f kept (existing file is never overwritten)."
+  done
+  rm -rf "$stash"
+}
+
 install_ide_dirs() {
   [ ${#IDE_DIRS_TO_INSTALL[@]} -gt 0 ] || return
   echo "🖥️   IDE directories:"
@@ -551,17 +577,17 @@ install_ide_dirs() {
         echo "    ✓  $dir/ already present."
         continue
       fi
-      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      copy_ide_dir "$TMP_DIR/$dir" "$dir"
       $DRY_RUN || echo "    ✅  $dir/ installed (was missing)."
     elif [ -d "$dir" ] && $UPGRADE_MODE; then
       if prompt_yn "Update '$dir/'?"; then
-        do_copy_dir "$TMP_DIR/$dir" "$dir"
+        copy_ide_dir "$TMP_DIR/$dir" "$dir"
         $DRY_RUN || echo "    ✅  $dir/ updated."
       else
         echo "    ⏭️   $dir/ skipped."
       fi
     else
-      do_copy_dir "$TMP_DIR/$dir" "$dir"
+      copy_ide_dir "$TMP_DIR/$dir" "$dir"
       $DRY_RUN || echo "    ✅  $dir/ installed."
     fi
   done
@@ -779,7 +805,9 @@ if [[ -z "$FILES_TARGET" ]] && [[ "$MODE" == "install" || "$MODE" == "full" || "
       dirs=$(ide_dirs "$def")
       files=$(ide_files "$def")
       [[ -n "$dirs" ]]  && GITIGNORE_CANDIDATES+=("$dirs/")
-      [[ -n "$files" ]] && GITIGNORE_CANDIDATES+=("$files")
+      if [[ -n "$files" ]] && ! contains_id "$files" ${GITIGNORE_CANDIDATES[@]+"${GITIGNORE_CANDIDATES[@]}"}; then
+        GITIGNORE_CANDIDATES+=("$files")
+      fi
     fi
   done
 

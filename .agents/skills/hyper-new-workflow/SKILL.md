@@ -1,5 +1,5 @@
 ---
-name: new-workflow
+name: hyper-new-workflow
 description: Converts a desired behavior, prompt, or idea into a properly formatted workflow file in the Hypergraph Coding Agent Framework. Use when the user wants to create a new slash command or workflow.
 ---
 
@@ -18,7 +18,7 @@ This skill converts a description of desired agent behavior into a properly form
 1. **Gather Inputs**
    - Extract the command name and its intended behavior from the user's request.
    - If only a description is provided, suggest a short, hyphen-separated name (e.g., `code-review`, `api-design`).
-   - Confirm a concise description for the frontmatter. Then use **AskUserQuestion** to confirm before drafting:
+   - Confirm a concise description for the frontmatter. Then use **ask-user** to confirm before drafting:
 
      ```
      Confirm the command name and description?
@@ -39,11 +39,13 @@ This skill converts a description of desired agent behavior into a properly form
      trigger: /<command-name>
      ---
      ```
+   - `name` **must exactly match the directory name** (lowercase letters, digits, and single hyphens; max 64 characters). Pi registers skills as `/skill:<name>` and Gemini CLI activates them by `name`, so a mismatch breaks invocation or collides with other skills.
    - **Structure the content** using the standard skill format:
      - `## When to use this skill` — trigger conditions
      - `## How to use it` — numbered steps for the agent to follow. Be explicit about agent actions, not just outcomes.
 
 3. **Create IDE Bridge Files**
+   Create a bridge in each harness bridge directory that exists in the project (skip any that are absent):
    - Create a thin bridge in `.claude/commands/<command-name>.md`:
      ```markdown
      ---
@@ -58,7 +60,19 @@ This skill converts a description of desired agent behavior into a properly form
      ---
      Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
      ```
+   - Create a Pi prompt template in `.pi/prompts/<command-name>.md` (Pi exposes it as `/<command-name>`). Keep the `$ARGUMENTS` line so arguments reach the skill; add `argument-hint` only if the skill takes arguments:
+     ```markdown
+     ---
+     description: "<description matching SKILL.md>"
+     argument-hint: "[optional argument description]"
+     ---
+     Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
+
+     Additional context from the user (may be empty): $ARGUMENTS
+     ```
+   - No bridge is needed for Gemini CLI or Pi skill discovery: both load `.agents/skills/` directly (Pi also as `/skill:<command-name>`).
 
 4. **Verify and Notify**
    - Confirm all files are well-formed with valid YAML frontmatter.
-   - Notify the user: "The `/<command-name>` skill is ready. The SKILL.md is the source of truth in `.agents/skills/<command-name>/`, with IDE bridges in `.claude/commands/` and `.windsurf/workflows/`."
+   - Run `python .agents/scripts/validate_skills.py` and fix any errors it reports (name/directory mismatch, missing description, missing Pi prompt bridge).
+   - Notify the user: "The `/<command-name>` skill is ready. The SKILL.md is the source of truth in `.agents/skills/<command-name>/`, with IDE bridges in the harness directories listed above."

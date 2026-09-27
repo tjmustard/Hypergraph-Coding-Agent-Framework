@@ -1,5 +1,5 @@
 ---
-name: execute
+name: hyper-execute
 description: Implements the current plan precisely and in full, following existing code patterns and updating the hypergraph after every modification. Use when ready to write code against a compiled MiniPRD.
 ---
 
@@ -18,7 +18,7 @@ This skill implements a plan precisely, minimally, and in full — adhering to e
 1. **Memory Check**
    - Read `.agents/memory/activeContext.md` before anything else.
    - Check whether the target MiniPRD is listed as complete or already audited.
-   - **If the MiniPRD is marked complete or audited:** HALT. Display the warning, then use **AskUserQuestion**:
+   - **If the MiniPRD is marked complete or audited:** HALT. Display the warning, then use **ask-user**:
 
      ```
      ⚠️ [MiniPRD name] appears already complete per activeContext.md.
@@ -33,7 +33,7 @@ This skill implements a plan precisely, minimally, and in full — adhering to e
 
 2. **Read the MiniPRD**
    - Read the target `MiniPRD_*.md` from `spec/compiled/`.
-   - Confirm a Confidence Score (1–10) against the MiniPRD's "Confidence Mandate" section. If below 9, list the clarifying questions, then use **AskUserQuestion**:
+   - Confirm a Confidence Score (1–10) against the MiniPRD's "Confidence Mandate" section. If below 9, list the clarifying questions, then use **ask-user**:
 
      ```
      Confidence is [N]/10. How do you want to proceed?
@@ -44,8 +44,9 @@ This skill implements a plan precisely, minimally, and in full — adhering to e
      ```
 
 2.5. **Codebase Orientation (Haiku Sub-Agent)**
-   - Before implementing, launch a read-only sub-agent to pre-load all relevant file contents:
-     - Use the Agent tool with `subagent_type: "general-purpose"` and `model: "haiku"`
+   - Before implementing, launch a read-only **sub-agent** to pre-load all relevant file contents:
+     - Claude Code: `subagent_type: "general-purpose"` and `model: "haiku"`
+     - Harnesses without a sub-agent capability (e.g. Pi): skip straight to the **Fallback** below.
      - Prompt the sub-agent: "Read `spec/compiled/[MiniPRD filename]` in full. From the Implementation Plan task list, identify every file path that must be created or modified. For each file that already exists in the codebase, read its full content and return it verbatim. For new files, list the path and expected purpose only. Return a structured report mapping file paths to their current content."
    - Wait for the sub-agent result before proceeding to Step 3.
    - Use the returned file contents as your working context for implementation.
@@ -68,5 +69,5 @@ This skill implements a plan precisely, minimally, and in full — adhering to e
 
 5. **Halt and Report**
    - Output a summary of all files modified and nodes flagged.
-   - Instruct the user: "Implementation complete. Start a new conversation and run `/hyper-audit spec/compiled/MiniPRD_[Target].md` to verify the code against the contract."
+   - Instruct the user: "Implementation complete. Start a **new-session** (Claude Code: new conversation; Pi: `/new`) and run `/hyper-audit spec/compiled/MiniPRD_[Target].md` to verify the code against the contract."
    - Note: a successful `/hyper-audit` run will move the MiniPRD to `spec/archive/` automatically, removing it from future execute runs.

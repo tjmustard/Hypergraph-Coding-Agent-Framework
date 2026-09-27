@@ -1,7 +1,7 @@
 # Hypergraph Coding Agent Framework — Agent Instructions
 
-> **Cross-IDE manifest.** This file is injected as always-on context by Windsurf, Cursor,
-> Roo Code, GitHub Copilot, and Zed. IDE-specific bridge files in `.claude/`, `.cursor/`,
+> **Cross-IDE manifest.** This file is injected as always-on context by Pi, Windsurf, Cursor,
+> Roo Code, GitHub Copilot, and Zed. IDE-specific bridge files in `.claude/`, `.pi/`, `.cursor/`,
 > `.windsurf/`, `.clinerules/`, and `.roo/` extend this base with tool-specific overrides.
 > For the human-facing usage guide, see `README.md`.
 
@@ -94,6 +94,65 @@ These prefixes act as an automatic local sandbox. They are intercepted by a repo
 
 ---
 
+## Harness Capability Map
+
+Skills are written once for every harness. Instead of naming one harness's tools, they name
+**capabilities** in bold (e.g. "use **ask-user**"). Map each capability to your harness's tool
+below. If your harness lacks it, use the fallback; never skip the step.
+
+| Capability (as written in skills) | Claude Code | Gemini CLI | Pi | Other IDE agents |
+|---|---|---|---|---|
+| read / write / edit files | Read, Write, Edit | `read_file`, `write_file` | `read`, `write`, `edit` | native file tools |
+| shell | Bash | `run_shell_command` | `bash` | terminal tool |
+| file search | Glob, Grep | `list_directory`, or the shell | `find`, `grep`, `ls` (enabled by `.pi/settings.json`), or `rg`/`find` via `bash` | native search |
+| **ask-user** | AskUserQuestion | `ask_user` | `ask_user` (from `.pi/extensions/hcaf-ask-user.ts`) | plain-text fallback |
+| **sub-agent** | Agent tool, with the model the skill names | inline fallback | inline fallback (Pi has no sub-agents) | inline fallback |
+| **new-session** | new conversation, or `/clear` | new chat session | `/new` | new chat window |
+| web research | WebSearch, WebFetch | equivalent if available | `curl` via `bash` if the network allows | equivalent if available |
+| GitHub | `gh` via Bash | `gh` via the shell | `gh` via `bash` | `gh` via terminal |
+
+**ask-user rules (every harness):**
+- At most 2 questions per call (the Pacing Loop), each with 2–4 labeled options and the
+  recommended option first. The user can always answer in free text ("Other").
+- Use multi-select only where the skill says the choices are not mutually exclusive.
+- **Plain-text fallback** (no ask-user tool, or the tool reports no UI): print each question
+  with lettered options (A, B, C, plus "Other: type your answer"), then **end your turn** and
+  wait. Never choose an answer on the user's behalf.
+
+**sub-agent fallback:** do the delegated work yourself in the current context, following the
+skill's **Fallback** step.
+
+**Web research:** never fabricate citations, URLs, or data. If you cannot fetch a source, say
+so and ask the user to supply it.
+
+---
+
+## Pi Harness
+
+[Pi](https://github.com/earendil-works/pi) reads this file as its always-on context. It does
+not read `CLAUDE.md` when `AGENTS.md` exists, so Pi's harness rules live here.
+
+| Piece | Location | What it provides |
+|---|---|---|
+| Skills | `.agents/skills/` (auto-discovered) | `/skill:hyper-<name> [args]`; the model can also load a skill on demand |
+| Slash commands | `.pi/prompts/hyper-*.md` | `/hyper-<name> [args]`, same as in other harnesses |
+| ask-user tool | `.pi/extensions/hcaf-ask-user.ts` | `ask_user`: 1–4 questions, options, multi-select, free-text Other |
+| Tool set | `.pi/settings.json` | Turns on `grep`, `find`, `ls` next to the default `read`, `bash`, `edit`, `write` |
+
+- **Project trust:** Pi loads `.pi/` and the project's `.agents/skills/` only after the user
+  trusts the project (startup prompt, or `pi --approve`). Without trust, `/hyper-*` and
+  `ask_user` are unavailable: follow Mandate 1 (read `.agents/skills/<name>/SKILL.md`
+  directly) and use the ask-user plain-text fallback.
+- **No approval prompts:** Pi runs tool calls without asking. A skill's **ask-user** gates are
+  therefore the only approval checkpoints: never skip them, and never push, force-reset, or
+  delete without one.
+- **Fresh context:** at every phase boundary, tell the user to run `/new`. `/compact` keeps a
+  summary of the old conversation, which breaks Red Team isolation.
+- **Model routing:** META.yml tiers (haiku/sonnet/opus) are advisory in Pi, which does not
+  switch models per skill. If a skill's tier matters, suggest `/model` and `/thinking`.
+
+---
+
 ## Available Skills
 
 | Skill | Trigger | Phase | Description |
@@ -142,7 +201,8 @@ Full skill instructions: `.agents/skills/hyper-<name>/SKILL.md`
 
 ### Model Routing
 
-Skills automatically route to the optimal Claude model tier based on metadata:
+In Claude Code, skills route to the optimal Claude model tier based on metadata (in Pi and
+other multi-provider harnesses this is advisory; see **Pi Harness → Model routing**):
 
 - **Haiku** (2k thinking ceiling): Routine, deterministic tasks. ~70% cost savings.
 - **Sonnet** (10k thinking ceiling): Tactical reasoning, trade-off analysis. ~50% cost savings.
@@ -230,14 +290,14 @@ Phase  2 (Build):      /hyper-execute → hypergraph_updater.py → /hyper-audit
 Phase  3 (Novel):      Human review → tests/fixtures/ → update MiniPRD
 ```
 
-Each phase boundary requires a **fresh context window** to prevent cross-contamination
+Each phase boundary requires a **new-session** (fresh context window) to prevent cross-contamination
 between adversarial agents (Red Team must not see Architect's conversation history).
 
 ---
 
 ## Schema Definitions (Persistent Rules)
 
-**Note:** These schemas are embedded in `AGENTS.md` to reduce per-message token overhead and ensure a single source of truth across all IDE integrations (Claude Code, Gemini CLI, Cursor, etc.).
+**Note:** These schemas are embedded in `AGENTS.md` to reduce per-message token overhead and ensure a single source of truth across all IDE integrations (Claude Code, Gemini CLI, Pi, Cursor, etc.).
 For the historical/deprecated versions, see `.agents/schemas/` directory.
 
 ### SuperPRD Schema

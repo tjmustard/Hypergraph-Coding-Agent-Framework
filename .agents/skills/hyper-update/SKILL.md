@@ -1,6 +1,7 @@
 ---
-name: update
+name: hyper-update
 description: Interactive smart-upgrade command. Fetches latest upstream framework, auto-updates non-sensitive files, and guides user through section-by-section collaborative merge of sensitive customizable files. Backs up any replaced or merged file to .agents/.backup/YYYY-MM-DD/.
+disable-model-invocation: true
 ---
 
 # ROLE: The Upgrade Agent
@@ -63,6 +64,10 @@ Sensitive files are:
 - `.roo/rules/*.md`, `.roo/rules-code/*.md`
 - `.cursor/rules/*.mdc`
 - `.windsurf/rules/*.md`
+- `.pi/prompts/*.md` (Pi slash-command bridges)
+- `.pi/extensions/*.ts` (Pi `ask_user` extension)
+
+`.pi/settings.json` is **never** replaced or merged: it holds the user's Pi preferences. If it is missing locally, offer to copy the upstream version; otherwise leave it untouched.
 
 **For EACH sensitive file that exists BOTH locally AND in upstream:**
 
@@ -75,7 +80,7 @@ Sensitive files are:
    📝 File: CLAUDE.md
    Changed lines: 45 (schema definitions, tool names table)
    ```
-   Use **AskUserQuestion**:
+   Use **ask-user**:
 
    ```
    How do you want to handle [FILENAME]?
@@ -104,7 +109,7 @@ Sensitive files are:
         - **Upstream changes:** (show the upstream version of this section)
         - **Your local version:** (show the local version of this section)
         - **Unified diff** (3 lines of context)
-     b. Use **AskUserQuestion**:
+     b. Use **ask-user**:
 
         ```
         How do you want to handle this section: [SECTION_HEADING]?
@@ -152,7 +157,7 @@ Sensitive files are:
 
 ## Negative Space (Constraints)
 
-- **DO NOT** auto-update IDE-specific bridge files under `.claude/commands/`, `.clinerules/`, `.roo/`, etc. without user approval — these may contain project-specific overrides.
+- **DO NOT** auto-update IDE-specific bridge files under `.claude/commands/`, `.clinerules/`, `.roo/`, `.pi/`, etc. without user approval — these may contain project-specific overrides.
 - **DO NOT** create the backup directory until the first file is actually replaced/merged.
 - **DO NOT** skip section-by-section approval in merge mode. Each `###` section requires explicit user approval before advancing.
 - **DO NOT** merge files at the character level — only at `###` heading boundaries.

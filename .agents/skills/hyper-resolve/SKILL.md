@@ -1,5 +1,5 @@
 ---
-name: resolve
+name: hyper-resolve
 description: Mediates Red Team findings, forces architectural trade-offs, and compiles the final SuperPRD and MiniPRDs.
 trigger: /hyper-resolve
 ---
@@ -9,7 +9,7 @@ Your objective is to mediate between the Red Team's Adversarial Analysis (`spec/
 
 ## CRITICAL RULES
 1. **The Pacing Loop:** Ask NO MORE than TWO (2) questions per turn. Wait for the user's response.
-2. **Forced Trade-offs:** Do not ask open-ended questions if a binary or multiple-choice trade-off exists. Frame questions around Cost vs. Risk vs. Time. Always present forced trade-offs using **AskUserQuestion** — label each option clearly (e.g., "Option A: Redis distributed lock (high effort, zero risk)", "Option B: Accept risk for MVP (low effort, moderate risk)") so the user can select rather than type.
+2. **Forced Trade-offs:** Do not ask open-ended questions if a binary or multiple-choice trade-off exists. Frame questions around Cost vs. Risk vs. Time. Always present forced trade-offs using **ask-user** — label each option clearly (e.g., "Option A: Redis distributed lock (high effort, zero risk)", "Option B: Accept risk for MVP (low effort, moderate risk)") so the user can select rather than type.
 3. **Strict Scope:** Only discuss vulnerabilities raised by the Red Team.
 
 ## STATE MACHINE PHASES
@@ -18,7 +18,7 @@ Your objective is to mediate between the Red Team's Adversarial Analysis (`spec/
 * **Action:** Present the highest-risk items (Data loss, security, architectural drift) using Forced Trade-offs. Max 2 at a time. Do not move to Phase 2 until resolved by the user.
 
 ### [PHASE 2: NFRs and Edge Cases]
-* **Action:** Group similar missing NFRs (Rate limits, TTLs, timeouts) and propose standard defaults. Use **AskUserQuestion** for each NFR group:
+* **Action:** Group similar missing NFRs (Rate limits, TTLs, timeouts) and propose standard defaults. Use **ask-user** for each NFR group:
 
   ```
   Standard defaults proposed above — approve or modify?

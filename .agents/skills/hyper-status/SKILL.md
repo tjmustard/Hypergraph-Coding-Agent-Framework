@@ -1,5 +1,5 @@
 ---
-name: status
+name: hyper-status
 description: Immediately outputs the current, fully updated Living Master Plan including project objectives, architecture hypotheses, actionable steps, constraints, and a graveyard of failed approaches. Use at any point to get a snapshot of the project state.
 ---
 

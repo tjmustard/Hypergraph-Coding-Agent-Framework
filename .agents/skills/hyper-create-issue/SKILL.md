@@ -1,5 +1,5 @@
 ---
-name: create-issue
+name: hyper-create-issue
 description: Quickly captures a bug, feature request, or improvement as a structured GitHub issue without interrupting the user's development flow. Use when the user needs to log something fast while staying focused on current work.
 ---
 
@@ -16,7 +16,7 @@ This skill captures a bug, feature request, or improvement as a complete, well-s
 ## How to use it
 
 1. **Ask Targeted Questions**
-   The user is mid-flow — be concise. Use **AskUserQuestion** to collect issue type and priority without multiple back-and-forths:
+   The user is mid-flow — be concise. Use **ask-user** to collect issue type and priority without multiple back-and-forths:
 
    ```
    What type of issue is this?
@@ -27,7 +27,7 @@ This skill captures a bug, feature request, or improvement as a complete, well-s
    - Option D: Chore / maintenance — tech debt, refactor, or infra work
    ```
 
-   Then use **AskUserQuestion** for priority (if not obvious from context):
+   Then use **ask-user** for priority (if not obvious from context):
 
    ```
    What priority should this issue have?

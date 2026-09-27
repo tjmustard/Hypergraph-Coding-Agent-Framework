@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-27
+
+### Added
+- **Pi harness support** ([earendil-works/pi](https://github.com/earendil-works/pi)): Pi reads `AGENTS.md` as its always-on context file and loads `.agents/skills/` natively, so every skill is available as `/skill:hyper-<name>`.
+- **`.pi/prompts/hyper-*.md`**: 35 prompt-template bridges so `/hyper-<name> [args]` works in Pi, including one for `hyper-init`.
+- **`.pi/extensions/hcaf-ask-user.ts`**: Pi extension that registers an `ask_user` tool (1–4 questions, labeled options, multi-select, free-text Other). It is built only on Pi's `select`/`input` dialogs and tells the model to fall back to plain-text questions when no UI is available.
+- **`.pi/settings.json`**: Turns on Pi's `grep`, `find`, and `ls` tools alongside the default `read`, `bash`, `edit`, `write`.
+- **Harness Capability Map** in `AGENTS.md` (and its install template): maps the capability names skills use (**ask-user**, **sub-agent**, **new-session**, file search, web research, GitHub) to Claude Code, Gemini CLI, Pi, and other IDE agents, with fallbacks. A new **Pi Harness** section covers project trust, `/new`, and model routing.
+- **`.agents/scripts/validate_skills.py`**: Stdlib-only validator. Checks that frontmatter `name` equals the directory name, that the description exists and is at most 1024 characters, and that skill bodies contain no harness-specific tool names. Pi prompt bridges must match skills 1:1 (errors); Claude Code and Windsurf bridge gaps are reported as warnings.
+- **`HACF-install.sh`**: New `pi` IDE ID, which installs `.pi/` and `AGENTS.md`. `.pi/prompts` is synced in skills mode.
+
+### Changed
+- **Skill frontmatter**: `name` now equals the directory name in all 35 skills (e.g. `architect` → `hyper-architect`). The old short names became Pi's `/skill:` names and diverged from the `activate_skill` names listed in `GEMINI.md`. The create-skill template and example follow the same rule.
+- **Harness-neutral skills**: 59 `AskUserQuestion` references across 23 skills now say **ask-user**. The Claude Agent-tool steps in `hyper-execute` and `hyper-audit` now say **sub-agent** and go straight to their inline fallback on harnesses without sub-agents. "Start a new conversation" became **new-session** (Claude Code: new conversation; Pi: `/new`).
+- **`hyper-publish` / `hyper-update`**: Now set `disable-model-invocation: true` so Pi runs them only when the user invokes them. `hyper-publish`'s `.claude/settings.json` permission step is Claude Code-only.
+- **`hyper-new-workflow`**: Creates a `.pi/prompts/` bridge, requires `name` to equal the directory name, and runs the validator. **`hyper-create-skill`**, **`hyper-update`**, **`hyper-contextualize`**, and **`hyper-document`** now cover Pi's files.
+- **`CLAUDE.md` / `GEMINI.md`** (and their install templates): Tool tables map the capability names. `GEMINI.md`'s skill list now shows the 35 real skills.
+- **`HACF-install.sh`**: The installer never overwrites an existing `.pi/settings.json`. It dedupes `AGENTS.md` when both `pi` and `universal` are selected.
+- **`HACF-uninstall.sh`**: The uninstaller never deletes `.pi/settings.json`.
+- **`hyper_update_core.py`**: Treats `.pi/prompts/` and `.pi/extensions/` as sensitive bridge directories.
+
 ## [0.5.9] - 2026-07-23
 
 ### Changed

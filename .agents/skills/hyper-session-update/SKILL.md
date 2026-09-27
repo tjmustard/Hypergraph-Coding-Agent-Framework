@@ -1,5 +1,5 @@
 ---
-name: session-update
+name: hyper-session-update
 description: Updates agentic memory files (activeContext, systemPatterns, productContext) and project docs with work done in the current session. Use at the end of a development session to keep memory in sync with the codebase.
 ---
 

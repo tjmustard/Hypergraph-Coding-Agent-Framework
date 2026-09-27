@@ -21,8 +21,9 @@ TMP_DIR="$(mktemp -d)"
 # These directories are NEVER touched — not even read
 PROTECTED_DIRS=("spec" "tests")
 
-# These files at the repo root are never removed by uninstall
-PROTECTED_FILES=("HACF-install.sh" "HACF-uninstall.sh" "README.md" "CHANGELOG.md")
+# These files are never removed by uninstall (paths relative to the repo root).
+# .pi/settings.json may hold the user's own Pi preferences.
+PROTECTED_FILES=("HACF-install.sh" "HACF-uninstall.sh" "README.md" "CHANGELOG.md" ".pi/settings.json")
 
 # ---------------------------------------------------------------------------
 # Flags

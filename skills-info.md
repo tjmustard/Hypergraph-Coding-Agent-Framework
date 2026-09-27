@@ -70,12 +70,13 @@ The Hypergraph framework leverages a modular skill system to route specialized r
 Skills are an open standard for extending agent capabilities. A skill is a folder containing a `SKILL.md` file with instructions that the agent can discover, activate, and follow when working on specific tasks.
 
 ### Where Skills Live
-Antigravity supports two scopes of skills:
+Antigravity and Pi both load skills from the workspace `.agents/skills/` directory directly. Other harnesses reach the same files through thin bridges (`.claude/commands/`, `.windsurf/workflows/`, `.pi/prompts/`).
 
 | Scope | Location | Use Case |
 | :--- | :--- | :--- |
 | **Workspace-Specific** | `<workspace-root>/.agents/skills/<skill-folder>/` | Team deployment workflows, local testing conventions, project-specific code generators. |
-| **Global** | `~/.gemini/antigravity/skills/<skill-folder>/` | Universal developer utilities, personal code formatters, general research prompts. |
+| **Global (Antigravity)** | `~/.gemini/antigravity/skills/<skill-folder>/` | Universal developer utilities, personal code formatters, general research prompts. |
+| **Global (Pi)** | `~/.agents/skills/<skill-folder>/` or `~/.pi/agent/skills/<skill-folder>/` | The same, for Pi and other Agent Skills harnesses. |
 
 ### Creating a Skill
 
@@ -103,8 +104,8 @@ When reviewing code, follow these steps...
 ```
 
 #### Fields Reference:
-- **`name`** *(Optional)*: A unique identifier for the skill (lowercase, hyphens for spaces). Defaults to the folder name.
-- **`description`** *(Required)*: A clear, concise third-person description of what the skill does and when to use it. This is what the agent reads when scanning available capabilities to match the user's intent.
+- **`name`** *(Required in this framework)*: Must exactly match the skill folder name (lowercase letters, digits, and single hyphens; max 64 characters). Pi registers the skill as `/skill:<name>` and Gemini CLI activates it by `name`, so a mismatch breaks invocation. `python .agents/scripts/validate_skills.py` enforces this.
+- **`description`** *(Required, max 1024 characters)*: A clear, concise third-person description of what the skill does and when to use it. This is what the agent reads when scanning available capabilities to match the user's intent.
 
 > [!TIP]
 > Always include relevant keywords in the description (e.g. "Python, pytest, CI/CD") to help the agent recognize when the skill is appropriate.

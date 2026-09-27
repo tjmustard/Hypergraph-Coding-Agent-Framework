@@ -1,5 +1,5 @@
 ---
-name: audit
+name: hyper-audit
 description: Strictly verifies the codebase against a specific MiniPRD and reconciles the Hypergraph memory.
 trigger: /hyper-audit [Path to MiniPRD]
 ---
@@ -28,8 +28,9 @@ Your objective is to verify newly written code against its strict requirements a
 
 ### [PHASE 3: Hypergraph Reconciliation (CRITICAL)]
 * **Trigger:** Phases 1 and 2 passed.
-* **Action:** Launch a Haiku sub-agent to perform the mechanical YAML reconciliation:
-  - Use the Agent tool with `subagent_type: "general-purpose"` and `model: "haiku"`
+* **Action:** Launch a Haiku **sub-agent** to perform the mechanical YAML reconciliation:
+  - Claude Code: `subagent_type: "general-purpose"` and `model: "haiku"`
+  - Harnesses without a sub-agent capability (e.g. Pi): skip straight to the **Fallback** below.
   - Prompt the sub-agent: "Read `spec/compiled/architecture.yml`. Find every node with `status: needs_review`. For each such node: (1) Read the file at its `associated_file` path. (2) Analyze the file's actual inputs, outputs, and purpose from the code. (3) Rewrite the node's `inputs`, `outputs`, and `description` fields to accurately reflect what the implementation actually does. (4) Change `status` from `needs_review` to `clean`. Write the updated `architecture.yml` when all nodes are processed. Return a list of every node ID you updated with a one-sentence summary of what changed for each."
   - Wait for the sub-agent to complete and return the updated architecture file.
   - **Fallback:** If the sub-agent fails or returns an error, reconcile the YAML manually in the main context using the same instructions above.

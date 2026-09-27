@@ -1,5 +1,5 @@
 ---
-name: process-document
+name: hyper-process-document
 description: Documents the process, methodology, and decisions of the current session as a reproducible narrative. Saves to spec/process/ in the workspace so the journey can be understood and recreated by others.
 trigger: /hyper-process-document
 argument-hint: "Brief title for this process document (e.g. 'Dynamic Workflow Engine')"
