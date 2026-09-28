@@ -70,7 +70,7 @@ The Hypergraph framework leverages a modular skill system to route specialized r
 Skills are an open standard for extending agent capabilities. A skill is a folder containing a `SKILL.md` file with instructions that the agent can discover, activate, and follow when working on specific tasks.
 
 ### Where Skills Live
-Antigravity and Pi both load skills from the workspace `.agents/skills/` directory directly. Other harnesses reach the same files through thin bridges (`.claude/commands/`, `.windsurf/workflows/`, `.pi/prompts/`).
+Antigravity and Pi both load skills from the workspace `.agents/skills/` directory directly. Claude Code and Windsurf reach the same files through thin bridges (`.claude/commands/`, `.windsurf/workflows/`).
 
 | Scope | Location | Use Case |
 | :--- | :--- | :--- |

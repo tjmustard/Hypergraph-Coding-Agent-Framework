@@ -63,7 +63,6 @@ class HyperUpdateCore:
         ".roo/rules-code/",
         ".cursor/rules/",
         ".windsurf/rules/",
-        ".pi/prompts/",
         ".pi/extensions/",
     ]
 

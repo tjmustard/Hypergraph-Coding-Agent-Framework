@@ -120,7 +120,7 @@ bash HACF-install.sh --mode=full -y   # full update, non-interactive
 
 For IDE config files (CLAUDE.md, AGENTS.md, GEMINI.md), the installer shows a unified diff before asking whether to overwrite. Files that are already up to date are silently skipped.
 
-> **Skill bridges:** When using `--mode=skills`, the installer also syncs `.claude/commands/`, `.windsurf/workflows/`, and `.pi/prompts/` — the thin bridge files that point to skill definitions. Other IDE dirs (`.cursor/`, `.clinerules/`, `.roo/`) contain only static rules and are untouched in skills mode.
+> **Skill bridges:** When using `--mode=skills`, the installer also syncs `.claude/commands/` and `.windsurf/workflows/` — the thin bridge files that point to skill definitions. Pi needs no bridges: it reads `.agents/skills/` directly. Other IDE dirs (`.cursor/`, `.clinerules/`, `.roo/`) contain only static rules and are untouched in skills mode.
 
 #### Surgical File Install
 
@@ -166,10 +166,10 @@ Available named targets:
 | `.cursor/` | Cursor `.mdc` rule bridges | `cursor` |
 | `.clinerules/` | Cline rule bridges | `cline` |
 | `.roo/` | Roo Code rule bridges | `roo` |
-| `.pi/` | Pi prompt-template bridges, `ask_user` extension, tool settings (an existing `.pi/settings.json` is never overwritten) | `pi` |
+| `.pi/` | Pi extensions (`ask_user` tool, `/hyper-*` command alias) and tool settings (an existing `.pi/settings.json` is never overwritten) | `pi` |
 | `AGENTS.md` | Cross-IDE always-on system manifest (also Pi's context file) | `pi`, `universal` |
 
-> **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`, `.pi/prompts/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
+> **Note:** Bridge directories (`.claude/`, `.windsurf/`, `.cursor/`, `.clinerules/`, `.roo/`) contain only thin one-line reference files. All actual skill content lives in `.agents/skills/`.
 >
 > **Naming convention:** All framework skills and commands use the `hyper-` prefix (e.g. `hyper-architect`, `/hyper-redteam`) so they never collide with skills or commands you create for your own project.
 
@@ -256,7 +256,7 @@ The Hypergraph Framework abandons the standard "Prompt Zero" approach in favor o
 -   `.cursor/rules/`: Cursor `.mdc` rule bridges.
 -   `.clinerules/`: Cline rule bridges.
 -   `.roo/rules/` + `.roo/rules-code/`: Roo Code rule bridges.
--   `.pi/prompts/`: Pi prompt-template bridges (`/hyper-<name>`), plus `.pi/extensions/hcaf-ask-user.ts` and `.pi/settings.json`.
+-   `.pi/extensions/`: Pi extensions (`hcaf-ask-user.ts`, `hcaf-commands.ts`) plus `.pi/settings.json`. No per-skill files: Pi reads `.agents/skills/` directly.
 
 ### Universal Standard
 -   `AGENTS.md`: Cross-IDE always-on manifest (Pi, Windsurf, Cursor, Roo Code, GitHub Copilot, Zed). Its **Harness Capability Map** maps the capability names skills use (**ask-user**, **sub-agent**, **new-session**) to each harness's tools.
@@ -285,9 +285,9 @@ All skill content lives **once** in `.agents/skills/*/SKILL.md`. Every IDE reads
     ↑ referenced by:
     .claude/commands/hyper-architect.md      (Claude Code)
     .windsurf/workflows/hyper-architect.md   (Windsurf)
-    .pi/prompts/hyper-architect.md           (Pi; Pi also loads the skill directly)
     AGENTS.md                          (Cursor, Roo Code, Copilot, Zed)
     GEMINI.md                          (Gemini CLI / Antigravity)
+    .agents/skills/ (loaded directly)        (Pi)
 ```
 
 ### Claude Code
@@ -323,7 +323,7 @@ Support via `.roo/rules/` (all modes) and `.roo/rules-code/` (code mode only), w
 Support for [Pi](https://github.com/earendil-works/pi) via `AGENTS.md` (Pi's always-on context file), native discovery of `.agents/skills/`, and the `.pi/` directory:
 
 -   **Skills:** every skill loads as `/skill:hyper-<name>`, and the model can pull one in on demand. `hyper-publish` and `hyper-update` set `disable-model-invocation`, so they run only when you invoke them.
--   **Slash commands:** `.pi/prompts/hyper-*.md` gives the same `/hyper-<name> [args]` commands as the other harnesses.
+-   **Slash commands:** `.pi/extensions/hcaf-commands.ts` rewrites `/hyper-<name> [args]` to `/skill:hyper-<name> [args]`, so the same commands as the other harnesses work with no per-skill files. New skills work immediately. Pi's `/` menu lists them as `/skill:hyper-*`.
 -   **`ask_user` tool:** `.pi/extensions/hcaf-ask-user.ts` adds the structured question picker that skills call **ask-user** (options, multi-select, free-text Other). Pi has no built-in equivalent.
 -   **Tools:** `.pi/settings.json` turns on Pi's `grep`, `find`, and `ls` alongside the default `read`, `bash`, `edit`, `write`.
 -   **Project trust:** Pi loads `.pi/` and project skills only after you trust the project (startup prompt, or `pi --approve`). Without trust, Pi still reads `AGENTS.md` and falls back to reading skill files directly and asking questions in plain text.

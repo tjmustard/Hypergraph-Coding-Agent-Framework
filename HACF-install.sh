@@ -54,13 +54,13 @@ IDE_DEFS=(
   "cursor|Cursor|.cursor|"
   "cline|Cline|.clinerules|"
   "roo|Roo Code|.roo|"
-  "pi|Pi  (reads AGENTS.md; .pi/ prompts, settings, ask_user extension)|.pi|AGENTS.md"
+  "pi|Pi  (reads AGENTS.md; .pi/ extensions and settings)|.pi|AGENTS.md"
   "universal|Universal — AGENTS.md  (GitHub Copilot, Zed, and others)||AGENTS.md"
 )
 
 # IDE subdirectories that contain per-skill bridge files.
 # These are synced alongside .agents/skills/ in skills-only mode.
-SKILL_BRIDGE_DIRS=(".claude/commands" ".windsurf/workflows" ".pi/prompts")
+SKILL_BRIDGE_DIRS=(".claude/commands" ".windsurf/workflows")
 
 # Files inside IDE directories that hold user preferences. They are installed when missing
 # but never overwritten by an IDE-directory copy.

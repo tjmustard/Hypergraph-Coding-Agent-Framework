@@ -1,6 +1,0 @@
----
-description: "Brainstorm architecture and trade-offs with a strategic CTO advisor persona"
----
-Read `.agents/skills/hyper-consult-cto/SKILL.md` and follow its instructions precisely. Adopt the CTO persona immediately and begin the consultation.
-
-Additional context from the user (may be empty): $ARGUMENTS

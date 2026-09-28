@@ -60,19 +60,9 @@ This skill converts a description of desired agent behavior into a properly form
      ---
      Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
      ```
-   - Create a Pi prompt template in `.pi/prompts/<command-name>.md` (Pi exposes it as `/<command-name>`). Keep the `$ARGUMENTS` line so arguments reach the skill; add `argument-hint` only if the skill takes arguments:
-     ```markdown
-     ---
-     description: "<description matching SKILL.md>"
-     argument-hint: "[optional argument description]"
-     ---
-     Read `.agents/skills/<command-name>/SKILL.md` and follow its instructions precisely.
-
-     Additional context from the user (may be empty): $ARGUMENTS
-     ```
-   - No bridge is needed for Gemini CLI or Pi skill discovery: both load `.agents/skills/` directly (Pi also as `/skill:<command-name>`).
+   - No bridge is needed for Gemini CLI or Pi: both load `.agents/skills/` directly. Pi exposes the skill as `/skill:<command-name>`, and HCAF's `.pi/extensions/hcaf-commands.ts` also accepts `/<command-name>` for any `hyper-` skill.
 
 4. **Verify and Notify**
    - Confirm all files are well-formed with valid YAML frontmatter.
-   - Run `python .agents/scripts/validate_skills.py` and fix any errors it reports (name/directory mismatch, missing description, missing Pi prompt bridge).
+   - Run `python .agents/scripts/validate_skills.py` and fix any errors it reports (name/directory mismatch, missing description, harness-specific tool names).
    - Notify the user: "The `/<command-name>` skill is ready. The SKILL.md is the source of truth in `.agents/skills/<command-name>/`, with IDE bridges in the harness directories listed above."

@@ -64,8 +64,7 @@ Sensitive files are:
 - `.roo/rules/*.md`, `.roo/rules-code/*.md`
 - `.cursor/rules/*.mdc`
 - `.windsurf/rules/*.md`
-- `.pi/prompts/*.md` (Pi slash-command bridges)
-- `.pi/extensions/*.ts` (Pi `ask_user` extension)
+- `.pi/extensions/*.ts` (Pi `ask_user` tool and `/hyper-*` command alias)
 
 `.pi/settings.json` is **never** replaced or merged: it holds the user's Pi preferences. If it is missing locally, offer to copy the upstream version; otherwise leave it untouched.
 

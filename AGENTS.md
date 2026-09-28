@@ -134,8 +134,8 @@ not read `CLAUDE.md` when `AGENTS.md` exists, so Pi's harness rules live here.
 
 | Piece | Location | What it provides |
 |---|---|---|
-| Skills | `.agents/skills/` (auto-discovered) | `/skill:hyper-<name> [args]`; the model can also load a skill on demand |
-| Slash commands | `.pi/prompts/hyper-*.md` | `/hyper-<name> [args]`, same as in other harnesses |
+| Skills | `.agents/skills/` (auto-discovered) | `/skill:hyper-<name> [args]` (listed in the `/` menu); the model can also load a skill on demand |
+| Command alias | `.pi/extensions/hcaf-commands.ts` | `/hyper-<name> [args]`, same as in other harnesses; no per-skill files |
 | ask-user tool | `.pi/extensions/hcaf-ask-user.ts` | `ask_user`: 1–4 questions, options, multi-select, free-text Other |
 | Tool set | `.pi/settings.json` | Turns on `grep`, `find`, `ls` next to the default `read`, `bash`, `edit`, `write` |
 

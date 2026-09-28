@@ -7,12 +7,13 @@ Checks:
       ``description`` is present and at most 1024 characters.
     * Skill bodies use harness-neutral capability names (see AGENTS.md -> Harness
       Capability Map) instead of one harness's tool names.
-    * Every skill has a Pi prompt bridge in ``.pi/prompts/`` that references its SKILL.md,
-      and no Pi bridge points at a missing skill (errors).
-    * Claude Code and Windsurf bridge gaps (warnings only).
+    * Claude Code and Windsurf bridge gaps: missing, orphaned, or broken bridge files
+      (warnings only).
 
-Bridge directories that do not exist in the project are skipped, so the script also works
-in projects that installed only some harnesses.
+Pi and Gemini CLI need no bridge files: they load ``.agents/skills/`` directly (Pi's
+``/hyper-<name>`` alias comes from ``.pi/extensions/hcaf-commands.ts``). Bridge
+directories that do not exist in the project are skipped, so the script also works in
+projects that installed only some harnesses.
 
 Usage:
     python .agents/scripts/validate_skills.py [project_root]
@@ -41,7 +42,6 @@ FORBIDDEN_TOOL_NAMES = {
 
 # Bridge directory -> severity of a missing, orphaned, or broken bridge.
 BRIDGE_DIRS = {
-    ".pi/prompts": "error",
     ".claude/commands": "warning",
     ".windsurf/workflows": "warning",
 }
